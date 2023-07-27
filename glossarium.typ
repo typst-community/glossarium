@@ -6,31 +6,36 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-#let glossary_label_prefix = "glossary:"
-#let glossary_entries = state("glossary_entries", (:))
+// glossarium figure kind
+#let __glossarium_figure="glossarium_entry"
+// prefix of label for retreiving of references
+#let __glossary_label_prefix = "glossary:"
+// global state constaining the glossary entry and their location
+#let __glossary_entries = state("__glossary_entries", (:))
 
-#let query_labels_with_key(loc, key, before: false) = {
+#let __query_labels_with_key(loc, key, before: false) = {
   if before {
     query(
-      selector(label(glossary_label_prefix + key)).before(loc, inclusive: false),
+      selector(label(__glossary_label_prefix + key)).before(loc, inclusive: false),
       loc,
     )
   } else {
     query(
-      selector(label(glossary_label_prefix + key)),
+      selector(label(__glossary_label_prefix + key)),
       loc,
     )
   }
 }
 
+// Reference a term
 #let gls(key, suffix: none, long: auto) = {
   locate(
     loc => {
-      let glossary_entries = glossary_entries.final(loc);
-      if key in glossary_entries {
-        let entry = glossary_entries.at(key)
+      let __glossary_entries = __glossary_entries.final(loc);
+      if key in __glossary_entries {
+        let entry = __glossary_entries.at(key)
 
-        let gloss = query_labels_with_key(loc, key, before: true)
+        let gloss = __query_labels_with_key(loc, key, before: true)
 
         let is_first = gloss == ();
         let entlong = entry.at("long", default: "")
@@ -42,7 +47,7 @@ SOFTWARE.*/
 
         [
         #link(label(entry.key))[#textLink]
-        #label(glossary_label_prefix + entry.key)
+        #label(__glossary_label_prefix + entry.key)
         ]
       } else {
         text(fill: red, "Glossary entry not found: " + key)
@@ -51,13 +56,13 @@ SOFTWARE.*/
   )
 }
 
-#let glspl(key) = {
-  gls(key, suffix: "s")
-}
+// reference to term with pluralisation
+#let glspl(key) = gls(key, suffix: "s")
 
+// show rule to make the references for glossarium
 #let make-glossary(body) = {
   show ref: r => {
-    if r.element != none and r.element.func() == figure and r.element.kind == "glossarium_entry" {
+    if r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure {
       // call to the general citing function
       gls(str(r.target), suffix: r.citation.supplement)
     } else {
@@ -68,7 +73,7 @@ SOFTWARE.*/
 }
 
 #let print-glossary(entries, body) = {
-  glossary_entries.update(
+  __glossary_entries.update(
     (x) => {
       for entry in entries {
         x.insert(
@@ -87,13 +92,13 @@ SOFTWARE.*/
 
   for entry in entries.sorted(key: (x) => x.key) {
     [
-    #show figure.where(kind: "glossarium_entry"): it => it.caption
+    #show figure.where(kind: __glossarium_figure): it => it.caption
     #par(
       hanging-indent: 1em,
     )[
       #figure(
         supplement: "",
-        kind: "glossarium_entry",
+        kind: __glossarium_figure,
         caption: {
           {
             set text(weight: 600)
@@ -107,7 +112,7 @@ SOFTWARE.*/
           entry.at("desc", default: "")
           locate(
             loc => {
-              query_labels_with_key(loc, entry.key)
+              __query_labels_with_key(loc, entry.key)
               .map((x) => x.location())
               .sorted(key: (x) => x.page())
               .fold(
