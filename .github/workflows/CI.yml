@@ -12,15 +12,20 @@ on:
 
 jobs:
   build-example:
-    - uses: yusancky/setup-typst@v2
-      id: setup-typst
-      with:
-        version: 'latest'
-    - name: Set up Git repository
-      uses: actions/checkout@v3
-    - name: Compile
-      run: typst compile --root example/example.typ
-    - name: Upload example PDF 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup typst  
+        uses: yusancky/setup-typst@v2
+        id: setup-typst
+        with:
+          version: 'latest'
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+      - name: typst version
+        run: typst --version
+      - name: Compile
+        run: typst compile example/example.typ --root .
+      - name: Upload example PDF 
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.sha }}_PDF_EXAMPLE
