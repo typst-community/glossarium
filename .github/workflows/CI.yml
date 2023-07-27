@@ -1,0 +1,27 @@
+name: Build example
+
+
+on:
+  push:
+    branches: 
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    branches: [ '**' ]
+
+jobs:
+  build-example:
+    - uses: yusancky/setup-typst@v2
+      id: setup-typst
+      with:
+        version: 'latest'
+    - name: Set up Git repository
+      uses: actions/checkout@v3
+    - name: Compile
+      run: typst compile --root example/example.typ
+    - name: Upload example PDF 
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.sha }}_PDF_EXAMPLE
+          path: example/example.pdf
