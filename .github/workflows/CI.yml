@@ -24,7 +24,7 @@ jobs:
       - name: typst version
         run: typst --version
       - name: Compile
-        run: typst compile example/example.typ --root .
+        run: typst --root . compile example/example.typ 
       - name: Upload example PDF 
         uses: actions/upload-artifact@v3
         with:

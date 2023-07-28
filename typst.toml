@@ -1,7 +1,7 @@
 [package]
 name = "glossarium"
-version = "0.1.1"
-entrypoint = "glossary.typ"
+version = "0.1.0"
+entrypoint = "glossarium.typ"
 authors = ["slashformotion", "Dherse"]
 license = "MIT"
 description = "Glossarium is a simple, easily customizable typst glossary."
