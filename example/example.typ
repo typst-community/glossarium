@@ -1,7 +1,7 @@
 // for local testing
 // #import "@local/glossarium:0.1.1": *
 #import "../glossarium.typ": make-glossary, print-glossary, gls, glspl
-#show: make-glossary.with()
+#show: make-glossary
 
 #set page(numbering: "1", paper: "a5")
 
@@ -19,7 +19,7 @@ At the moment, customization is not built-in to the function and instead follows
 
 #pagebreak()
 = Glossary
-#show: print-glossary.with((
+#print-glossary((
     (key: "kuleuven", short: "KU Leuven", long: "Katholieke Universiteit Leuven", desc: [Fugiat do fugiat est minim ullamco est eu duis minim nisi tempor adipisicing do _sunt_. #gls("vub")]),
     (key: "uclouvain", short: "UCLouvain", long: "Université catholique de Louvain", desc: "Sunt pariatur deserunt irure dolore veniam voluptate cillum in. Officia nulla laborum nostrud mollit officia aliqua. Laborum tempor aute proident fugiat adipisicing qui laborum tempor ad officia. Nulla ipsum voluptate in proident laborum labore nulla culpa sunt deserunt sit ad aliqua culpa."),
     (key: "ughent", short: "UGent", long: "Universiteit Gent", desc: "Labore officia commodo dolor sunt eu sunt excepteur enim nisi ex ad officia magna. Nostrud elit ullamco quis amet id eu. Cupidatat elit cupidatat ad nulla laboris irure elit."),

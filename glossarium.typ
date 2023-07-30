@@ -72,7 +72,7 @@ SOFTWARE.*/
   body
 }
 
-#let print-glossary(entries, body) = {
+#let print-glossary(entries) = {
   __glossary_entries.update(
     (x) => {
       for entry in entries {
@@ -141,6 +141,5 @@ SOFTWARE.*/
     ]
   }
 
-  body
 };
 

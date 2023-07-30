@@ -26,7 +26,7 @@ For Typst before 0.6.0 or to use **glossarium** as a local module, download the 
 
 After importing the package and before making any calls to `gls`,` print-glossary` or `glspl`, please ***MAKE SURE*** you add this line
 ```js
-#show: make-glossary.with()
+#show: make-glossary
 ```
 
 > *WHY DO WE NEED THAT ?* : In order to be able to create references to the terms in your glossary using typst ref syntax `@key` glossarium needs to setup some [show rules](https://typst.app/docs/tutorial/advanced-styling/) before any references exist. This is due to the way typst works, there is no workaround.
@@ -46,7 +46,7 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/) com
 
 Then the terms are passed as a list to `print-glossary`
 ```ts
-#show: print-glossary.with((
+#print-glossary((
   // minimal term
   (key: "kuleuven", short: "KU Leuven"),
   // a term with a long form
