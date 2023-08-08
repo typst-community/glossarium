@@ -1,6 +1,6 @@
 # Typst glossary
 
-> Glossarium is based in great part of the work of [Sébastien d'Herbais de Thun](https://github.com/Dherse) from his master thesis available at: <https://github.com/Dherse/masterproef>. His glossary is available under the MIT licence [here](https://github.com/Dherse/masterproef/blob/main/elems/acronyms.typ).
+> Glossarium is based in great part of the work of [Sébastien d'Herbais de Thun](https://github.com/Dherse) from his master thesis available at: <https://github.com/Dherse/masterproef>. His glossary is available under the MIT license [here](https://github.com/Dherse/masterproef/blob/main/elems/acronyms.typ).
 
 Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX glossaries package](https://www.ctan.org/pkg/glossaries) . You can see an example showing the different features in [`example.typ`](example/example.typ).
 
@@ -45,6 +45,7 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/) com
 - `desc` (string or content) *optional*: The description of the term.
 
 Then the terms are passed as a list to `print-glossary`
+
 ```ts
 #print-glossary((
   // minimal term
@@ -62,6 +63,8 @@ Then the terms are passed as a list to `print-glossary`
      #link("https://en.wikipedia.org/wiki/OpenID#OpenID_Foundation")[OpenID Foundation].]),
 ))
 ```
+
+By default, the terms that are not referenced in the document are not shown in the glossary, you can force their appearance by setting the `show-all` argument to true
 
 You can call this function from anywhere.
 
