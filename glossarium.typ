@@ -96,6 +96,7 @@ SOFTWARE.*/
     #show figure.where(kind: __glossarium_figure): it => it.caption
     #par(
       hanging-indent: 1em,
+      first-line-indent: 0em,
     )[
       #figure(
         supplement: "",
