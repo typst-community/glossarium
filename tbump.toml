@@ -23,6 +23,16 @@ tag_template = "v{new_version}"
 src = "typst.toml"
 search = 'version = "{current_version}"'
 
+[[file]]
+src = "makefile"
+search = 'version=0.2.0'
+
+
 [[before_commit]]
 name = "compile examples"
 cmd = "typst compile example/example.typ --root . "
+
+
+[[after_push]]
+name = "Create local version of package"
+cmd = "make local"
