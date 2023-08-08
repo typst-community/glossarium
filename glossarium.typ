@@ -81,7 +81,8 @@ SOFTWARE.*/
           (
             key: entry.key,
             short: entry.short,
-            long: entry.long,
+            long: entry.at("long", default: ""),
+            desc: entry.at("desc", default: ""),
           ),
         )
       }
@@ -142,4 +143,3 @@ SOFTWARE.*/
   }
 
 };
-
