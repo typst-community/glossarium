@@ -9,3 +9,6 @@ all:
 
 watch:
 	typst --root . watch example/example.typ 
+
+fmt:
+	find -name "**.typ" -exec typstfmt {} \;
