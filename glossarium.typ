@@ -7,7 +7,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 // glossarium figure kind
-#let __glossarium_figure="glossarium_entry"
+#let __glossarium_figure = "glossarium_entry"
 // prefix of label for retreiving of references
 #let __glossary_label_prefix = "glossary:"
 // global state constaining the glossary entry and their location
@@ -72,7 +72,7 @@ SOFTWARE.*/
   body
 }
 
-#let print-glossary(entries) = {
+#let print-glossary(entries, show-all: false) = {
   __glossary_entries.update(
     (x) => {
       for entry in entries {
@@ -102,38 +102,45 @@ SOFTWARE.*/
         supplement: "",
         kind: __glossarium_figure,
         caption: {
-          {
-            set text(weight: 600)
-            let long = entry.at("long", default: "")
-            if long != "" and long != [] [
-            #emph(entry.short) - #entry.long:
-            ] else [
-            #emph(entry.short):
-            ]
-          }
-          entry.at("desc", default: "")
           locate(
             loc => {
-              __query_labels_with_key(loc, entry.key)
-              .map((x) => x.location())
-              .sorted(key: (x) => x.page())
-              .fold(
-                (values: (), pages: ()),
-                ((values, pages), x) => if pages.contains(x.page()) {
-                  (values: values, pages: pages)
-                } else {
-                  values.push(x)
-                  pages.push(x.page())
-                  (values: values, pages: pages)
-                },
-              )
-              .values
-              .map(
-                (x) => link(
-                  x,
-                )[#numbering(x.page-numbering(), ..counter(page).at(x))],
-              )
-              .join(", ")
+              let term_references = __query_labels_with_key(loc, entry.key)
+              if term_references.len() != 0 or show-all {
+                let desc = entry.at("desc", default: "")
+                let long = entry.at("long", default: "")
+                let hasLong = long != "" and long != []
+                let hasDesc = desc != "" and desc != []
+
+                {
+                  set text(weight: 600)
+                  if hasLong [
+                  #emph(entry.short) - #entry.long
+                  ] else [
+                  #emph(entry.short)
+                  ]
+                }
+                if hasDesc [: #desc] else [. ]
+
+                term_references.map((x) => x.location())
+                .sorted(key: (x) => x.page())
+                .fold(
+                  (values: (), pages: ()),
+                  ((values, pages), x) => if pages.contains(x.page()) {
+                    (values: values, pages: pages)
+                  } else {
+                    values.push(x)
+                    pages.push(x.page())
+                    (values: values, pages: pages)
+                  },
+                )
+                .values
+                .map(
+                  (x) => link(
+                    x,
+                  )[#numbering(x.page-numbering(), ..counter(page).at(x))],
+                )
+                .join(", ")
+              }
             },
           )
         },
@@ -142,5 +149,5 @@ SOFTWARE.*/
     #parbreak()
     ]
   }
-
 };
+
