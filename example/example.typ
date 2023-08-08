@@ -6,6 +6,8 @@
 #set page(numbering: "1", paper: "a5")
 
 
+//I recommend setting a show rule for the links to that your reader understand that they can click on the references to go to the term in the glossary.
+#show link: set text(fill: blue.darken(60%))
 
 There are many Belgian universities, like @kuleuven and @ulb. When repeating their names, they won't show as a long version: @kuleuven, @ulb. But we can still force them to be long using the `gls` function: #gls("kuleuven", long: true). We can also force them to be short: #gls("kuleuven", long: false). Finally, we can make them plural using the `suffix` parameter: #gls("kuleuven", suffix: "s") or using the additional `supplement` onto the `ref`: @kuleuven[s]. We can also use the plural function function `#glspl(key: "kuleuven")` #glspl("kuleuven").
 
@@ -30,6 +32,4 @@ At the moment, customization is not built-in to the function and instead follows
     desc: "Tempor deserunt commodo reprehenderit eiusmod enim. Ut ullamco deserunt in elit commodo ipsum nisi voluptate proident culpa. Sunt do mollit velit et et amet consectetur tempor proident Lorem. Eu officia amet do ea occaecat velit fugiat qui tempor sunt aute. Magna Lorem veniam duis ea eiusmod labore non anim labore irure culpa Lorem dolor officia. Laboris reprehenderit eiusmod nostrud duis excepteur nisi officia."),
     (key: "unamur", short: "UNamur", long: "Université de Namur"),
 ))
-
-
 
