@@ -27,6 +27,9 @@ search = 'version = "{current_version}"'
 src = "makefile"
 search = 'version=0.2.0'
 
+[[file]]
+src = "README.md"
+search = '#import "@preview/glossarium:0.2.0": make-glossary, print-glossary, gls, glspl'
 
 [[before_commit]]
 name = "compile examples"
