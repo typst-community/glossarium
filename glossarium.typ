@@ -119,7 +119,7 @@ SOFTWARE.*/
                   #emph(entry.short)
                   ]
                 }
-                if hasDesc [: #desc] else [. ]
+                if hasDesc [: #desc ] else [. ]
 
                 term_references.map((x) => x.location())
                 .sorted(key: (x) => x.page())
