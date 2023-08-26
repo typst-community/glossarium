@@ -5,10 +5,10 @@ local:
 	cp -r * ~/.local/share/typst/packages/local/glossarium/${version}
 
 all:
-	typst --root . compile example/example.typ 
+	typst compile --root . example/example.typ 
 
 watch:
-	typst --root . watch example/example.typ 
+	typst watch --root .  example/example.typ 
 
 fmt:
 	find -name "**.typ" -exec typstfmt {} \;
