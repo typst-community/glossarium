@@ -12,6 +12,8 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     environment: basic_env
+    permissions:
+      pull-requests: write
     steps:
 
       - name: Get Artifact URL & PR Info
@@ -52,10 +54,11 @@ jobs:
           JOB_PATH: "${{ github.server_url }}/${{ github.repository }}/actions/\
             runs/${{ env.PREVIOUS_JOB_ID }}"
           HEAD_SHA: ${{ env.HEAD_SHA }}
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ env.PR_NUMBER }}
-          body: |-
+          token: ${{ secrets.TOKEN }}
+          body: |
             ## Build Preview
 
             [![badge]]($JOB_PATH)
