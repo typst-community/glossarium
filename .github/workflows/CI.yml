@@ -30,3 +30,4 @@ jobs:
         with:
           name: ${{ github.sha }}_PDF_EXAMPLE
           path: example/example.pdf
+          if-no-files-found: error
