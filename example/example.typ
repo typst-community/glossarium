@@ -72,7 +72,7 @@ At the moment, customization is not built-in to the function and instead follows
     (
       key: "notused",
       short: "Not used",
-      desc: "This key is not cited anywhere, it won't be in the glossary",
+      desc: [This key is not cited anywhere, it won't be in the glossary unless the `show-all` argument is set to true],
     ),
   ),
   // show all term even if they are not referenced, default to true
