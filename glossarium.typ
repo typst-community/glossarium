@@ -8,9 +8,9 @@ SOFTWARE.*/
 
 // glossarium figure kind
 #let __glossarium_figure = "glossarium_entry"
-// prefix of label for retreiving of references
+// prefix of label for references query
 #let __glossary_label_prefix = "glossary:"
-// global state constaining the glossary entry and their location
+// global state containing the glossary entry and their location
 #let __glossary_entries = state("__glossary_entries", (:))
 
 #let __query_labels_with_key(loc, key, before: false) = {

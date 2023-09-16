@@ -1,5 +1,3 @@
-// for local testing
-// #import "@local/glossarium:0.1.1": *
 #import "../glossarium.typ": make-glossary, print-glossary, gls, glspl
 #show: make-glossary
 
