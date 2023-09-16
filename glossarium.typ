@@ -101,6 +101,7 @@ SOFTWARE.*/
       #figure(
         supplement: "",
         kind: __glossarium_figure,
+        numbering: none,
         caption: {
           locate(
             loc => {
