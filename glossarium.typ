@@ -114,11 +114,12 @@ SOFTWARE.*/
 
                 {
                   set text(weight: 600)
-                  if hasLong [
-                  #emph(entry.short) - #entry.long
-                  ] else [
-                  #emph(entry.short)
-                  ]
+                  if hasLong {
+                    emph(entry.short) + [ -- ] + entry.long
+                  }
+                  else {
+                    emph(entry.short)
+                  }
                 }
                 if hasDesc [: #desc ] else [. ]
 
