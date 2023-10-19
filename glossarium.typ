@@ -42,7 +42,7 @@ SOFTWARE.*/
         let textLink = if (is_first or long == true) and entlong != [] and entlong != "" {
           [ #entry.short#suffix (#emph(entlong))]
         } else {
-          [#entry.short#suffix ]
+          [#entry.short#suffix]
         }
 
         [#link(label(entry.key))[#textLink]#label(__glossary_label_prefix + entry.key)]
