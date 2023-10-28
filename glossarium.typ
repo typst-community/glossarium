@@ -28,7 +28,7 @@ SOFTWARE.*/
 }
 
 // Reference a term
-#let gls(key, suffix: none, long: auto) = {
+#let gls(key, suffix: none, long: none, display: none) = {
   locate(
     loc => {
       let __glossary_entries = __glossary_entries.final(loc);
@@ -39,7 +39,9 @@ SOFTWARE.*/
 
         let is_first = gloss == ();
         let entlong = entry.at("long", default: "")
-        let textLink = if (is_first or long == true) and entlong != [] and entlong != "" {
+        let textLink = if display !=none {
+            [ #display]
+        } else if (is_first or long == true) and entlong != [] and entlong != "" {
           [ #entry.short#suffix (#emph(entlong))]
         } else {
           [#entry.short#suffix ]

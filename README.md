@@ -92,6 +92,14 @@ You can use the `glspl` function and the references supplements to pluralize ter
 @oidc[s]
 ```
 
+#### Overriding the text shown
+
+You can also override the text shown by setting the `display` argument.
+
+```ts
+#glspl("oidc", display: "whatever you want") 
+```
+
 ## Final tips
 
 I recommend setting a show rule for the links to that your reader understand that they can click on the references to go to the term in the glossary.

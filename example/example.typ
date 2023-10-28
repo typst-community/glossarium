@@ -8,6 +8,11 @@
 
 There are many Belgian universities, like @kuleuven and @ulb. When repeating their names, they won't show as a long version: @kuleuven, @ulb. But we can still force them to be long using the `gls` function: #gls("kuleuven", long: true). We can also force them to be short: #gls("kuleuven", long: false). Finally, we can make them plural using the `suffix` parameter: #gls("kuleuven", suffix: "s") or using the additional `supplement` onto the `ref`: @kuleuven[s]. We can also use the plural function function `#glspl(key: "kuleuven")` #glspl("kuleuven").
 
+
+
+You can also override the text shown by setting the `display` argument: #gls("kuleuven", display: "whatever you want") 
+
+
 #pagebreak()
 
 Numbering is, of course, correct when referencing the glossary: @kuleuven, @ulb, @ughent, @vub, @ulb, @umons, @uliege, @unamur. They are also sorted based on where the page is in the document and not the textual representation.
@@ -15,6 +20,7 @@ Numbering is, of course, correct when referencing the glossary: @kuleuven, @ulb,
 #pagebreak()
 
 At the moment, customization is not built-in to the function and instead follows a modified version of @ughent's template. But you can easily customize it by modifying `glossary.typ`. It is short enough and well documented enough to be easily understood. Additionally, you can load data externally and pass it as a parameter to the `glossary.with` function to load data from an external format.
+
 
 #pagebreak()
 = Glossary
@@ -76,4 +82,3 @@ At the moment, customization is not built-in to the function and instead follows
   // show all term even if they are not referenced, default to true
   show-all: true
 )
-
