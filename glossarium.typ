@@ -40,17 +40,14 @@ SOFTWARE.*/
         let is_first = gloss == ();
         let entlong = entry.at("long", default: "")
         let textLink = if display !=none {
-            [ #display]
+            [#display]
         } else if (is_first or long == true) and entlong != [] and entlong != "" {
-          [ #entry.short#suffix (#emph(entlong))]
+          [#entry.short#suffix (#emph(entlong))]
         } else {
-          [#entry.short#suffix ]
+          [#entry.short#suffix]
         }
 
-        [
-        #link(label(entry.key))[#textLink]
-        #label(__glossary_label_prefix + entry.key)
-        ]
+        [#link(label(entry.key))[#textLink]#label(__glossary_label_prefix + entry.key)]
       } else {
         text(fill: red, "Glossary entry not found: " + key)
       }
