@@ -44,13 +44,10 @@ SOFTWARE.*/
         } else if (is_first or long == true) and entlong != [] and entlong != "" {
           [ #entry.short#suffix (#emph(entlong))]
         } else {
-          [#entry.short#suffix ]
+          [#entry.short#suffix]
         }
 
-        [
-        #link(label(entry.key))[#textLink]
-        #label(__glossary_label_prefix + entry.key)
-        ]
+        [#link(label(entry.key))[#textLink]#label(__glossary_label_prefix + entry.key)]
       } else {
         text(fill: red, "Glossary entry not found: " + key)
       }
@@ -116,11 +113,12 @@ SOFTWARE.*/
 
                 {
                   set text(weight: 600)
-                  if hasLong [
-                  #emph(entry.short) - #entry.long
-                  ] else [
-                  #emph(entry.short)
-                  ]
+                  if hasLong {
+                    emph(entry.short) + [ -- ] + entry.long
+                  }
+                  else {
+                    emph(entry.short)
+                  }
                 }
                 if hasDesc [: #desc ] else [. ]
 
