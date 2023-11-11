@@ -40,9 +40,9 @@ SOFTWARE.*/
         let is_first = gloss == ();
         let entlong = entry.at("long", default: "")
         let textLink = if display !=none {
-            [ #display]
-        } else if (is_first or long == true) and entlong != [] and entlong != "" {
-          [ #entry.short#suffix (#emph(entlong))]
+            [#display]
+        } else if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
+          [#entry.short#suffix (#emph(entlong))]
         } else {
           [#entry.short#suffix]
         }
