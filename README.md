@@ -94,10 +94,10 @@ You can use the `glspl` function and the references supplements to pluralize ter
 
 #### Overriding the text shown
 
-You can also override the text shown by setting the `display` argument.
+You can also override the text displayed by setting the `display` argument.
 
 ```ts
-#glspl("oidc", display: "whatever you want") 
+#gls("oidc", display: "whatever you want") 
 ```
 
 ## Final tips
@@ -108,3 +108,17 @@ I recommend setting a show rule for the links to that your reader understand tha
 #show link: set text(fill: blue.darken(60%))
 // links are now blue ! 
 ```
+
+## Changelog
+
+### 0.2.4
+
+### Fixed
+
+- Fixed a bug where the reference would a long ref even when "long" was set to false (e4644f4) by [@dscso](https://github.com/dscso)
+
+### Changed
+
+- The glossary appearance have been improved slightly (a1ee80e) by [@JuliDi](https://github.com/JuliDi)
+
+### Previous versions did not have a changelog entry
