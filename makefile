@@ -1,4 +1,4 @@
-version=0.2.3
+version=0.2.4
 
 local:
 	mkdir -p ~/.local/share/typst/packages/local/glossarium/${version}
