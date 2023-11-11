@@ -2,8 +2,8 @@ name: Comment Artifact URL on PR
 
 on:
   workflow_run:
-    types:
-      - "completed"
+    # types:
+      # - "completed"
     workflows:
       - "Build example"
 
@@ -15,7 +15,6 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-
       - name: Get Artifact URL & PR Info
         env:
           GH_TOKEN: ${{ secrets.TOKEN }}
@@ -56,23 +55,19 @@ jobs:
           HEAD_SHA: ${{ env.HEAD_SHA }}
         uses: peter-evans/create-or-update-comment@v3
         with:
+          edit-mode: replace
           issue-number: ${{ env.PR_NUMBER }}
           token: ${{ secrets.TOKEN }}
           body: |
             ## Build Preview
 
-            [![badge]]($JOB_PATH)
-
             You can find files attached to the below linked Workflow Run URL (Logs).
 
             Please note that files only stay for around 90 days!
 
-            | Name      | Link
+            | Name      | Link |
             --------------------------------------------------------------------
-            | Commit    | ${{ env.HEAD_SHA }}
-
-            | Logs      | ${{ env.JOB_PATH }}
-
-            | Exemple build with ${{ env.PR_NUMBER }} | ${{ env. ARTIFACT_URL }}
+            | Commit    | ${{ env.HEAD_SHA }} |
+            | Workflow Run (click here to get PDF link)      | ${{ env.JOB_PATH }} |
 
             [badge]: https://img.shields.io/badge/Build-Success!-3fb950?logo=github&style=for-the-badge
