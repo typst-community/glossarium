@@ -111,11 +111,17 @@ I recommend setting a show rule for the links to that your reader understand tha
 
 ## Changelog
 
+### 0.2.5
+
+### Fixed
+
+- Fixed a bug where there was 2 space after a reference by [@drupol](https://github.com/dscso) (16da5b5357926f716abfe09c4adc5805a6baa8c9)
+
 ### 0.2.4
 
 ### Fixed
 
-- Fixed a bug where the reference would a long ref even when "long" was set to false (e4644f4) by [@dscso](https://github.com/dscso)
+- Fixed a bug where the reference would a long ref even when "long" was set to false by [@dscso](https://github.com/dscso) (e4644f4)
 
 ### Changed
 
