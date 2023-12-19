@@ -15,38 +15,38 @@ Reference to @ntc \
 Reference to @bor
 
 #pagebreak()
+
 = Glossary with group enabled
+
 #print-glossary(
   (
     (
       key: "ntc",
       short: "NTC",
       long: "Linear Transform Coding",
-      desc: [This is the opposite of @ltc.],
+      description: [This is the opposite of @ltc.],
       group: "Nonlinear",
     ),
     (
       key: "ltc",
       short: "LTC",
       long: "This is the opposite of @ltc.",
-      desc: [    Transform Coding constraint to linear transforms.],
+      description: [Transform Coding constraint to linear transforms.],
       group: "Linear",
     ),
     (
       key: "bor",
       short: "DEF",
       long: "Default",
-      desc: lorem(25),
+      description: lorem(25),
     ),
     (
       key: "bor2",
       short: "DEF2",
       long: "Default2",
-      desc: lorem(25),
+      description: lorem(25),
       group: "", // Please note that an empty group has the same effect as no group
     ),
-    
   ),
   show-all: true,
-  enable-group-pagebreak: true, // break page for each group
 )

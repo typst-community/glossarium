@@ -61,7 +61,7 @@
       key: key,
       short: eval(entry.short, mode: "markup"),
       long: eval(entry.at("long", default: ""), mode: "markup"),
-      desc: eval(entry.at("description", default: ""), mode: "markup"),
+      description: eval(entry.at("description", default: ""), mode: "markup"),
       group: entry.at("group", default: ""),
       file: file,
     ))

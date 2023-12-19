@@ -33,7 +33,6 @@ After importing the package and before making any calls to `gls`,` print-glossar
 >
 >Therefore I recommend that you always put the `#show: ...` statement on the line just below the `#import` statement.
 
-
 ### Printing the glossary
 
 First we have to define the terms. 
@@ -42,7 +41,7 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/) com
 - `key` (string) *required, case-sensitive, unique*: used to reference the term.
 - `short` (string) *required*: the short form of the term replacing the term citation. 
 - `long` (string or content) *optional*: The long form of the term, displayed in the glossary and on the first citation of the term. 
-- `desc` (string or content) *optional*: The description of the term.
+- `description` (string or content) *optional*: The description of the term.
 - `plural` (string or content) *optional*: The pluralized short form of the term. 
 - `longplural` (string or content) *optional*: The pluralized long form of the term. 
 - `group` (string) *optional, case-sensitive*: The group the term belongs to. The terms are displayed by groups in the glossary.
@@ -63,9 +62,9 @@ Then the terms are passed as a list to `print-glossary`
       key: "oidc", 
       short: "OIDC", 
       long: "OpenID Connect", 
-      desc: [OpenID is an open standard and decentralized authentication protocol promoted by the non-profit
+      description: [OpenID is an open standard and decentralized authentication protocol promoted by the non-profit
       #link("https://en.wikipedia.org/wiki/OpenID#OpenID_Foundation")[OpenID Foundation].],
-      group: "Accronyms",
+      group: "Acronyms",
     ),
 
     // a term with a short plural 
@@ -74,7 +73,7 @@ Then the terms are passed as a list to `print-glossary`
       short: "potato",
       // "plural" will be used when "short" should be pluralized
       plural: "potatoes",
-      desc: [#lorem(10)],
+      description: [#lorem(10)],
     ),
 
     // a term with a long plural 
@@ -84,7 +83,7 @@ Then the terms are passed as a list to `print-glossary`
       long: "diagonal matrix",
       // "longplural" will be used when "long" should be pluralized
       longplural: "diagonal matrices",
-      desc: "Probably some math stuff idk",
+      description: "Probably some math stuff idk",
     ),
   )
 )
@@ -94,10 +93,9 @@ By default, the terms that are not referenced in the document are not shown in t
 
 You can also disable the back-references by setting the parameter `disable-back-references` to `true`.
 
-Group page breaks can be enable by setting the parameter `enable-group-pagebreak` to `true`.
+By default, group breaks use `linebreaks`. This behaviour can be changed by setting the `group-break` parameter to `pagebreak`, or `colbreak`, or any other function that returns `content`.
 
-You can call this function from anywhere in you document.
-
+You can call this function from anywhere in your document.
 
 ### Referencing terms.
 
