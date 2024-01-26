@@ -71,7 +71,7 @@ SOFTWARE.*/
   body
 }
 
-#let print-glossary(entries, show-all: false) = {
+#let print-glossary(entries, show-all: false, disable-back-references: false) = {
   __glossary_entries.update(
     (x) => {
       for entry in entries {
@@ -105,7 +105,7 @@ SOFTWARE.*/
           locate(
             loc => {
               let term_references = __query_labels_with_key(loc, entry.key)
-              if term_references.len() != 0 or show-all {
+              if term_references.len() != 0 or show-all  {
                 let desc = entry.at("desc", default: "")
                 let long = entry.at("long", default: "")
                 let hasLong = long != "" and long != []
@@ -121,26 +121,27 @@ SOFTWARE.*/
                   }
                 }
                 if hasDesc [: #desc ] else [. ]
-
-                term_references.map((x) => x.location())
-                .sorted(key: (x) => x.page())
-                .fold(
-                  (values: (), pages: ()),
-                  ((values, pages), x) => if pages.contains(x.page()) {
-                    (values: values, pages: pages)
-                  } else {
-                    values.push(x)
-                    pages.push(x.page())
-                    (values: values, pages: pages)
-                  },
-                )
-                .values
-                .map(
-                  (x) => link(
-                    x,
-                  )[#numbering(x.page-numbering(), ..counter(page).at(x))],
-                )
-                .join(", ")
+                if disable-back-references  == true { 
+                  term_references.map((x) => x.location())
+                  .sorted(key: (x) => x.page())
+                  .fold(
+                    (values: (), pages: ()),
+                    ((values, pages), x) => if pages.contains(x.page()) {
+                      (values: values, pages: pages)
+                    } else {
+                      values.push(x)
+                      pages.push(x.page())
+                      (values: values, pages: pages)
+                    },
+                  )
+                  .values
+                  .map(
+                    (x) => link(
+                      x,
+                    )[#numbering(x.page-numbering(), ..counter(page).at(x))],
+                  )
+                  .join(", ")
+                }
               }
             },
           )
