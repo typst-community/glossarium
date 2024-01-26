@@ -15,7 +15,7 @@ This manual assume you have a good enough understanding of typst markup and scri
 For Typst 0.6.0 or later import the package from the typst preview repository:
 
 ```ts
-#import "@preview/glossarium:0.2.5": make-glossary, print-glossary, gls, glspl 
+#import "@preview/glossarium:0.2.6": make-glossary, print-glossary, gls, glspl 
 ```
 
 For Typst before 0.6.0 or to use **glossarium** as a local module, download the package files into your project folder and import `glossarium.typ`:

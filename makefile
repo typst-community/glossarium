@@ -1,4 +1,4 @@
-version=0.2.5
+version=0.2.6
 
 local: ## copy typst package to local registry
 	mkdir -p ~/.local/share/typst/packages/local/glossarium/${version}
