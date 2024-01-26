@@ -80,5 +80,7 @@ At the moment, customization is not built-in to the function and instead follows
     ),
   ),
   // show all term even if they are not referenced, default to true
-  show-all: true
+  show-all: true,
+  // disable the back ref at the end of the descriptions
+  disable-back-references: true,
 )
