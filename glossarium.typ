@@ -121,7 +121,7 @@ SOFTWARE.*/
                   }
                 }
                 if hasDesc [: #desc ] else [. ]
-                if disable-back-references  == true { 
+                if disable-back-references  != true { 
                   term_references.map((x) => x.location())
                   .sorted(key: (x) => x.page())
                   .fold(
