@@ -64,7 +64,9 @@ Then the terms are passed as a list to `print-glossary`
 ))
 ```
 
-By default, the terms that are not referenced in the document are not shown in the glossary, you can force their appearance by setting the `show-all` argument to true
+By default, the terms that are not referenced in the document are not shown in the glossary, you can force their appearance by setting the `show-all` argument to true.
+
+You can also disable the back-references by setting the parameter `disable-back-references` to `true`.
 
 You can call this function from anywhere.
 
@@ -111,19 +113,25 @@ I recommend setting a show rule for the links to that your reader understand tha
 
 ## Changelog
 
+### 0.2.6
+
+#### Added
+
+- A new boolean parameter `disable-back-references` has been introduced. If set to true, it disable the back-references (the page number at the end of the description of each term). Please note that disabling back-references only disables the display of the page number, if you don't have any references to your glossary terms, they won't show up unless the parameter `show-all` has been set to true.
+
 ### 0.2.5
 
-### Fixed
+#### Fixed
 
 - Fixed a bug where there was 2 space after a reference by [@drupol](https://github.com/dscso) (16da5b5357926f716abfe09c4adc5805a6baa8c9)
 
 ### 0.2.4
 
-### Fixed
+#### Fixed
 
 - Fixed a bug where the reference would a long ref even when "long" was set to false by [@dscso](https://github.com/dscso) (e4644f4)
 
-### Changed
+#### Changed
 
 - The glossary appearance have been improved slightly (a1ee80e) by [@JuliDi](https://github.com/JuliDi)
 
