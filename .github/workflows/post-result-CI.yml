@@ -66,7 +66,7 @@ jobs:
             Please note that files only stay for around 90 days!
 
             | Name      | Link |
-            --------------------------------------------------------------------
+            |---|---|
             | Commit    | ${{ env.HEAD_SHA }} |
             | Workflow Run (click here to get PDF link)      | ${{ env.JOB_PATH }} |
 

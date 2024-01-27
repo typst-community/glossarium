@@ -1,5 +1,5 @@
 # Uncomment this if your project is hosted on GitHub:
-# github_url = "https://github.com/<user or organization>/<project>/"
+github_url = "https://github.com/ENIB-Community/glossarium/"
 
 [version]
 current = "0.2.6"
@@ -21,20 +21,22 @@ tag_template = "v{new_version}"
 
 [[file]]
 src = "typst.toml"
-search = 'version = "{current_version}"'
 
 [[file]]
-src = "makefile"
-search = 'version={current_version}'
+src = "justfile"
 
 [[file]]
 src = "README.md"
-search = '#import "@preview/glossarium:{current_version}": make-glossary, print-glossary, gls, glspl'
+
+[[file]]
+src = "examples/import-terms-from-yaml-file/import-terms-from-yaml-file.typ"
+
+[[file]]
+src = "examples/full-example/main.typ"
 
 [[before_commit]]
 name = "compile examples"
-cmd = "typst compile example/example.typ --root . "
-
+cmd = "make "
 
 [[after_push]]
 name = "Create local version of package"

@@ -24,10 +24,10 @@ jobs:
       - name: typst version
         run: typst --version
       - name: Compile
-        run: typst compile --root . example/example.typ
+        run: make build-examples
       - name: Upload example PDF 
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.sha }}_PDF_EXAMPLE
-          path: example/example.pdf
+          name: ${{ github.sha }}_PDF_EXAMPLES
+          path: examples/*
           if-no-files-found: error

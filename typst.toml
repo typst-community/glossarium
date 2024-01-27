@@ -6,4 +6,4 @@ authors = ["slashformotion", "Dherse"]
 license = "MIT"
 description = "Glossarium is a simple, easily customizable typst glossary."
 repository = "https://github.com/ENIB-Community/glossarium"
-exclude = ["tbump.toml", "example/*", ".gitignore", "makefile", ".github/*"]
+exclude = ["tbump.toml", "examples/*", ".gitignore", "makefile", ".github/*"]
