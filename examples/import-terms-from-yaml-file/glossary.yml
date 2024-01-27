@@ -1,0 +1,13 @@
+# glossary.yaml
+
+ntc:
+  short: NTC
+  long: Nonlinear Transform Coding
+  description: |
+    This is the opposite of @ltc.
+
+ltc:
+  short: LTC
+  long: Linear Transform Coding
+  description: |
+    Transform Coding constraint to linear transforms.
