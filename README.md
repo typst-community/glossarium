@@ -123,7 +123,7 @@ I recommend setting a show rule for the links to that your reader understand tha
 
 #### Fixed
 
-- Fixed a bug where there was 2 space after a reference by [@drupol](https://github.com/dscso) (16da5b5357926f716abfe09c4adc5805a6baa8c9)
+- Fixed a bug where there was 2 space after a reference by [@drupol](https://github.com/drupol) (16da5b5357926f716abfe09c4adc5805a6baa8c9)
 
 ### 0.2.4
 
