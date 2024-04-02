@@ -29,13 +29,12 @@ SOFTWARE.*/
 
 // Reference a term
 #let gls(key, suffix: none, long: none, display: none) = {
-  locate(
-    loc => {
-      let __glossary_entries = __glossary_entries.final(loc);
+  context {
+      let __glossary_entries = __glossary_entries.final(here());
       if key in __glossary_entries {
         let entry = __glossary_entries.at(key)
 
-        let gloss = __query_labels_with_key(loc, key, before: true)
+        let gloss = __query_labels_with_key(here(), key, before: true)
 
         let is_first = gloss == ();
         let entlong = entry.at("long", default: "")
@@ -51,8 +50,7 @@ SOFTWARE.*/
       } else {
         text(fill: red, "Glossary entry not found: " + key)
       }
-    },
-  )
+    }
 }
 
 // reference to term with pluralisation
@@ -102,9 +100,8 @@ SOFTWARE.*/
         kind: __glossarium_figure,
         numbering: none,
         caption: {
-          locate(
-            loc => {
-              let term_references = __query_labels_with_key(loc, entry.key)
+          context {
+              let term_references = __query_labels_with_key(here(), entry.key)
               if term_references.len() != 0 or show-all  {
                 let desc = entry.at("desc", default: "")
                 let long = entry.at("long", default: "")
@@ -143,8 +140,7 @@ SOFTWARE.*/
                   .join(", ")
                 }
               }
-            },
-          )
+            }
         },
       )[] #label(entry.key)
       ]
