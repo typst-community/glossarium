@@ -4,7 +4,7 @@
 
 
 
-#import "@local/glossarium:0.2.6": *
+#import "../../glossarium.typ": *
 // Replace the local import with a import to the preview namespace. 
 // If you don't know what that mean, please go read typst documentation on how to import packages at https://typst.app/docs/packages/.
 
@@ -25,7 +25,7 @@
 
       for key in v.keys() {
         assert(
-          key in ("short", "long", "description"),
+          key in ("short", "long", "description", "group"),
           message: "Found unexpected key `" + key + "` in glossary entry `" + k + "` in `" + file + "`",
         )
       }
@@ -48,13 +48,21 @@
           message: "The description of glossary entry `" + k + "` in `" + file + "` is not a string",
         )
       }
-    }
+      
+      if "group" in v {
+        assert(
+          type(v.group) == str,
+          message: "The optional group of glossary entry `" + k + "` in `" + file + "` is not a string",
+        )
+      }
+}
 
     return entries.pairs().map(((key, entry)) => (
       key: key,
       short: eval(entry.short, mode: "markup"),
       long: eval(entry.at("long", default: ""), mode: "markup"),
       desc: eval(entry.at("description", default: ""), mode: "markup"),
+      group: entry.at("group", default: ""),
       file: file,
     ))
   }
@@ -87,6 +95,7 @@
 
 = Test Document
 
-Reference to @ntc
+Reference to @ntc \
+Reference to @bor
 
 #glossary("glossary.yml")
