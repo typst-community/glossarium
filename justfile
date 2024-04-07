@@ -6,8 +6,8 @@ local:
 	mkdir -p ~/.local/share/typst/packages/local/glossarium/{{version}}
 	cp -r * ~/.local/share/typst/packages/local/glossarium/{{version}}
 
-build-examples: local
-    find examples/* -type d -exec typst compile --root {} {}/main.typ \;
+build-examples: 
+    find examples/* -type d -exec bash -c "echo Compiling {} && typst compile --root . {}/main.typ" \;
 
 # format typst code (use typstfmt)
 fmt:

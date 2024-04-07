@@ -63,11 +63,10 @@ SOFTWARE.*/
   body
 }
 
-#let print-glossary(entries, show-all: false, disable-back-references: false, group-pagebreak: false) = {
-  __glossary_entries.update(x => {
-    for entry in entries {
-      x.insert(
-        entry.key,
+#let __normalize-entry-list(entry_list) = {
+  let new-list = ()
+  for entry in entry_list {
+      new-list.push(
         (
           key: entry.key,
           short: entry.short,
@@ -75,6 +74,18 @@ SOFTWARE.*/
           desc: entry.at("desc", default: ""),
           group: entry.at("group", default: ""),
         ),
+      )
+    }
+    return new-list
+}
+
+#let print-glossary(entry_list, show-all: false, disable-back-references: false, group-pagebreak: false) = {
+  let entries = __normalize-entry-list(entry_list)
+  __glossary_entries.update(x => {
+    for entry in entry_list {
+      x.insert(
+        entry.key,
+        entry,
       )
     }
     
