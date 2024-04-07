@@ -19,12 +19,14 @@ jobs:
         id: setup-typst
         with:
           version: 'latest'
+      - name: Setup Just
+        uses: extractions/setup-just@v2
       - name: Set up Git repository
         uses: actions/checkout@v3
       - name: typst version
         run: typst --version
       - name: Compile
-        run: make build-examples
+        run: just build-examples
       - name: Upload example PDF 
         uses: actions/upload-artifact@v3
         with:
