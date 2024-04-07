@@ -79,7 +79,7 @@ SOFTWARE.*/
     return new-list
 }
 
-#let print-glossary(entry_list, show-all: false, disable-back-references: false, group-pagebreak: false) = {
+#let print-glossary(entry_list, show-all: false, disable-back-references: false, enable-group-pagebreak: false) = {
   let entries = __normalize-entry-list(entry_list)
   __glossary_entries.update(x => {
     for entry in entry_list {
@@ -146,6 +146,6 @@ SOFTWARE.*/
         ]
       }
     }
-    if group-pagebreak {pagebreak(weak: true)} 
+    if enable-group-pagebreak {pagebreak(weak: true)} 
   }
 };
