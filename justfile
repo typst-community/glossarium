@@ -7,7 +7,8 @@ local:
 	cp -r * ~/.local/share/typst/packages/local/glossarium/{{version}}
 
 build-examples: 
-    find examples/* -type d -exec bash -c "echo Compiling {} && typst compile --root . {}/main.typ" \;
+	@find examples/**/*.pdf -delete
+	@find examples/**/*.typ -type f -exec sh -c "echo --------- Compiling {} && time typst compile --root . {}" \;
 
 # format typst code (use typstfmt)
 fmt:
