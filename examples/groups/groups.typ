@@ -48,5 +48,5 @@ Reference to @bor
     
   ),
   show-all: true,
-  group-pagebreak: true, // break page for each group
+  enable-group-pagebreak: true, // break page for each group
 )

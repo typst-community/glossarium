@@ -1,4 +1,3 @@
-# Uncomment this if your project is hosted on GitHub:
 github_url = "https://github.com/ENIB-Community/glossarium/"
 
 [version]
@@ -36,8 +35,8 @@ src = "examples/full-example/main.typ"
 
 [[before_commit]]
 name = "compile examples"
-cmd = "make "
+cmd = "just build-examples"
 
 [[after_push]]
 name = "Create local version of package"
-cmd = "make local"
+cmd = "just local"

@@ -39,10 +39,11 @@ After importing the package and before making any calls to `gls`,` print-glossar
 First we have to define the terms. 
 A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/) composed of 2 required and 2 optional elements: 
 
-- `key` (string) *required*: used to make reference to the term.
+- `key` (string) *required, case-sensitive, unique*: used to reference the term.
 - `short` (string) *required*: the short form of the term replacing the term citation. 
 - `long` (string or content) *optional*: The long form of the term, displayed in the glossary and on the first citation of the term. 
 - `desc` (string or content) *optional*: The description of the term.
+- `group` (string) *optional, case-sensitive*: The group the term belongs to. The terms are displayed by groups in the glossary.
 
 Then the terms are passed as a list to `print-glossary`
 
@@ -50,8 +51,15 @@ Then the terms are passed as a list to `print-glossary`
 #print-glossary((
   // minimal term
   (key: "kuleuven", short: "KU Leuven"),
-  // a term with a long form
-  (key: "unamur", short: "UNamur", long: "Université de Namur"),
+  // a term with a long form and a group
+  (key: "unamur", short: "UNamur", long: "Namur University", group: "Universities"),
+  // another one but formated differently
+  (
+    key: "umons",
+    short: "UMons",
+    long: "Mons University",
+    group: "Universities"
+  ),
   // no long form here
   (key: "kdecom", short: "KDE Community", desc:"An international team developing and distributing Open Source software."),
   // a full term with description containing markup
@@ -60,7 +68,9 @@ Then the terms are passed as a list to `print-glossary`
     short: "OIDC", 
     long: "OpenID Connect", 
     desc: [OpenID is an open standard and decentralized authentication protocol promoted by the non-profit
-     #link("https://en.wikipedia.org/wiki/OpenID#OpenID_Foundation")[OpenID Foundation].]),
+     #link("https://en.wikipedia.org/wiki/OpenID#OpenID_Foundation")[OpenID Foundation].]
+    group: "Accronyms",
+  ),
 ))
 ```
 
@@ -68,7 +78,10 @@ By default, the terms that are not referenced in the document are not shown in t
 
 You can also disable the back-references by setting the parameter `disable-back-references` to `true`.
 
-You can call this function from anywhere.
+Group page breaks can be enable by setting the parameter `enable-group-pagebreak` to `true`.
+
+You can call this function from anywhere in you document.
+
 
 ### Referencing terms.
 
@@ -112,6 +125,10 @@ I recommend setting a show rule for the links to that your reader understand tha
 ```
 
 ## Changelog
+
+### 0.3.0
+
+- Introducing support for grouping terms in the glossary. Use the optional and case-sensitive key `group` to assign terms to specific groups. The appearanceof the glossary can be customized with the new parameter `enable-group-pagebreak`, allowing users to insert page breaks between groups for better organization. These enhancements were contributed by [indicatelovelace](https://github.com/indicatelovelace).
 
 ### 0.2.6
 
