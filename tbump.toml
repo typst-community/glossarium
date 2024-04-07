@@ -26,12 +26,7 @@ src = "justfile"
 
 [[file]]
 src = "README.md"
-
-[[file]]
-src = "examples/import-terms-from-yaml-file/import-terms-from-yaml-file.typ"
-
-[[file]]
-src = "examples/full-example/main.typ"
+search = '#import "@preview/glossarium:{current_version}": make-glossary, print-glossary, gls, glspl'
 
 [[before_commit]]
 name = "compile examples"
