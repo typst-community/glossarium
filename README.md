@@ -68,7 +68,7 @@ Then the terms are passed as a list to `print-glossary`
     short: "OIDC", 
     long: "OpenID Connect", 
     desc: [OpenID is an open standard and decentralized authentication protocol promoted by the non-profit
-     #link("https://en.wikipedia.org/wiki/OpenID#OpenID_Foundation")[OpenID Foundation].]
+     #link("https://en.wikipedia.org/wiki/OpenID#OpenID_Foundation")[OpenID Foundation].],
     group: "Accronyms",
   ),
 ))
