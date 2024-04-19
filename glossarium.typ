@@ -62,25 +62,25 @@ SOFTWARE.*/
       let is_first = gloss == ()
       let entlong = entry.at("long", default: "")
       let textLink = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        [#entlong (#entry.short#suffix)]
+        [#entry.short#suffix (#emph(entlong))]
       } else {
         [#entry.short#suffix]
       }
        
-      let article-short = entry.at("artshort", default: "")
-      if article-short == "" or article-short == [] {
-        article-short = "a"
-      }
-       
-      let article-long = entry.at("artlong", default: "")
-      if article-long == "" or article-long == [] {
-        article-long = "a"
-      }
-       
       let article = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        article-long
+        let article-long = entry.at("artlong", default: "")
+        if article-long == "" or article-long == [] {
+          "a"
+        } else {
+          article-long
+        }
       } else {
-        article-short
+        let article-short = entry.at("artshort", default: "")
+        if article-short == "" or article-short == [] {
+          "a"
+        } else {
+          article-short
+        }
       }
        
       [#article #link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
