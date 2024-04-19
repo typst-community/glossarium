@@ -68,19 +68,9 @@ SOFTWARE.*/
       }
        
       let article = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        let article-long = entry.at("artlong", default: "")
-        if article-long == "" or article-long == [] {
-          "a"
-        } else {
-          article-long
-        }
+        entry.at("artlong", default: "a")
       } else {
-        let article-short = entry.at("artshort", default: "")
-        if article-short == "" or article-short == [] {
-          "a"
-        } else {
-          article-short
-        }
+        entry.at("artshort", default: "a")
       }
        
       [#article #link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
@@ -112,9 +102,9 @@ SOFTWARE.*/
     new-list.push((
       key: entry.key,
       short: entry.short,
-      artshort: entry.at("artshort", default: ""),
+      artshort: entry.at("artshort", default: "a"),
       long: entry.at("long", default: ""),
-      artlong: entry.at("artlong", default: ""),
+      artlong: entry.at("artlong", default: "a"),
       desc: entry.at("desc", default: ""),
       group: entry.at("group", default: ""),
     ))
