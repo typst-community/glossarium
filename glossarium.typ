@@ -15,7 +15,10 @@ SOFTWARE.*/
 
 #let __query_labels_with_key(loc, key, before: false) = {
   if before {
-    query(selector(label(__glossary_label_prefix + key)).before(loc, inclusive: false), loc)
+    query(
+      selector(label(__glossary_label_prefix + key)).before(loc, inclusive: false),
+      loc,
+    )
   } else {
     query(selector(label(__glossary_label_prefix + key)), loc)
   }
@@ -27,9 +30,9 @@ SOFTWARE.*/
     let __glossary_entries = __glossary_entries.final(here())
     if key in __glossary_entries {
       let entry = __glossary_entries.at(key)
-      
+       
       let gloss = __query_labels_with_key(here(), key, before: true)
-      
+       
       let is_first = gloss == ()
       let entlong = entry.at("long", default: "")
       let textLink = if display != none {
@@ -39,8 +42,48 @@ SOFTWARE.*/
       } else {
         [#entry.short#suffix]
       }
-      
+       
       [#link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
+    } else {
+      text(fill: red, "Glossary entry not found: " + key)
+    }
+  }
+}
+
+
+#let agls(key, suffix: none, long: none) = {
+  context {
+    let __glossary_entries = __glossary_entries.final(here())
+    if key in __glossary_entries {
+      let entry = __glossary_entries.at(key)
+       
+      let gloss = __query_labels_with_key(here(), key, before: true)
+       
+      let is_first = gloss == ()
+      let entlong = entry.at("long", default: "")
+      let textLink = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
+        [#entlong (#entry.short#suffix)]
+      } else {
+        [#entry.short#suffix]
+      }
+       
+      let article-short = entry.at("artshort", default: "")
+      if article-short == "" or article-short == [] {
+        article-short = "a"
+      }
+       
+      let article-long = entry.at("artlong", default: "")
+      if article-long == "" or article-long == [] {
+        article-long = "a"
+      }
+       
+      let article = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
+        article-long
+      } else {
+        article-short
+      }
+       
+      [#article #link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
     } else {
       text(fill: red, "Glossary entry not found: " + key)
     }
@@ -66,44 +109,49 @@ SOFTWARE.*/
 #let __normalize-entry-list(entry_list) = {
   let new-list = ()
   for entry in entry_list {
-      new-list.push(
-        (
-          key: entry.key,
-          short: entry.short,
-          long: entry.at("long", default: ""),
-          desc: entry.at("desc", default: ""),
-          group: entry.at("group", default: ""),
-        ),
-      )
-    }
-    return new-list
+    new-list.push((
+      key: entry.key,
+      short: entry.short,
+      artshort: entry.at("artshort", default: ""),
+      long: entry.at("long", default: ""),
+      artlong: entry.at("artlong", default: ""),
+      desc: entry.at("desc", default: ""),
+      group: entry.at("group", default: ""),
+    ))
+  }
+  return new-list
 }
 
-#let print-glossary(entry_list, show-all: false, disable-back-references: false, enable-group-pagebreak: false) = {
+#let print-glossary(
+  entry_list,
+  show-all: false,
+  disable-back-references: false,
+  enable-group-pagebreak: false,
+) = {
   let entries = __normalize-entry-list(entry_list)
   __glossary_entries.update(x => {
     for entry in entry_list {
-      x.insert(
-        entry.key,
-        entry,
-      )
+      x.insert(entry.key, entry)
     }
-    
+     
     x
   })
-  
+   
   let groups = entries.map(x => x.at("group", default: "")).dedup()
   // move no group to the front
   groups.insert(0, "")
   groups.pop()
-  
+   
   for group in groups.sorted() {
     if group != "" [#heading(group, level: 2) ]
     for entry in entries.sorted(key: x => x.key) {
       if entry.group == group {
         [
           #show figure.where(kind: __glossarium_figure): it => it.caption
-          #par(hanging-indent: 1em, first-line-indent: 0em)[
+          #par(
+            hanging-indent: 1em,
+            first-line-indent: 0em,
+          )[
             #figure(
               supplement: "",
               kind: __glossarium_figure,
@@ -146,6 +194,6 @@ SOFTWARE.*/
         ]
       }
     }
-    if enable-group-pagebreak {pagebreak(weak: true)} 
+    if enable-group-pagebreak { pagebreak(weak: true) }
   }
 };
