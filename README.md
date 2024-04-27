@@ -143,7 +143,7 @@ I recommend setting a show rule for the links to that your readers understand th
 
 ## Changelog
 
-### Unreleased
+### 0.4.0
 
 - Support for plurals has been implemented, showcased in [examples/plural-example/main.typ](examples/plural-example). Contributed by [@St0wy](https://github.com/St0wy). 
 - The behavior of the gls and glspl functions has been altered regarding calls on undefined glossary keys. They now cause panics. Contributed by [@St0wy](https://github.com/St0wy). 
