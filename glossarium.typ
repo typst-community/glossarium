@@ -15,7 +15,10 @@ SOFTWARE.*/
 
 #let __query_labels_with_key(loc, key, before: false) = {
   if before {
-    query(selector(label(__glossary_label_prefix + key)).before(loc, inclusive: false), loc)
+    query(
+      selector(label(__glossary_label_prefix + key)).before(loc, inclusive: false),
+      loc,
+    )
   } else {
     query(selector(label(__glossary_label_prefix + key)), loc)
   }
@@ -27,19 +30,19 @@ SOFTWARE.*/
     let __glossary_entries = __glossary_entries.final(here())
     if key in __glossary_entries {
       let entry = __glossary_entries.at(key)
-      
+       
       let gloss = __query_labels_with_key(here(), key, before: true)
-      
+       
       let is_first = gloss == ()
       let entlong = entry.at("long", default: "")
       let textLink = if display != none {
         [#display]
       } else if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        [#entry.short#suffix (#emph(entlong))]
+        [#entlong (#entry.short#suffix)]
       } else {
         [#entry.short#suffix]
       }
-      
+       
       [#link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
     } else {
       text(fill: red, "Glossary entry not found: " + key)
@@ -48,7 +51,47 @@ SOFTWARE.*/
 }
 
 // reference to term with pluralisation
-#let glspl(key) = gls(key, suffix: "s")
+#let glspl(key, long: none) = {
+  context {
+    let __glossary_entries = __glossary_entries.final(here())
+    if key in __glossary_entries {
+      let entry = __glossary_entries.at(key)
+       
+      let gloss = __query_labels_with_key(here(), key, before: true)
+       
+      let suffix = "s";
+      let is_first = gloss == ()
+      let entlongplural = entry.at("longplural", default: "");
+      let entlong = if entlongplural == [] or entlongplural == "" {
+        let entlong = entry.at("long", default: "");
+        if entlong != [] and entlong != "" {
+          [#entlong#suffix]
+        } else {
+          entlong
+        }
+      } else {
+        [#entlongplural]
+      }
+       
+      let entplural = entry.at("plural", default: "");
+      let short = if entplural == [] or entplural == "" {
+        [#entry.short#suffix]
+      } else {
+        [#entplural]
+      }
+       
+      let textLink = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
+        [#entlong (#short)]
+      } else {
+        [#short]
+      }
+       
+      [#link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
+    } else {
+      text(fill: red, "Glossary entry not found: " + key)
+    }
+  }
+}
 
 // show rule to make the references for glossarium
 #let make-glossary(body) = {
@@ -66,44 +109,49 @@ SOFTWARE.*/
 #let __normalize-entry-list(entry_list) = {
   let new-list = ()
   for entry in entry_list {
-      new-list.push(
-        (
-          key: entry.key,
-          short: entry.short,
-          long: entry.at("long", default: ""),
-          desc: entry.at("desc", default: ""),
-          group: entry.at("group", default: ""),
-        ),
-      )
-    }
-    return new-list
+    new-list.push((
+      key: entry.key,
+      short: entry.short,
+      plural: entry.at("plural", default: ""),
+      long: entry.at("long", default: ""),
+      longplural: entry.at("longplural", default: ""),
+      desc: entry.at("desc", default: ""),
+      group: entry.at("group", default: ""),
+    ))
+  }
+  return new-list
 }
 
-#let print-glossary(entry_list, show-all: false, disable-back-references: false, enable-group-pagebreak: false) = {
+#let print-glossary(
+  entry_list,
+  show-all: false,
+  disable-back-references: false,
+  enable-group-pagebreak: false,
+) = {
   let entries = __normalize-entry-list(entry_list)
   __glossary_entries.update(x => {
     for entry in entry_list {
-      x.insert(
-        entry.key,
-        entry,
-      )
+      x.insert(entry.key, entry)
     }
-    
+     
     x
   })
-  
+   
   let groups = entries.map(x => x.at("group", default: "")).dedup()
   // move no group to the front
   groups.insert(0, "")
   groups.pop()
-  
+   
   for group in groups.sorted() {
     if group != "" [#heading(group, level: 2) ]
     for entry in entries.sorted(key: x => x.key) {
       if entry.group == group {
         [
           #show figure.where(kind: __glossarium_figure): it => it.caption
-          #par(hanging-indent: 1em, first-line-indent: 0em)[
+          #par(
+            hanging-indent: 1em,
+            first-line-indent: 0em,
+          )[
             #figure(
               supplement: "",
               kind: __glossarium_figure,
@@ -146,6 +194,6 @@ SOFTWARE.*/
         ]
       }
     }
-    if enable-group-pagebreak {pagebreak(weak: true)} 
+    if enable-group-pagebreak { pagebreak(weak: true) }
   }
 };
