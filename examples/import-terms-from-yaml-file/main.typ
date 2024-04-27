@@ -90,7 +90,8 @@
   print-glossary(entries, show-all: full)
 }
 
-#set page(numbering: "1")
+#set page(paper: "a5")
+
 #show: make-glossary
 
 = Test Document

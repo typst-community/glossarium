@@ -13,6 +13,8 @@ SOFTWARE.*/
 // global state containing the glossary entry and their location
 #let __glossary_entries = state("__glossary_entries", (:))
 
+#let __glossarium_error_prefix = "glossarium error : "
+
 #let __query_labels_with_key(loc, key, before: false) = {
   if before {
     query(
@@ -22,6 +24,11 @@ SOFTWARE.*/
   } else {
     query(selector(label(__glossary_label_prefix + key)), loc)
   }
+}
+
+// key not found error
+#let __not-found-panic-error-msg(key) = {
+ __glossarium_error_prefix+"key '"+key+"' not found"
 }
 
 // Reference a term
@@ -38,20 +45,21 @@ SOFTWARE.*/
       let textLink = if display != none {
         [#display]
       } else if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        [#entry.short#suffix (#emph(entlong))]
+        [#entlong (#entry.short#suffix)]
       } else {
         [#entry.short#suffix]
       }
        
       [#link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
     } else {
-      text(fill: red, "Glossary entry not found: " + key)
+      panic(__not-found-panic-error-msg(key))
     }
   }
 }
 
-
-#let agls(key, suffix: none, long: none) = {
+// Reference to term with pluralisation
+#let glspl(key, long: none) = {
+  let suffix = "s"
   context {
     let __glossary_entries = __glossary_entries.final(here())
     if key in __glossary_entries {
@@ -60,28 +68,38 @@ SOFTWARE.*/
       let gloss = __query_labels_with_key(here(), key, before: true)
        
       let is_first = gloss == ()
-      let entlong = entry.at("long", default: "")
-      let textLink = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        [#entry.short#suffix (#emph(entlong))]
+      let entlongplural = entry.at("longplural", default: "");
+      let entlong = if entlongplural == [] or entlongplural == "" {
+        // if the entry long plural is not provided, then fallback to adding 's' suffix
+        let entlong = entry.at("long", default: "");
+        if entlong != [] and entlong != "" {
+          [#entlong#suffix]
+        } else {
+          entlong
+        }
       } else {
+        [#entlongplural]
+      }
+       
+      let entplural = entry.at("plural", default: "");
+      let short = if entplural == [] or entplural == "" {
         [#entry.short#suffix]
-      }
-       
-      let article = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        entry.at("artlong", default: "a")
       } else {
-        entry.at("artshort", default: "a")
+        [#entplural]
       }
        
-      [#article #link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
+      let textLink = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
+        [#entlong (#short)]
+      } else {
+        [#short]
+      }
+       
+      [#link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
     } else {
-      text(fill: red, "Glossary entry not found: " + key)
+      panic(__not-found-panic-error-msg(key))
     }
   }
 }
-
-// reference to term with pluralisation
-#let glspl(key) = gls(key, suffix: "s")
 
 // show rule to make the references for glossarium
 #let make-glossary(body) = {
@@ -102,9 +120,9 @@ SOFTWARE.*/
     new-list.push((
       key: entry.key,
       short: entry.short,
-      artshort: entry.at("artshort", default: "a"),
+      plural: entry.at("plural", default: ""),
       long: entry.at("long", default: ""),
-      artlong: entry.at("artlong", default: "a"),
+      longplural: entry.at("longplural", default: ""),
       desc: entry.at("desc", default: ""),
       group: entry.at("group", default: ""),
     ))
@@ -173,7 +191,14 @@ SOFTWARE.*/
                           pages.push(x.page())
                           (values: values, pages: pages)
                         },
-                      ).values.map(x => link(x)[#numbering(x.page-numbering(), ..counter(page).at(x))]).join(", ")
+                      ).values.map(x => {
+                         let page-numbering = x.page-numbering();
+                          if page-numbering == none {
+                            page-numbering = "1"
+                          }
+                          link(x)[#numbering(page-numbering, ..counter(page).at(x))]
+                        }
+                      ).join(", ")
                     }
                   }
                 }
