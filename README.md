@@ -2,7 +2,7 @@
 
 > Glossarium is based in great part of the work of [Sébastien d'Herbais de Thun](https://github.com/Dherse) from his master thesis available at: <https://github.com/Dherse/masterproef>. His glossary is available under the MIT license [here](https://github.com/Dherse/masterproef/blob/main/elems/acronyms.typ).
 
-Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX glossaries package](https://www.ctan.org/pkg/glossaries) . You can see an example showing the different features in [`example.typ`](example/example.typ).
+Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX glossaries package](https://www.ctan.org/pkg/glossaries) . You can see various examples showcasing the different features in the `examples` folder.
 
 ![Screenshot](.github/example.png)
 
@@ -145,11 +145,12 @@ I recommend setting a show rule for the links to that your readers understand th
 
 ### Unreleased
 
-- Added support for plurals, see [examples/plural-example](examples/plural-example)
+- Support for plurals has been implemented, showcased in [examples/plural-example/main.typ](examples/plural-example). Contributed by [@St0wy](https://github.com/St0wy). 
+- The behavior of the gls and glspl functions has been altered regarding calls on undefined glossary keys. They now cause panics. Contributed by [@St0wy](https://github.com/St0wy). 
 
 ### 0.3.0
 
-- Introducing support for grouping terms in the glossary. Use the optional and case-sensitive key `group` to assign terms to specific groups. The appearanceof the glossary can be customized with the new parameter `enable-group-pagebreak`, allowing users to insert page breaks between groups for better organization. These enhancements were contributed by [indicatelovelace](https://github.com/indicatelovelace).
+- Introducing support for grouping terms in the glossary. Use the optional and case-sensitive key `group` to assign terms to specific groups. The appearanceof the glossary can be customized with the new parameter `enable-group-pagebreak`, allowing users to insert page breaks between groups for better organization. Contributed by [indicatelovelace](https://github.com/indicatelovelace).
 
 ### 0.2.6
 
@@ -161,16 +162,16 @@ I recommend setting a show rule for the links to that your readers understand th
 
 #### Fixed
 
-- Fixed a bug where there was 2 space after a reference by [@drupol](https://github.com/drupol) (16da5b5357926f716abfe09c4adc5805a6baa8c9)
+- Fixed a bug where there was 2 space after a reference. Contributed by [@drupol](https://github.com/drupol)
 
 ### 0.2.4
 
 #### Fixed
 
-- Fixed a bug where the reference would a long ref even when "long" was set to false by [@dscso](https://github.com/dscso) (e4644f4)
+- Fixed a bug where the reference would a long ref even when "long" was set to false. Contributed by [@dscso](https://github.com/dscso) 
 
 #### Changed
 
-- The glossary appearance have been improved slightly (a1ee80e) by [@JuliDi](https://github.com/JuliDi)
+- The glossary appearance have been improved slightlyby. Contributed by [@JuliDi](https://github.com/JuliDi)
 
 ### Previous versions did not have a changelog entry
