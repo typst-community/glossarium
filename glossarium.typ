@@ -50,8 +50,9 @@ SOFTWARE.*/
   }
 }
 
-// reference to term with pluralisation
+// Reference to term with pluralisation
 #let glspl(key, long: none) = {
+  let suffix = "s"
   context {
     let __glossary_entries = __glossary_entries.final(here())
     if key in __glossary_entries {
@@ -59,10 +60,10 @@ SOFTWARE.*/
        
       let gloss = __query_labels_with_key(here(), key, before: true)
        
-      let suffix = "s";
       let is_first = gloss == ()
       let entlongplural = entry.at("longplural", default: "");
       let entlong = if entlongplural == [] or entlongplural == "" {
+        // if the entry long plural is not provided, then fallback to adding 's' suffix
         let entlong = entry.at("long", default: "");
         if entlong != [] and entlong != "" {
           [#entlong#suffix]
