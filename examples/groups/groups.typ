@@ -4,7 +4,7 @@
 
 #show: make-glossary
 
-#set page(numbering: "1", paper: "a5")
+#set page(paper: "a5")
 
 //I recommend setting a show rule for the links to that your reader understand that they can click on the references to go to the term in the glossary.
 #show link: set text(fill: blue.darken(60%))

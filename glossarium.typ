@@ -184,7 +184,14 @@ SOFTWARE.*/
                           pages.push(x.page())
                           (values: values, pages: pages)
                         },
-                      ).values.map(x => link(x)[#numbering(x.page-numbering(), ..counter(page).at(x))]).join(", ")
+                      ).values.map(x => {
+                         let page-numbering = x.page-numbering();
+                          if page-numbering == none {
+                            page-numbering = "1"
+                          }
+                          link(x)[#numbering(page-numbering, ..counter(page).at(x))]
+                        }
+                      ).join(", ")
                     }
                   }
                 }

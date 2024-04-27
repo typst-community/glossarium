@@ -4,7 +4,7 @@
 
 #show: make-glossary
 
-#set page(numbering: "1", paper: "a5")
+#set page(paper: "a5")
 
 #show link: set text(fill: blue.darken(60%))
 
