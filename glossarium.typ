@@ -13,6 +13,8 @@ SOFTWARE.*/
 // global state containing the glossary entry and their location
 #let __glossary_entries = state("__glossary_entries", (:))
 
+#let __glossarium_error_prefix = "glossarium error : "
+
 #let __query_labels_with_key(loc, key, before: false) = {
   if before {
     query(
@@ -22,6 +24,11 @@ SOFTWARE.*/
   } else {
     query(selector(label(__glossary_label_prefix + key)), loc)
   }
+}
+
+// key not found error
+#let __not-found-panic-error-msg(key) = {
+ __glossarium_error_prefix+"key '"+key+"' not found"
 }
 
 // Reference a term
@@ -45,7 +52,7 @@ SOFTWARE.*/
        
       [#link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
     } else {
-      text(fill: red, "Glossary entry not found: " + key)
+      panic(__not-found-panic-error-msg(key))
     }
   }
 }
@@ -89,7 +96,7 @@ SOFTWARE.*/
        
       [#link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
     } else {
-      text(fill: red, "Glossary entry not found: " + key)
+      panic(__not-found-panic-error-msg(key))
     }
   }
 }
