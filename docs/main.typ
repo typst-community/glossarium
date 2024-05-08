@@ -118,7 +118,7 @@ print-glossary(entry-list, user-print-description: my-print-description)
 Keep in mind that some options are available from the start:
 - `show-all (bool)` : show all entries, even if they are not referenced in the document
 - `disable-back-references (bool)`: do not show back references
-- `group-break (function: () => content)`: a function to call between groups
+- `user-group-break (function: () => content)`: a function to call between groups
 
 == Default functions
 
