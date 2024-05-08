@@ -93,7 +93,7 @@ By default, the terms that are not referenced in the document are not shown in t
 
 You can also disable the back-references by setting the parameter `disable-back-references` to `true`.
 
-By default, group breaks use `linebreaks`. This behaviour can be changed by setting the `group-break` parameter to `pagebreak`, or `colbreak`, or any other function that returns `content`.
+By default, group breaks use `linebreaks`. This behaviour can be changed by setting the `user-group-break` parameter to `() => pagebreak()`, or `() => colbreak()`, or any other function that returns the `content` you want.
 
 You can call this function from anywhere in your document.
 
