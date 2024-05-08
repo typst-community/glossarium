@@ -30,7 +30,7 @@ search = '#import "@preview/glossarium:{current_version}": make-glossary, print-
 
 [[file]]
 src = "glossarium.typ"
-search = '#let __glossarium_version = "{current_version}"'
+search = '#let glossarium_version = "{current_version}"'
 
 [[before_commit]]
 name = "compile examples"
