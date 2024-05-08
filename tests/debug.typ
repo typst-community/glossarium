@@ -218,6 +218,7 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
     entry-list-3,
     show-all: true,
     disable-back-references: false,
+    user-group-break: colbreak,
   )
 
   == `#default-print-reference.with(show-all: true)`
