@@ -8,7 +8,7 @@ local:
     mkdir -p ~/.local/share/typst/packages/local/glossarium/{{version}}
     cp -r * ~/.local/share/typst/packages/local/glossarium/{{version}}
 
-build-examples:
+build-examples: 
     @find examples/**/*.typ -type f -exec sh -c "echo --------- Compiling {} && time typst compile --root . {}" \;
 
 # format typst code (use typstfmt)
@@ -17,4 +17,4 @@ fmt:
 
 # benchmark using hyperfine
 benchmark:
-    hyperfine --warmup 100 --export-markdown {{benchmark_file}} {{benchmark_commands}}
+    hyperfine --warmup 10 --prepare 'find examples/**/*.pdf -delete' --export-markdown {{benchmark_file}} {{benchmark_commands}}
