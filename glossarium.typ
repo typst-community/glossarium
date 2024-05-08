@@ -28,7 +28,7 @@
 #let __attribute_is_empty = "attribute_is_empty"
 #let __unknown_error = "unknown_error"
 
-// __error_message(key, kind: __key_not_found) -> str
+// __error_message(key, kind, ..kwargs) -> str
 // Generate an error message
 //
 // # Arguments
