@@ -28,7 +28,7 @@ SOFTWARE.*/
 
 // key not found error
 #let __not-found-panic-error-msg(key) = {
- __glossarium_error_prefix+"key '"+key+"' not found"
+  __glossarium_error_prefix + "key '" + key + "' not found"
 }
 
 // Reference a term
@@ -51,6 +51,35 @@ SOFTWARE.*/
       }
        
       [#link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
+    } else {
+      panic(__not-found-panic-error-msg(key))
+    }
+  }
+}
+
+#let agls(key, suffix: none, long: none) = {
+  context {
+    let __glossary_entries = __glossary_entries.final(here())
+    if key in __glossary_entries {
+      let entry = __glossary_entries.at(key)
+       
+      let gloss = __query_labels_with_key(here(), key, before: true)
+       
+      let is_first = gloss == ()
+      let entlong = entry.at("long", default: "")
+      let textLink = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
+        [#entlong (#entry.short#suffix)]
+      } else {
+        [#entry.short#suffix]
+      }
+       
+      let article = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
+        entry.at("artlong", default: "a")
+      } else {
+        entry.at("artshort", default: "a")
+      }
+       
+      [#article #link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
     } else {
       panic(__not-found-panic-error-msg(key))
     }
@@ -120,8 +149,10 @@ SOFTWARE.*/
     new-list.push((
       key: entry.key,
       short: entry.short,
+      artshort: entry.at("artshort", default: "a"),
       plural: entry.at("plural", default: ""),
       long: entry.at("long", default: ""),
+      artlong: entry.at("artlong", default: "a"),
       longplural: entry.at("longplural", default: ""),
       desc: entry.at("desc", default: ""),
       group: entry.at("group", default: ""),
@@ -192,13 +223,12 @@ SOFTWARE.*/
                           (values: values, pages: pages)
                         },
                       ).values.map(x => {
-                         let page-numbering = x.page-numbering();
-                          if page-numbering == none {
-                            page-numbering = "1"
-                          }
-                          link(x)[#numbering(page-numbering, ..counter(page).at(x))]
+                        let page-numbering = x.page-numbering();
+                        if page-numbering == none {
+                          page-numbering = "1"
                         }
-                      ).join(", ")
+                        link(x)[#numbering(page-numbering, ..counter(page).at(x))]
+                      }).join(", ")
                     }
                   }
                 }
