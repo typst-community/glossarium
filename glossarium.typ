@@ -617,7 +617,7 @@
           user-print-back-references: user-print-back-references,
         ),
       )[] #label(entry.key)
-      // Line below can be removed safely
+      // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
       #figure(kind: __glossarium_figure, supplement: "")[] #label(entry.key + ":pl")
     ]
     #parbreak()
@@ -650,6 +650,11 @@
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
 //  ...
+// 
+// # Warnings
+// A strong warning is given not to override `user-print-reference` without
+// careful consideration of `default-print-reference`'s original implementation.
+// The package's behaviour may break in unexpected ways if not handled correctly.
 //  
 // # Returns
 // The glossary content
@@ -731,13 +736,18 @@
 //  user-print-back-references: default-print-back-references,
 // ) -> contextual content
 // Print the glossary
-
+//
 // # Arguments
 //  entry-list (list<dictionary>): the list of entries
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
 //  ...
-
+//
+// # Warnings
+// A strong warning is given not to override `user-print-reference` without
+// careful consideration of `default-print-reference`'s original implementation.
+// The package's behaviour may break in unexpected ways if not handled correctly.
+//
 // # Usage
 // Print the glossary
 // ```typ

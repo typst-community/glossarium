@@ -295,6 +295,12 @@ One important utility function is #typc("count-refs"). For @WHO,
 
 === #typc("default-print-reference(entry)") <ssec:print-reference>
 
+#text.with(fill: red.darken(10%))([
+  #emoji.warning There are few reasons to modify this function. It is recommended
+  to keep the default behaviour, but an override option is provided for advanced
+  users.
+])
+
 The default implementation is:
 #typc-block[
 ```typc
