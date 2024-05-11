@@ -28,6 +28,10 @@ src = "justfile"
 src = "README.md"
 search = '#import "@preview/glossarium:{current_version}": make-glossary, print-glossary, gls, glspl'
 
+[[file]]
+src = "glossarium.typ"
+search = '#let glossarium_version = "{current_version}"'
+
 [[before_commit]]
 name = "compile examples"
 cmd = "just build-examples"
