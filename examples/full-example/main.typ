@@ -1,4 +1,4 @@
-#import "../../glossarium.typ": make-glossary, print-glossary, gls, glspl, agls, gls-key, gls-short, gls-plural, gls-long, gls-longplural, gls-description, gls-group
+#import "../../glossarium.typ": make-glossary, print-glossary, gls, glspl, agls, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group
 // Replace the local import with a import to the preview namespace. 
 // If you don't know what that mean, please go read typst documentation on how to import packages at https://typst.app/docs/packages/.
 #show: make-glossary
@@ -26,8 +26,10 @@ You can also override the text shown by setting the `display` argument: #gls("ku
 Attributes of an entry can be retrieved using the available functions:
 - `gls-key("kuleuven")`: #gls-key("kuleuven")
 - `gls-short("kuleuven")`: #gls-short("kuleuven")
+- `gls-artshort("kuleuven")`: #gls-artshort("kuleuven")
 - `gls-plural("kuleuven")`: #gls-plural("kuleuven")
 - `gls-long("kuleuven")`: #gls-long("kuleuven")
+- `gls-artlong("kuleuven")`: #gls-artlong("kuleuven")
 - `gls-longplural("kuleuven")`: #gls-longplural("kuleuven")
 - `gls-description("kuleuven")`: #gls-description("kuleuven")
 - `gls-group("kuleuven")`: #gls-group("kuleuven")
@@ -40,11 +42,8 @@ where the page is in the document and not the textual representation.
 
 #pagebreak()
 
-At the moment, customization is not built-in to the function and instead follows
-a modified version of @ughent's template. But you can easily customize it by
-modifying `glossary.typ`. It is short enough and well documented enough to be
-easily understood. Additionally, you can load data externally and pass it as a
-parameter to the `glossary.with` function to load data from an external format.
+Additionally, you can load data externally and pass it as a parameter to the
+`glossary.with` function to load data from an external format.
 
 #pagebreak()
 
@@ -97,12 +96,23 @@ parameter to the `glossary.with` function to load data from an external format.
       long: "Université de Liège",
       description: "Tempor deserunt commodo reprehenderit eiusmod enim. Ut ullamco deserunt in elit commodo ipsum nisi voluptate proident culpa. Sunt do mollit velit et et amet consectetur tempor proident Lorem. Eu officia amet do ea occaecat velit fugiat qui tempor sunt aute. Magna Lorem veniam duis ea eiusmod labore non anim labore irure culpa Lorem dolor officia. Laboris reprehenderit eiusmod nostrud duis excepteur nisi officia.",
     ),
-    (key: "unamur", short: "UNamur", long: "Université de Namur"),
+    (
+      key: "unamur", 
+      short: "UNamur", 
+      long: "Université de Namur"
+    ),
+    (
+      key: "lod", 
+      short: "LOD", 
+      artshort: "an",
+      long: "level of details",
+      description: lorem(10),
+    ),
     (
       key: "notused",
       short: "Not used",
-      description: [This key is not cited anywhere, it won't be in the glossary unless the
-        `show-all` argument is set to true],
+      description: [This key is not cited anywhere, it won't be in the glossary unless the 
+      `show-all` argument is set to true],
     ),
   ),
   // show all term even if they are not referenced, default to true

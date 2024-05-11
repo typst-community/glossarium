@@ -118,22 +118,28 @@
   return attr != "" and attr != []
 }
 #let has-long(entry) = __has_attribute(entry, "long")
+#let has-artshort(entry) = __has_attribute(entry, "artshort")
 #let has-plural(entry) = __has_attribute(entry, "plural")
+#let has-long(entry) = __has_attribute(entry, "long")
+#let has-artlong(entry) = __has_attribute(entry, "artlong")
 #let has-longplural(entry) = __has_attribute(entry, "longplural")
 #let has-description(entry) = __has_attribute(entry, "description")
 #let has-group(entry) = __has_attribute(entry, "group")
+ 
 
-// __link_and_label(key, text) -> contextual content
+// __link_and_label(key, text, prefix: none, suffix: none) -> contextual content
 // Build a link and a label
 //
 // # Arguments
 //  key (str): the key of the term
-//  text (str): the text to be displayed
+//  text (content): the text to be displayed
+//  prefix (str|content): the prefix to be added to the label
+//  suffix (str|content): the suffix to be added to the label
 //
 // # Returns
 // The link and the entry label
-#let __link_and_label(key, text) = context {
-  return [#link(label(key), text)#label(__glossary_label_prefix + key)]
+#let __link_and_label(key, text, prefix: none, suffix: none) = context {
+  return [#prefix#link(label(key), text)#suffix#label(__glossary_label_prefix + key)]
 }
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
@@ -187,32 +193,43 @@
   }
 }
 
+// agls(key, suffix: none, long: none) -> contextual content
+// Reference to term with article
+//
+// # Arguments
+//  key (str): the key of the term
+//  suffix (str|content): the suffix to be added to the short form
+//  long (bool): enable/disable the long form
+//
+// # Returns
+// The link and the entry label
 #let agls(key, suffix: none, long: none) = {
   context {
-    let __glossary_entries = __glossary_entries.final(here())
-    if key in __glossary_entries {
-      let entry = __glossary_entries.at(key)
-       
-      let gloss = __query_labels_with_key(here(), key, before: true)
-       
-      let is_first = gloss == ()
-      let entlong = entry.at("long", default: "")
-      let textLink = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        [#entlong (#entry.short#suffix)]
-      } else {
-        [#entry.short#suffix]
-      }
-       
-      let article = if (is_first or long == true) and entlong != [] and entlong != "" and long != false {
-        entry.at("artlong", default: "a")
-      } else {
-        entry.at("artshort", default: "a")
-      }
-       
-      [#article #link(label(entry.key), textLink)#label(__glossary_label_prefix + entry.key)]
-    } else {
-      panic(__not-found-panic-error-msg(key))
+    let entry = __get_entry_with_key(here(), key)
+     
+    // Attributes
+    let ent-long = entry.at("long", default: "")
+    let ent-short = entry.at("short", default: "")
+    let ent-artlong = entry.at("artlong", default: "a")
+    let ent-artshort = entry.at("artshort", default: "a")
+
+    // Conditions
+    let is-first-or-long = __is_first_or_long(here(), key, long: long)
+    let has-long = has-long(entry)
+
+    // Link text
+    let link-text = none
+    let article = none
+    if is-first-or-long and has-long and long != false {
+      link-text = [#ent-long (#ent-short#suffix)]
+      article = ent-artlong
+    } else { // Default to short
+      link-text = [#entry.short#suffix]
+      article = ent-artshort
     }
+     
+    // Return
+    return __link_and_label(entry.key, link-text, prefix: [#article ])
   }
 }
 
@@ -289,7 +306,7 @@
   }
 }
 
-// gls-key(key) -> str
+// gls-key(key, link: false) -> str
 // Get the key of the term
 //
 // # Arguments
@@ -300,7 +317,7 @@
 // The key of the term
 #let gls-key(key, link: false) = __gls_attribute(key, "key", link: link)
 
-// gls-short(key) -> str
+// gls-short(key, link: false) -> str
 // Get the short form of the term
 //
 // # Arguments
@@ -311,7 +328,18 @@
 // The short form of the term
 #let gls-short(key, link: false) = __gls_attribute(key, "short", link: link)
 
-// gls-plural(key) -> str|content
+// gls-artshort(key, link: false) -> str|content
+// Get the article of the short form
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The article of the short form
+#let gls-artshort(key, link: false) = __gls_attribute(key, "artshort", link: link)
+
+// gls-plural(key, link: false) -> str|content
 // Get the plural form of the term
 //
 // # Arguments
@@ -322,7 +350,7 @@
 // The plural form of the term
 #let gls-plural(key, link: false) = __gls_attribute(key, "plural", link: link)
 
-// gls-long(key) -> str|content
+// gls-long(key, link: false) -> str|content
 // Get the long form of the term
 //
 // # Arguments
@@ -333,7 +361,18 @@
 // The long form of the term
 #let gls-long(key, link: false) = __gls_attribute(key, "long", link: link)
 
-// gls-longplural(key) -> str|content
+// gls-artlong(key, link: false) -> str|content
+// Get the article of the long form
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The article of the long form
+#let gls-artlong(key, link: false) = __gls_attribute(key, "artlong", link: link)
+
+// gls-longplural(key, link: false) -> str|content
 // Get the long plural form of the term
 //
 // # Arguments
@@ -344,7 +383,7 @@
 // The long plural form of the term
 #let gls-longplural(key, link: false) = __gls_attribute(key, "longplural", link: link)
 
-// gls-description(key) -> str|content
+// gls-description(key, link: false) -> str|content
 // Get the description of the term
 //
 // # Arguments
