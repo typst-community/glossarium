@@ -145,10 +145,7 @@ SOFTWARE.*/
     x
   })
    
-  let groups = entries.map(x => x.at("group", default: "")).dedup()
-  // move no group to the front
-  groups.insert(0, "")
-  groups.pop()
+  let groups = entries.map(x => x.at("group")).dedup()
    
   for group in groups.sorted() {
     if group != "" [#heading(group, level: 2) ]
