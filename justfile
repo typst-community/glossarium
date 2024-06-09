@@ -18,3 +18,6 @@ fmt:
 # benchmark using hyperfine
 benchmark:
     hyperfine --warmup 10 --prepare 'find examples/**/*.pdf -delete' --export-markdown {{benchmark_file}} {{benchmark_commands}}
+
+docs: 
+    typst compile docs/main.typ --root .

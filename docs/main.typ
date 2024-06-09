@@ -64,7 +64,13 @@
 #let entries = __normalize_entry_list(entry-list)
 #let groups = entries.map(x => x.at("group")).dedup()
 
-#align(center)[`glossarium@`#glossarium_version]
+#align(center, heading([`glossarium@`#glossarium_version], level: 1, numbering: none))\
+
+#text(fill: red.darken(10%), size: 11pt, font: "Iosevka Extrabold Extended")[
+This document outline how to change the default behaviour of `glossarium` by
+implementing "user functions". It is recommended to keep the default implementation and not to change the default behaviour of the package. 
+
+If you have a need that require to change the defaults, you are expected to be knowledgeable in writing complex typst code and to try to debug your issues first on you own. Be aware that helping regular users and fixing bugs will take priority over helping you debug your own implementation of `glossarium` internal functions.]
 
 #outline(indent: 1em)
 
