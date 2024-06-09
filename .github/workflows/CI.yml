@@ -31,3 +31,25 @@ jobs:
           name: ${{ github.sha }}_PDF_EXAMPLES
           path: examples/*
           if-no-files-found: error
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup typst  
+        uses: yusancky/setup-typst@v2
+        id: setup-typst
+        with:
+          version: 'latest'
+      - name: Setup Just
+        uses: extractions/setup-just@v2
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+      - name: typst version
+        run: typst --version
+      - name: Compile
+        run: just test
+      - name: Upload example PDF 
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.sha }}_PDF_TESTS
+          path: tests/*
+          if-no-files-found: error

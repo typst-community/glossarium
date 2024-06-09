@@ -1,4 +1,4 @@
-#import "../glossarium.typ": *
+#import "../themes/default.typ": *
 
 #show: make-glossary
 #show link: set text(fill: red)
