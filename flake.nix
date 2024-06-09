@@ -21,6 +21,7 @@
             typst
             just
             zathura
+            typstyle
           ];
         };
       }
