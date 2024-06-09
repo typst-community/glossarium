@@ -10,7 +10,7 @@
 #let __glossarium_figure = "glossarium_entry"
 
 // prefix of label for references query
-#let __glossary_label_prefix = "gls:"
+#let __glossary_label_prefix = "__gls:"
 
 // global state containing the glossary entry and their location
 // A glossary entry is a `dictionary`.
