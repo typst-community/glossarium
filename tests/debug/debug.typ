@@ -1,4 +1,4 @@
-#import "../themes/default.typ": *
+#import "../../themes/default.typ": *
 
 #show: make-glossary
 #show link: set text(fill: red)
@@ -18,7 +18,7 @@
     short: "potato@A",
     plural: "potatoes@A",
     description: [#lorem(5)],
-    group: "A"
+    group: "A",
   ),
   (
     key: "potato B",
@@ -27,13 +27,13 @@
     plural: "potatoes@B",
     longplural: "long potatoes@B",
     description: [#lorem(5)],
-    group: "B"
+    group: "B",
   ),
   (
     key: "hidden potato",
     short: "hiddenpotato",
     group: "show-all test",
-    description: [This potato does not appear, unless `print-glossary` is called with `show-all: true`]
+    description: [This potato does not appear, unless `print-glossary` is called with `show-all: true`],
   ),
 )
 #let entry-list-2 = (
@@ -44,7 +44,7 @@
     plural: "potatoes@C",
     longplural: "long potatoes@C",
     description: [#lorem(5)],
-    group: "C"
+    group: "C",
   ),
   (
     key: "potato D",
@@ -52,7 +52,7 @@
     long: "long potato@D",
     plural: "potatoes@D",
     description: [#lorem(5)],
-    group: "D"
+    group: "D",
   ),
   (
     key: "potato E",
@@ -60,7 +60,7 @@
     long: "long potato@E",
     longplural: "long potatoes@E",
     description: [#lorem(5)],
-    group: "E"
+    group: "E",
   ),
   (
     key: "potato F",
@@ -68,7 +68,7 @@
     long: "long potato@F",
     longplural: "long potatoes@F",
     description: [This potato should not appear in the document.],
-    group: "F"
+    group: "F",
   ),
 )
 #let entry-list-3 = (
@@ -78,7 +78,7 @@
     long: "long potato@G",
     longplural: "long potatoes@G",
     description: [This potato should appear in the document.],
-    group: "G"
+    group: "G",
   ),
 )
 
@@ -92,22 +92,22 @@
   == entry-list-1
 
   #entry-list-1
-  
+
   == entry-list-2
   #entry-list-2
 
   #colbreak()
-  
+
   == #repr(__normalize_entry_list) n°0
 
   #__normalize_entry_list(entry-list-0)
-  
+
   == #repr(__normalize_entry_list) n°1
 
   #__normalize_entry_list(entry-list-1)
-  
+
   == #repr(__normalize_entry_list) n°2
-  
+
   #__normalize_entry_list(entry-list-2)
 ]
 
@@ -128,21 +128,21 @@ First: #gls("potato")
 Display: #gls("potato", display: "potato text")
 
 Force long: #gls("potato", long: true)
-  
+
 1st ref. when long is empty defaults to short: #gls("potato A")
-  
+
 Force long when empty defaults to short: #gls("potato A", long: true)
 
 2nd ref.: #gls("potato A")
 
 1st ref.: #gls("potato B")
-  
+
 == #glspl
 
 First: #glspl("potato C")
 
 Force long: #glspl("potato", long: true)
-  
+
 Force long when empty defaults to plural: #glspl("potato A", long: true)
 
 2nd ref.: #glspl("potato A")
@@ -177,7 +177,7 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
 
 == `gls-longplural.with(link: true)`
 
-#gls-longplural.with(link:true)("potato B")
+#gls-longplural.with(link: true)("potato B")
 
 == #gls-description
 
@@ -191,7 +191,7 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
 
 #columns(2)[
   == `#print-glossary.with(show-all: true, disable-back-references: true)`
-  
+
   #print-glossary(
     entry-list-0,
     show-all: true,
@@ -205,7 +205,7 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
   )
 
   #colbreak()
-  
+
   == #repr(print-glossary) (show-all: false)
 
   #print-glossary(
@@ -213,7 +213,7 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
     show-all: false,
     disable-back-references: false,
   )
-  
+
   #print-glossary(
     entry-list-3,
     show-all: true,
