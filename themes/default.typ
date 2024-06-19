@@ -14,7 +14,7 @@
 
 // global state containing the glossary entry and their location
 // A glossary entry is a `dictionary`.
-// See `__normalize_entry_list`. 
+// See `__normalize_entry_list`.
 #let __glossary_entries = state("__glossary_entries", (:))
 
 // glossarium version
@@ -51,7 +51,7 @@
   } else {
     msg = "unknown error"
   }
-  
+
   // return the error message
   return __glossarium_error_prefix + msg
 }
@@ -69,7 +69,10 @@
 #let __query_labels_with_key(loc, key, before: false) = {
   if before {
     return query(
-      selector(label(__glossary_label_prefix + key)).before(loc, inclusive: false),
+      selector(label(__glossary_label_prefix + key)).before(
+        loc,
+        inclusive: false,
+      ),
       loc,
     )
   } else {
@@ -79,14 +82,14 @@
 
 // __get_entry_with_key(loc, key) -> dictionary
 // Get an entry from the glossary
-// 
+//
 // # Arguments
 //  loc (location): the location of the reference
 //  key (str): the key of the term
 //
 // # Returns
 // The entry of the term
-// 
+//
 // # Panics
 // If the key is not found, it will raise a `key_not_found` error
 #let __get_entry_with_key(loc, key) = {
@@ -125,7 +128,6 @@
 #let has-longplural(entry) = __has_attribute(entry, "longplural")
 #let has-description(entry) = __has_attribute(entry, "description")
 #let has-group(entry) = __has_attribute(entry, "group")
- 
 
 // __link_and_label(key, text, prefix: none, suffix: none) -> contextual content
 // Build a link and a label
@@ -139,7 +141,10 @@
 // # Returns
 // The link and the entry label
 #let __link_and_label(key, text, prefix: none, suffix: none) = context {
-  return [#prefix#link(label(key), text)#suffix#label(__glossary_label_prefix + key)]
+  return [#prefix#link(
+      label(key),
+      text,
+    )#suffix#label(__glossary_label_prefix + key)]
 }
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
@@ -156,25 +161,25 @@
 #let gls(key, suffix: none, long: none, display: none) = {
   context {
     let entry = __get_entry_with_key(here(), key)
-    
+
     // Attributes
     let ent-long = entry.at("long", default: "")
     let ent-short = entry.at("short", default: "")
-      
+
     // Conditions
     let is-first-or-long = __is_first_or_long(here(), key, long: long)
     let has-long = has-long(entry)
 
     // Link text
     // 1. If `display` attribute is provided, use it
-    // 2. Else, if 
+    // 2. Else, if
     //  a. The entry is referenced for the first time OR long form is explicitly requested
     //      AND
     //  b. The entry has a nonempty `long` attribute
     //      AND
     //  c. long form is not disabled
     // 3. Else, return the `short` attribute + suffix
-    // Priority order: 
+    // Priority order:
     //  1. `gls(key, display: "text")` will return `text`
     //  2. `gls(key, long: false)` will return `short+suffix`
     //  3. If attribute `long` is empty, `gls(key)` will return `short+suffix`
@@ -188,7 +193,7 @@
     } else {
       link-text += [#ent-short#suffix]
     }
-     
+
     return __link_and_label(entry.key, link-text)
   }
 }
@@ -206,7 +211,7 @@
 #let agls(key, suffix: none, long: none) = {
   context {
     let entry = __get_entry_with_key(here(), key)
-     
+
     // Attributes
     let ent-long = entry.at("long", default: "")
     let ent-short = entry.at("short", default: "")
@@ -223,11 +228,12 @@
     if is-first-or-long and has-long and long != false {
       link-text = [#ent-long (#ent-short#suffix)]
       article = ent-artlong
-    } else { // Default to short
+    } else {
+      // Default to short
       link-text = [#entry.short#suffix]
       article = ent-artshort
     }
-     
+
     // Return
     return __link_and_label(entry.key, link-text, prefix: [#article ])
   }
@@ -249,13 +255,13 @@
 
     // Attributes
     let ent-short = entry.at("short", default: "")
-    let ent-plural = entry.at("plural", default: "");
+    let ent-plural = entry.at("plural", default: "")
     let ent-long = entry.at("long", default: "")
     let ent-longplural = entry.at("longplural", default: "")
-     
+
     // Conditions
     let is-first-or-long = __is_first_or_long(here(), key, long: long)
-    let has-plural = has-plural(entry) 
+    let has-plural = has-plural(entry)
     let has-long = has-long(entry)
     let has-longplural = has-longplural(entry)
 
@@ -267,7 +273,7 @@
     } else {
       [#ent-longplural]
     }
-     
+
     let shortplural = if not has-plural {
       // Default short plural
       // if the entry plural is not provided, then fallback to adding default
@@ -276,14 +282,14 @@
     } else {
       [#ent-plural]
     }
-     
+
     // Link text
     let link-text = if is-first-or-long and has-long and long != false {
       [#longplural (#shortplural)]
     } else {
       [#shortplural]
     }
-     
+
     return __link_and_label(entry.key, link-text)
   }
 }
@@ -337,7 +343,11 @@
 //
 // # Returns
 // The article of the short form
-#let gls-artshort(key, link: false) = __gls_attribute(key, "artshort", link: link)
+#let gls-artshort(key, link: false) = __gls_attribute(
+  key,
+  "artshort",
+  link: link,
+)
 
 // gls-plural(key, link: false) -> str|content
 // Get the plural form of the term
@@ -381,7 +391,11 @@
 //
 // # Returns
 // The long plural form of the term
-#let gls-longplural(key, link: false) = __gls_attribute(key, "longplural", link: link)
+#let gls-longplural(key, link: false) = __gls_attribute(
+  key,
+  "longplural",
+  link: link,
+)
 
 // gls-description(key, link: false) -> str|content
 // Get the description of the term
@@ -392,7 +406,11 @@
 //
 // # Returns
 // The description of the term
-#let gls-description(key, link: false) = __gls_attribute(key, "description", link: link)
+#let gls-description(key, link: false) = __gls_attribute(
+  key,
+  "description",
+  link: link,
+)
 
 // gls-group(key, link: false) -> str
 // Get the group of the term
@@ -421,15 +439,15 @@
   // Transform the ref to the glossary term
   show ref: r => {
     if (
-      r.element != none 
-      and r.element.func() == figure
-      and r.element.kind == __glossarium_figure 
+      r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
     ) {
       // call to the general citing function
       let key = str(r.target)
-      if key.ends-with(":pl") { // Plural ref
+      if key.ends-with(":pl") {
+        // Plural ref
         glspl(str(key).slice(0, -3))
-      } else { // Default ref
+      } else {
+        // Default ref
         gls(str(key), suffix: r.citation.supplement)
       }
     } else {
@@ -475,35 +493,31 @@
 // The back references as an array of links
 #let get-entry-back-references(entry) = {
   let term-references = __query_labels_with_key(here(), entry.key)
-  return term-references
-    .map(x => x.location())
-    .sorted(key: x => x.page())
-    .fold(
-      (values: (), pages: ()),
-      ((values, pages), x) => {
-        if pages.contains(x.page()) {
-          // Skip duplicate references
-          return (values: values, pages: pages)
-        } else {
-          // Add the back reference
-          values.push(x)
-          pages.push(x.page())
-          return (values: values, pages: pages)
-        }
+  return term-references.map(x => x.location()).sorted(key: x => x.page()).fold(
+    (values: (), pages: ()),
+    ((values, pages), x) => {
+      if pages.contains(x.page()) {
+        // Skip duplicate references
+        return (values: values, pages: pages)
+      } else {
+        // Add the back reference
+        values.push(x)
+        pages.push(x.page())
+        return (values: values, pages: pages)
       }
-    ).values
-    .map(x => {
-      let page-numbering = x.page-numbering();
-      if page-numbering == none {
-        page-numbering = "1"
-      }
-      return link(x)[#numbering(page-numbering, ..counter(page).at(x))]
-    })
+    },
+  ).values.map(x => {
+    let page-numbering = x.page-numbering()
+    if page-numbering == none {
+      page-numbering = "1"
+    }
+    return link(x)[#numbering(page-numbering, ..counter(page).at(x))]
+  })
 }
 
 // count-refs(entry) -> int
 // Count the number of references to the entry
-// 
+//
 // # Arguments
 // entry (dictionary): the entry
 //
@@ -536,7 +550,7 @@
 // The description of the entry
 #let default-print-description(entry) = {
   return entry.at("description")
-} 
+}
 
 // default-print-title(entry) -> content
 // Print the title of the entry
@@ -549,14 +563,14 @@
 #let default-print-title(entry) = {
   let caption = []
   let txt = text.with(weight: 600)
-  
+
   if has-long(entry) {
     caption += txt(emph(entry.short) + [ -- ] + entry.long)
   } else {
     caption += txt(emph(entry.short))
   }
   return caption
-} 
+}
 
 // default-print-gloss(
 //  entry,
@@ -567,13 +581,13 @@
 //  user-print-back-references: default-print-back-references,
 // ) -> contextual content
 // Print the entry
-// 
+//
 // # Arguments
 //  entry (dictionary): the entry
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
 //  ...
-// 
+//
 // # Returns
 //  The gloss content
 #let default-print-gloss(
@@ -585,7 +599,7 @@
   user-print-back-references: default-print-back-references,
 ) = context {
   let caption = []
-  
+
   if show-all == true or count-refs(entry) != 0 {
     // Title
     caption += user-print-title(entry)
@@ -619,7 +633,7 @@
 //  user-print-back-references: default-print-back-references,
 // ) -> contextual content
 // Print the entry
-// 
+//
 // # Arguments
 //  entry (dictionary): the entry
 //  show-all (bool): show all entries
@@ -648,16 +662,19 @@
         kind: __glossarium_figure,
         numbering: none,
         caption: user-print-gloss(
-          entry, 
-          show-all: show-all, 
+          entry,
+          show-all: show-all,
           disable-back-references: disable-back-references,
           user-print-title: user-print-title,
           user-print-description: user-print-description,
           user-print-back-references: user-print-back-references,
         ),
-      )[] #label(entry.key)
+      )[]#label(entry.key)
       // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
-      #figure(kind: __glossarium_figure, supplement: "")[] #label(entry.key + ":pl")
+      #figure(
+        kind: __glossarium_figure,
+        supplement: "",
+      )[] #label(entry.key + ":pl")
     ]
     #parbreak()
   ]
@@ -689,12 +706,12 @@
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
 //  ...
-// 
+//
 // # Warnings
 // A strong warning is given not to override `user-print-reference` without
 // careful consideration of `default-print-reference`'s original implementation.
 // The package's behaviour may break in unexpected ways if not handled correctly.
-//  
+//
 // # Returns
 // The glossary content
 #let default-print-glossary(
@@ -710,27 +727,28 @@
   user-print-back-references: default-print-back-references,
 ) = {
   let body = []
-  let previous-heading = query(selector(heading).before(here())).last()
-  
+  let previous-headings = query(selector(heading).before(here()))
+  let group-heading-level = 1
+  if previous-headings.len() != 0 {
+    group-heading-level = previous-headings.last().level
+  }
   for group in groups.sorted() {
     let group-entries = entries.filter(x => x.at("group") == group)
     let group-ref-counts = group-entries.map(count-refs)
+
     let print-group = (
-      group != "" 
-      and (
-        show-all == true 
-        or group-ref-counts.any(x => x > 0)
-      )
+      group != "" and (show-all == true or group-ref-counts.any(x => x > 0))
     )
 
     // Only print group name if any entries are referenced
-    if print-group { 
-      body += [#heading(group, level: previous-heading.level + 1)] 
+    if print-group {
+      body += [#heading(group, level: group-heading-level)]
     }
     for entry in group-entries.sorted(key: x => x.key) {
+
       body += user-print-reference(
-        entry, 
-        show-all: show-all, 
+        entry,
+        show-all: show-all,
         disable-back-references: disable-back-references,
         user-print-gloss: user-print-gloss,
         user-print-title: user-print-title,
@@ -738,7 +756,8 @@
         user-print-back-references: user-print-back-references,
       )
     }
-    
+
+
     body += user-group-break()
   }
 
@@ -806,19 +825,18 @@
 ) = {
   // Normalize entry-list
   let entries = __normalize_entry_list(entry-list)
-  
+
   // Update state
   __update_glossary(entries)
-   
+
   // Groups
   let groups = entries.map(x => x.at("group")).dedup()
-   
+
   // Glossary
   let body = []
-  
   body += context {
-      user-print-glossary(
-      entries, 
+    user-print-glossary(
+      entries,
       groups,
       show-all: show-all,
       disable-back-references: disable-back-references,
@@ -830,7 +848,7 @@
       user-print-back-references: user-print-back-references,
     )
   }
-    
+
   // Content
-  body  
+  body
 }

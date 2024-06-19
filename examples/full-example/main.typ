@@ -1,5 +1,5 @@
 #import "../../glossarium.typ": make-glossary, print-glossary, gls, glspl, agls, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group
-// Replace the local import with a import to the preview namespace. 
+// Replace the local import with a import to the preview namespace.
 // If you don't know what that mean, please go read typst documentation on how to import packages at https://typst.app/docs/packages/.
 #show: make-glossary
 
@@ -16,7 +16,7 @@ We can also force them to be short: #gls("kuleuven", long: false). Finally, we
 can make them plural:
 + using the `suffix` parameter: #gls("kuleuven", suffix: "s"), or
 + using the additional `supplement` onto the `ref`: @kuleuven[s], or
-+ the plural function `#glspl(key: "kuleuven")` #glspl("kuleuven"), or 
++ the plural function `#glspl(key: "kuleuven")` #glspl("kuleuven"), or
 + call `@kuleuven:pl` @kuleuven:pl
 
 It is also possible to use the proper article with `#agls("lod")`: "#agls("lod") system", "#agls("lod") system".
@@ -97,13 +97,13 @@ Additionally, you can load data externally and pass it as a parameter to the
       description: "Tempor deserunt commodo reprehenderit eiusmod enim. Ut ullamco deserunt in elit commodo ipsum nisi voluptate proident culpa. Sunt do mollit velit et et amet consectetur tempor proident Lorem. Eu officia amet do ea occaecat velit fugiat qui tempor sunt aute. Magna Lorem veniam duis ea eiusmod labore non anim labore irure culpa Lorem dolor officia. Laboris reprehenderit eiusmod nostrud duis excepteur nisi officia.",
     ),
     (
-      key: "unamur", 
-      short: "UNamur", 
+      key: "unamur",
+      short: "UNamur",
       long: "Université de Namur"
     ),
     (
-      key: "lod", 
-      short: "LOD", 
+      key: "lod",
+      short: "LOD",
       artshort: "an",
       long: "level of details",
       description: lorem(10),
@@ -111,7 +111,7 @@ Additionally, you can load data externally and pass it as a parameter to the
     (
       key: "notused",
       short: "Not used",
-      description: [This key is not cited anywhere, it won't be in the glossary unless the 
+      description: [This key is not cited anywhere, it won't be in the glossary unless the
       `show-all` argument is set to true],
     ),
   ),

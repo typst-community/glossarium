@@ -2,10 +2,8 @@
 
 // The glossary command here is modeled after the bibliography command and accepts similar arguments.
 
-
-
 #import "../../glossarium.typ": *
-// Replace the local import with a import to the preview namespace. 
+// Replace the local import with a import to the preview namespace.
 // If you don't know what that mean, please go read typst documentation on how to import packages at https://typst.app/docs/packages/.
 
 #let glossary(files, title: "Glossary", full: false) = {
@@ -48,14 +46,14 @@
           message: "The description of glossary entry `" + k + "` in `" + file + "` is not a string",
         )
       }
-      
+
       if "group" in v {
         assert(
           type(v.group) == str,
           message: "The optional group of glossary entry `" + k + "` in `" + file + "` is not a string",
         )
       }
-}
+    }
 
     return entries.pairs().map(((key, entry)) => (
       key: key,
@@ -77,7 +75,7 @@
     let new = read-glossary-entries(file)
 
     for entry in new {
-      let duplicate = entries.find((e) => e.key == entry.key)
+      let duplicate = entries.find(e => e.key == entry.key)
       if duplicate != none {
         panic("Found duplicate key `" + entry.key + "` in files `" + entry.file + "` and `" + duplicate.file + "`")
       }

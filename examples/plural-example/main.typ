@@ -1,5 +1,5 @@
 #import "../../glossarium.typ": make-glossary, print-glossary, gls, glspl
-// Replace the local import with a import to the preview namespace. 
+// Replace the local import with a import to the preview namespace.
 // If you don't know what that mean, please go read typst documentation on how to import packages at https://typst.app/docs/packages/.
 
 #show: make-glossary
@@ -16,7 +16,7 @@ But I don't like to eat #glspl("dm").
 
 I thought about it and now I like to eat #glspl("dm").
 
-I love #glspl("cpu"). I ate a #gls("cpu") once. 
+I love #glspl("cpu"). I ate a #gls("cpu") once.
 
 Would you eat a #gls("buffer") ? I heard #glspl("buffer") are tasty.
 
@@ -42,10 +42,10 @@ Would you eat a #gls("buffer") ? I heard #glspl("buffer") are tasty.
       short: "CPU",
       long: "Central Processing Unit",
       description: [#lorem(10)],
-    ), 
+    ),
     (
-      key: "buffer", 
-      short: "buffer", 
+      key: "buffer",
+      short: "buffer",
       description: "A place to store stuff"
     ),
   ),
