@@ -141,6 +141,12 @@ I recommend setting a show rule for the links to that your readers understand th
 
 ## Changelog
 
+### Unreleased
+
+### 0.4.1
+
+- Resolved an issue causing Glossarium to crash when all entries had a defined, non-empty group.
+
 ### 0.4.0
 
 - Support for plurals has been implemented, showcased in [examples/plural-example/main.typ](examples/plural-example). Contributed by [@St0wy](https://github.com/St0wy). 
