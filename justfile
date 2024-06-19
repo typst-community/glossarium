@@ -12,12 +12,12 @@ build-examples:
     @find examples/**/*.typ -type f -exec sh -c "echo --------- Compiling {} && time typst compile --root . {}" \;
 
 test: 
-    typst compile --root . tests/debug.typ
+     find tests/**/*.typ -type f | xargs -I{} typst compile --root . {}
 
 # format typst code (use typstfmt)
 fmt:
-    find -name "**.typ" -exec typstfmt {} \;
-
+    typstyle format-all
+    
 # benchmark using hyperfine
 benchmark:
     hyperfine --warmup 10 --prepare 'find examples/**/*.pdf -delete' --export-markdown {{benchmark_file}} {{benchmark_commands}}
