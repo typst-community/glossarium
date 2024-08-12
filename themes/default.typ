@@ -140,12 +140,14 @@
 //
 // # Returns
 // The link and the entry label
-#let __link_and_label(key, text, prefix: none, suffix: none) = context {
-  return [#prefix#link(
-      label(key),
-      text,
-    )#suffix#label(__glossary_label_prefix + key)]
-}
+#let __link_and_label(key, text, prefix: none, suffix: none) = (
+  context {
+    return [#prefix#link(
+        label(key),
+        text,
+      )#suffix#label(__glossary_label_prefix + key)]
+  }
+)
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term
@@ -228,6 +230,9 @@
     if is-first-or-long and has-long and long != false {
       link-text = [#ent-long (#ent-short#suffix)]
       article = ent-artlong
+    } else if has-short {
+      // Default to short
+      link-text += [#ent-short#suffix]
     } else {
       // Default to short
       link-text = [#entry.short#suffix]
@@ -286,6 +291,9 @@
     // Link text
     let link-text = if is-first-or-long and has-long and long != false {
       [#longplural (#shortplural)]
+    } else if has-short {
+      // Default to short
+      [#shortplural]
     } else {
       [#shortplural]
     }
@@ -303,14 +311,16 @@
 //
 // # Returns
 // The attribute of the term
-#let __gls_attribute(key, attr, link: false) = context {
-  let entry = __get_entry_with_key(here(), key)
-  if link {
-    return __link_and_label(entry.key, entry.at(attr))
-  } else {
-    return entry.at(attr)
+#let __gls_attribute(key, attr, link: false) = (
+  context {
+    let entry = __get_entry_with_key(here(), key)
+    if link {
+      return __link_and_label(entry.key, entry.at(attr))
+    } else {
+      return entry.at(attr)
+    }
   }
-}
+)
 
 // gls-key(key, link: false) -> str
 // Get the key of the term
@@ -438,9 +448,7 @@
   // Select all figure refs and filter by __glossarium_figure
   // Transform the ref to the glossary term
   show ref: r => {
-    if (
-      r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
-    ) {
+    if (r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure) {
       // call to the general citing function
       let key = str(r.target)
       if key.ends-with(":pl") {
@@ -493,20 +501,25 @@
 // The back references as an array of links
 #let get-entry-back-references(entry) = {
   let term-references = __query_labels_with_key(here(), entry.key)
-  return term-references.map(x => x.location()).sorted(key: x => x.page()).fold(
-    (values: (), pages: ()),
-    ((values, pages), x) => {
-      if pages.contains(x.page()) {
-        // Skip duplicate references
-        return (values: values, pages: pages)
-      } else {
-        // Add the back reference
-        values.push(x)
-        pages.push(x.page())
-        return (values: values, pages: pages)
-      }
-    },
-  ).values.map(x => {
+  return term-references
+    .map(x => x.location())
+    .sorted(key: x => x.page())
+    .fold(
+      (values: (), pages: ()),
+      ((values, pages), x) => {
+        if pages.contains(x.page()) {
+          // Skip duplicate references
+          return (values: values, pages: pages)
+        } else {
+          // Add the back reference
+          values.push(x)
+          pages.push(x.page())
+          return (values: values, pages: pages)
+        }
+      },
+    )
+    .values
+    .map(x => {
     let page-numbering = x.page-numbering()
     if page-numbering == none {
       page-numbering = "1"
@@ -597,31 +610,33 @@
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
-) = context {
-  let caption = []
+) = (
+  context {
+    let caption = []
 
-  if show-all == true or count-refs(entry) != 0 {
-    // Title
-    caption += user-print-title(entry)
+    if show-all == true or count-refs(entry) != 0 {
+      // Title
+      caption += user-print-title(entry)
 
-    // Description
-    if has-description(entry) {
-      // Title - Description separator
-      caption += ": "
+      // Description
+      if has-description(entry) {
+        // Title - Description separator
+        caption += ": "
 
-      caption += user-print-description(entry)
+        caption += user-print-description(entry)
+      }
+
+      // Back references
+      if disable-back-references != true {
+        caption += " "
+
+        caption += user-print-back-references(entry)
+      }
     }
 
-    // Back references
-    if disable-back-references != true {
-      caption += " "
-
-      caption += user-print-back-references(entry)
-    }
+    return caption
   }
-
-  return caption
-}
+)
 
 // default-print-reference(
 //  entry,
@@ -680,6 +695,7 @@
   ]
 }
 
+
 // default-group-break() -> content
 // Default group break
 #let default-group-break() = {
@@ -736,9 +752,7 @@
     let group-entries = entries.filter(x => x.at("group") == group)
     let group-ref-counts = group-entries.map(count-refs)
 
-    let print-group = (
-      group != "" and (show-all == true or group-ref-counts.any(x => x > 0))
-    )
+    let print-group = (group != "" and (show-all == true or group-ref-counts.any(x => x > 0)))
 
     // Only print group name if any entries are referenced
     if print-group {
