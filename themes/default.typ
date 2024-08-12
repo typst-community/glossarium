@@ -95,7 +95,7 @@
 // # Panics
 // If the key is not found, it will raise a `key_not_found` error
 #let __get_entry_with_key(loc, key) = {
-  let entries = if sys.version <= version(0, 11, 0) {
+  let entries = if sys.version <= version(0, 11, 1) {
     __glossary_entries.final()
   } else {
     __glossary_entries.at(loc)
@@ -806,6 +806,9 @@
 // # Arguments
 // entries (array<dictionary>): the list of entries
 #let register-glossary(entry-list) = {
+  if sys.version <= version(0, 11, 1) {
+    return
+  }
   // Normalize entry-list
   let entries = __normalize_entry_list(entry-list)
 
@@ -858,7 +861,7 @@
     panic("entry-list is required")
   }
   let entries = ()
-  if sys.version <= version(0, 11, 0) {
+  if sys.version <= version(0, 11, 1) {
     // Normalize entry-list
     entries = __normalize_entry_list(entry-list)
 
@@ -875,7 +878,7 @@
   // Glossary
   let body = []
   body += context {
-    let el = if sys.version <= version(0, 11, 0) {
+    let el = if sys.version <= version(0, 11, 1) {
       entries
     } else if entry-list != none {
       __glossary_entries.get().values().filter(x => x.key in entry-list.map(x => x.key))
