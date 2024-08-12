@@ -85,6 +85,7 @@
   }
 
   [= #title]
+  register-glossary(entries)
   print-glossary(entries, show-all: full)
 }
 

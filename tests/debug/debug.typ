@@ -81,6 +81,16 @@
     group: "G",
   ),
 )
+#for entries in (
+  entry-list-0,
+  entry-list-1,
+  entry-list-2,
+  entry-list-3,
+) {
+  register-glossary(entries)
+}
+
+= Typst Compiler Version: #sys.version, #type(sys.version)
 
 = Normalization
 #set text(size: 8pt)
@@ -187,6 +197,14 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
 
 #gls-group("potato D")
 
+== test `__attribute_is_empty` error
+
+// #gls-long("potato A")
+
+== test `__key_not_found` error
+
+// #gls("potato Z")
+
 #pagebreak()
 
 #columns(2)[
@@ -220,6 +238,10 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
     disable-back-references: false,
     user-group-break: colbreak,
   )
+
+  == Test `#print-glossary(none)` error
+
+  // #print-glossary(none)
 
   == `#default-print-reference.with(show-all: true)`
 

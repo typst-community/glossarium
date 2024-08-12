@@ -26,6 +26,7 @@
 // Errors types
 #let __key_not_found = "key_not_found"
 #let __attribute_is_empty = "attribute_is_empty"
+#let __glossary_is_empty = "__glossary_is_empty"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -46,8 +47,10 @@
   if kind == __key_not_found {
     msg = "key '" + key + "' not found"
   } else if kind == __attribute_is_empty {
-    attr = kwargs.get("attr") + " "
+    let attr = kwargs.at("attr")
     msg = "requested attribute " + attr + "is empty for key '" + key + "'"
+  } else if kind == __glossary_is_empty {
+    msg = "glossary is empty. Register entries using `register-glossary(entry-list)`."
   } else {
     msg = "unknown error"
   }
@@ -73,10 +76,9 @@
         loc,
         inclusive: false,
       ),
-      loc,
     )
   } else {
-    return query(selector(label(__glossary_label_prefix + key)), loc)
+    return query(selector(label(__glossary_label_prefix + key)))
   }
 }
 
@@ -93,7 +95,11 @@
 // # Panics
 // If the key is not found, it will raise a `key_not_found` error
 #let __get_entry_with_key(loc, key) = {
-  let entries = __glossary_entries.final(loc)
+  let entries = if sys.version <= version(0, 11, 0) {
+    __glossary_entries.final()
+  } else {
+    __glossary_entries.at(loc)
+  }
   if key in entries {
     return entries.at(key)
   } else {
@@ -316,8 +322,10 @@
     let entry = __get_entry_with_key(here(), key)
     if link {
       return __link_and_label(entry.key, entry.at(attr))
-    } else {
+    } else if attr in entry {
       return entry.at(attr)
+    } else {
+      panic(__error_message(key, __attribute_is_empty, attr: attr))
     }
   }
 )
@@ -622,14 +630,12 @@
       if has-description(entry) {
         // Title - Description separator
         caption += ": "
-
         caption += user-print-description(entry)
       }
 
       // Back references
       if disable-back-references != true {
         caption += " "
-
         caption += user-print-back-references(entry)
       }
     }
@@ -771,7 +777,6 @@
       )
     }
 
-
     body += user-group-break()
   }
 
@@ -793,6 +798,18 @@
     }
     return x
   })
+}
+
+// register-glossary(entry-list) -> none
+// Register the glossary entries
+//
+// # Arguments
+// entries (array<dictionary>): the list of entries
+#let register-glossary(entry-list) = {
+  // Normalize entry-list
+  let entries = __normalize_entry_list(entry-list)
+
+  __update_glossary(entries)
 }
 
 // print-glossary(
@@ -826,7 +843,7 @@
 // print-glossary(entry-list)
 // ```
 #let print-glossary(
-  entry-list,
+  entry-list, // TODO: deprecate in v0.12.0
   show-all: false,
   disable-back-references: false,
   user-print-glossary: default-print-glossary,
@@ -837,21 +854,35 @@
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
 ) = {
-  // Normalize entry-list
-  let entries = __normalize_entry_list(entry-list)
+  if entry-list == none {
+    panic("entry-list is required")
+  }
+  let entries = ()
+  if sys.version <= version(0, 11, 0) {
+    // Normalize entry-list
+    entries = __normalize_entry_list(entry-list)
 
-  // Update state
-  __update_glossary(entries)
-
-  // Groups
-  let groups = entries.map(x => x.at("group")).dedup()
+    // Update state
+    __update_glossary(entries)
+  } else {
+    context {
+      if __glossary_entries.get().len() == 0 {
+        panic(__error_message(none, __glossary_is_empty))
+      }
+    }
+  }
 
   // Glossary
   let body = []
   body += context {
+    let el = if sys.version <= version(0, 11, 0) {
+      entries
+    } else if entry-list != none {
+      __glossary_entries.get().values().filter(x => x.key in entry-list.map(x => x.key))
+    }
     user-print-glossary(
-      entries,
-      groups,
+      el,
+      el.map(x => x.at("group")).dedup(),
       show-all: show-all,
       disable-back-references: disable-back-references,
       user-print-reference: user-print-reference,
