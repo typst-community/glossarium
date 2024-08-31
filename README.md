@@ -130,6 +130,15 @@ You can also override the text displayed by setting the `display` argument.
 #gls("oidc", display: "whatever you want") 
 ```
 
+#### Shadow terms
+
+Shadow terms allow for a term being used without it being marked the first reference.
+This is very useful when your terms appear in an outline, e.g. because they are used in a figure caption.
+
+```typ
+#gls("cpu", shadow: true)
+```
+
 ## Final tips
 
 I recommend setting a show rule for the links to that your readers understand that they can click on the references to go to the term in the glossary.
@@ -138,6 +147,32 @@ I recommend setting a show rule for the links to that your readers understand th
 #show link: set text(fill: blue.darken(60%))
 // links are now blue ! 
 ```
+
+If you use a show rule to not show citations in an outline like
+
+```typ
+#show outline: it => {
+  show ref: none
+  it
+}
+```
+
+you have to change it, in order for glossary entries to still be displayed:
+
+```typ
+#show outline: it => {
+  show ref: it => {
+    // citations do not an element, every other reference has
+    if it.element != none {
+      return it
+    } else {
+      return none
+    }
+  }
+  it
+}
+```
+
 
 ## Changelog
 
