@@ -12,6 +12,9 @@
 // prefix of label for references query
 #let __glossary_label_prefix = "__gls:"
 
+// prefix of label for references query
+#let __shadow_suffix = ":__shdw"
+
 // global state containing the glossary entry and their location
 // A glossary entry is a `dictionary`.
 // See `__normalize_entry_list`.
@@ -66,18 +69,22 @@
 //
 // # Returns
 // The labels with the key
-#let __query_labels_with_key(loc, key, before: false) = {
-  if before {
-    return query(
-      selector(label(__glossary_label_prefix + key)).before(
-        loc,
-        inclusive: false,
-      ),
-      loc,
-    )
-  } else {
-    return query(selector(label(__glossary_label_prefix + key)), loc)
+#let __query_labels_with_key(loc, key, before: false, opt-suffix: none) = {
+  let std-selector-str = __glossary_label_prefix + key
+  let selectors-str = (std-selector-str,)
+  if opt-suffix != none {
+    selectors-str.push(std-selector-str + opt-suffix)
   }
+  return selectors-str
+    .map(s => label(s))
+    .map(s => {
+        if before {
+          return query(selector(s).before(loc, inclusive: false), loc)
+        } else {
+          return query(selector(s), loc)
+        }
+      })
+    .flatten()
 }
 
 // __get_entry_with_key(loc, key) -> dictionary
@@ -111,9 +118,9 @@
 //
 // # Returns
 // True if the key is the first reference to the term or long form is requested
-#let __is_first_or_long(loc, key, long: none) = {
+#let __is_first_or_long(loc, key, long: none, shadow: none) = {
   let gloss = __query_labels_with_key(loc, key, before: true)
-  return gloss == () or long == true
+  return (gloss == () and shadow == false) or long == true
 }
 
 #let __has_attribute(entry, key) = {
@@ -140,12 +147,11 @@
 //
 // # Returns
 // The link and the entry label
-#let __link_and_label(key, text, prefix: none, suffix: none) = context {
-  return [#prefix#link(
-      label(key),
-      text,
-    )#suffix#label(__glossary_label_prefix + key)]
-}
+#let __link_and_label(key, text, prefix: none, suffix: none) = (
+  context {
+    return [#prefix#link(label(key), text)#suffix#label(__glossary_label_prefix + key)]
+  }
+)
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term
@@ -158,7 +164,7 @@
 //
 // # Returns
 // The link and the entry label
-#let gls(key, suffix: none, long: none, display: none) = {
+#let gls(key, suffix: none, long: none, display: none, shadow: false) = {
   context {
     let entry = __get_entry_with_key(here(), key)
 
@@ -167,7 +173,7 @@
     let ent-short = entry.at("short", default: "")
 
     // Conditions
-    let is-first-or-long = __is_first_or_long(here(), key, long: long)
+    let is-first-or-long = __is_first_or_long(here(), key, long: long, shadow: shadow)
     let has-long = has-long(entry)
 
     // Link text
@@ -188,12 +194,16 @@
     let link-text = []
     if display != none {
       link-text += [#display]
-    } else if is-first-or-long and has-long and long != false {
+    } else if is-first-or-long and has-long and long != false  {
       link-text += [#ent-long (#ent-short#suffix)]
     } else {
       link-text += [#ent-short#suffix]
     }
 
+    if shadow {
+      return __link_and_label(entry.key + __shadow_suffix, link-text)
+    }  
+    
     return __link_and_label(entry.key, link-text)
   }
 }
@@ -208,7 +218,7 @@
 //
 // # Returns
 // The link and the entry label
-#let agls(key, suffix: none, long: none) = {
+#let agls(key, suffix: none, long: none, shadow: false) = {
   context {
     let entry = __get_entry_with_key(here(), key)
 
@@ -219,7 +229,7 @@
     let ent-artshort = entry.at("artshort", default: "a")
 
     // Conditions
-    let is-first-or-long = __is_first_or_long(here(), key, long: long)
+    let is-first-or-long = __is_first_or_long(here(), key, long: long, shadow: shadow)
     let has-long = has-long(entry)
 
     // Link text
@@ -233,6 +243,10 @@
       link-text = [#entry.short#suffix]
       article = ent-artshort
     }
+
+    if shadow {
+      return __link_and_label(entry.key + __shadow_suffix, link-text, prefix: [#article ])
+    } 
 
     // Return
     return __link_and_label(entry.key, link-text, prefix: [#article ])
@@ -248,7 +262,7 @@
 //
 // # Returns
 // The link and the entry label
-#let glspl(key, long: none) = {
+#let glspl(key, long: none, shadow: false) = {
   context {
     let default-plural-suffix = "s"
     let entry = __get_entry_with_key(here(), key)
@@ -260,7 +274,7 @@
     let ent-longplural = entry.at("longplural", default: "")
 
     // Conditions
-    let is-first-or-long = __is_first_or_long(here(), key, long: long)
+    let is-first-or-long = __is_first_or_long(here(), key, long: long, shadow: shadow)
     let has-plural = has-plural(entry)
     let has-long = has-long(entry)
     let has-longplural = has-longplural(entry)
@@ -290,6 +304,10 @@
       [#shortplural]
     }
 
+    if shadow {
+      return __link_and_label(entry.key + __shadow_suffix, link-text)
+    }
+
     return __link_and_label(entry.key, link-text)
   }
 }
@@ -303,14 +321,16 @@
 //
 // # Returns
 // The attribute of the term
-#let __gls_attribute(key, attr, link: false) = context {
-  let entry = __get_entry_with_key(here(), key)
-  if link {
-    return __link_and_label(entry.key, entry.at(attr))
-  } else {
-    return entry.at(attr)
+#let __gls_attribute(key, attr, link: false) = (
+  context {
+    let entry = __get_entry_with_key(here(), key)
+    if link {
+      return __link_and_label(entry.key, entry.at(attr))
+    } else {
+      return entry.at(attr)
+    }
   }
-}
+)
 
 // gls-key(key, link: false) -> str
 // Get the key of the term
@@ -343,11 +363,7 @@
 //
 // # Returns
 // The article of the short form
-#let gls-artshort(key, link: false) = __gls_attribute(
-  key,
-  "artshort",
-  link: link,
-)
+#let gls-artshort(key, link: false) = __gls_attribute(key, "artshort", link: link)
 
 // gls-plural(key, link: false) -> str|content
 // Get the plural form of the term
@@ -391,11 +407,7 @@
 //
 // # Returns
 // The long plural form of the term
-#let gls-longplural(key, link: false) = __gls_attribute(
-  key,
-  "longplural",
-  link: link,
-)
+#let gls-longplural(key, link: false) = __gls_attribute(key, "longplural", link: link)
 
 // gls-description(key, link: false) -> str|content
 // Get the description of the term
@@ -406,11 +418,7 @@
 //
 // # Returns
 // The description of the term
-#let gls-description(key, link: false) = __gls_attribute(
-  key,
-  "description",
-  link: link,
-)
+#let gls-description(key, link: false) = __gls_attribute(key, "description", link: link)
 
 // gls-group(key, link: false) -> str
 // Get the group of the term
@@ -438,9 +446,7 @@
   // Select all figure refs and filter by __glossarium_figure
   // Transform the ref to the glossary term
   show ref: r => {
-    if (
-      r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
-    ) {
+    if (r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure) {
       // call to the general citing function
       let key = str(r.target)
       if key.ends-with(":pl") {
@@ -492,21 +498,23 @@
 // # Returns
 // The back references as an array of links
 #let get-entry-back-references(entry) = {
-  let term-references = __query_labels_with_key(here(), entry.key)
-  return term-references.map(x => x.location()).sorted(key: x => x.page()).fold(
-    (values: (), pages: ()),
-    ((values, pages), x) => {
-      if pages.contains(x.page()) {
-        // Skip duplicate references
-        return (values: values, pages: pages)
-      } else {
-        // Add the back reference
-        values.push(x)
-        pages.push(x.page())
-        return (values: values, pages: pages)
-      }
-    },
-  ).values.map(x => {
+  let term-references = __query_labels_with_key(here(), entry.key, opt-suffix: __shadow_suffix)
+  return term-references
+    .map(x => x.location())
+    .sorted(key: x => x.page())
+    .fold((values: (), pages: ()), ((values, pages), x) => {
+        if pages.contains(x.page()) {
+          // Skip duplicate references
+          return (values: values, pages: pages)
+        } else {
+          // Add the back reference
+          values.push(x)
+          pages.push(x.page())
+          return (values: values, pages: pages)
+        }
+      })
+    .values
+    .map(x => {
     let page-numbering = x.page-numbering()
     if page-numbering == none {
       page-numbering = "1"
@@ -524,7 +532,7 @@
 // # Returns
 // The number of references to the entry
 #let count-refs(entry) = {
-  let refs = __query_labels_with_key(here(), entry.key)
+  let refs = __query_labels_with_key(here(), entry.key, opt-suffix: __shadow_suffix)
   return refs.len()
 }
 
@@ -597,31 +605,33 @@
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
-) = context {
-  let caption = []
+) = (
+  context {
+    let caption = []
 
-  if show-all == true or count-refs(entry) != 0 {
-    // Title
-    caption += user-print-title(entry)
+    if show-all == true or count-refs(entry) != 0 {
+      // Title
+      caption += user-print-title(entry)
 
-    // Description
-    if has-description(entry) {
-      // Title - Description separator
-      caption += ": "
+      // Description
+      if has-description(entry) {
+        // Title - Description separator
+        caption += ": "
 
-      caption += user-print-description(entry)
+        caption += user-print-description(entry)
+      }
+
+      // Back references
+      if disable-back-references != true {
+        caption += " "
+
+        caption += user-print-back-references(entry)
+      }
     }
 
-    // Back references
-    if disable-back-references != true {
-      caption += " "
-
-      caption += user-print-back-references(entry)
-    }
+    return caption
   }
-
-  return caption
-}
+)
 
 // default-print-reference(
 //  entry,
@@ -653,10 +663,7 @@
 ) = {
   return [
     #show figure.where(kind: __glossarium_figure): it => it.caption
-    #par(
-      hanging-indent: 1em,
-      first-line-indent: 0em,
-    )[
+    #par(hanging-indent: 1em, first-line-indent: 0em)[
       #figure(
         supplement: "",
         kind: __glossarium_figure,
@@ -671,10 +678,9 @@
         ),
       )[]#label(entry.key)
       // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
-      #figure(
-        kind: __glossarium_figure,
-        supplement: "",
-      )[] #label(entry.key + ":pl")
+      #figure(kind: __glossarium_figure, supplement: "")[] #label(entry.key + ":pl")
+      // The line below adds a ref for shadow entries, e.g., "@term:__shadow"
+      #figure(kind: __glossarium_figure, supplement: "")[] #label(entry.key + __shadow_suffix)
     ]
     #parbreak()
   ]
@@ -736,16 +742,13 @@
     let group-entries = entries.filter(x => x.at("group") == group)
     let group-ref-counts = group-entries.map(count-refs)
 
-    let print-group = (
-      group != "" and (show-all == true or group-ref-counts.any(x => x > 0))
-    )
+    let print-group = (group != "" and (show-all == true or group-ref-counts.any(x => x > 0)))
 
     // Only print group name if any entries are referenced
     if print-group {
       body += [#heading(group, level: group-heading-level)]
     }
     for entry in group-entries.sorted(key: x => x.key) {
-
       body += user-print-reference(
         entry,
         show-all: show-all,
@@ -756,7 +759,6 @@
         user-print-back-references: user-print-back-references,
       )
     }
-
 
     body += user-group-break()
   }
