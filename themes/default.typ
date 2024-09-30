@@ -717,6 +717,8 @@
   entries,
   groups,
   show-all: false,
+  group-heading-level: none,
+  num-columns: 1,
   disable-back-references: false,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
@@ -726,10 +728,13 @@
   user-print-back-references: default-print-back-references,
 ) = {
   let body = []
-  let previous-headings = query(selector(heading).before(here()))
-  let group-heading-level = 1
-  if previous-headings.len() != 0 {
-    group-heading-level = previous-headings.last().level
+  if group-heading-level == none {
+    let previous-headings = query(selector(heading).before(here()))
+    group-heading-level = if previous-headings.len() != 0 {
+      previous-headings.last().level
+    } else {
+      1
+    }
   }
   for group in groups.sorted() {
     let group-entries = entries.filter(x => x.at("group") == group)
@@ -760,7 +765,7 @@
     body += user-group-break()
   }
 
-  return body
+  return columns(num-columns, body)
 }
 
 //  __update_glossary(entries) -> none
@@ -813,6 +818,8 @@
 #let print-glossary(
   entry-list,
   show-all: false,
+  group-heading-level: none,
+  num-columns: 1,
   disable-back-references: false,
   user-print-glossary: default-print-glossary,
   user-print-reference: default-print-reference,
@@ -838,6 +845,8 @@
       entries,
       groups,
       show-all: show-all,
+      group-heading-level: group-heading-level,
+      num-columns: num-columns,
       disable-back-references: disable-back-references,
       user-print-reference: user-print-reference,
       user-group-break: user-group-break,
