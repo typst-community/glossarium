@@ -73,10 +73,9 @@
         loc,
         inclusive: false,
       ),
-      loc,
     )
   } else {
-    return query(selector(label(__glossary_label_prefix + key)), loc)
+    return query(selector(label(__glossary_label_prefix + key)))
   }
 }
 
@@ -93,7 +92,7 @@
 // # Panics
 // If the key is not found, it will raise a `key_not_found` error
 #let __get_entry_with_key(loc, key) = {
-  let entries = __glossary_entries.final(loc)
+  let entries = __glossary_entries.final()
   if key in entries {
     return entries.at(key)
   } else {
