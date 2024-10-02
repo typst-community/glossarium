@@ -488,7 +488,7 @@
   for entry in entry-list {
     new-list.push((
       key: entry.key,
-      short: entry.short.at("short", default: ""),
+      short: entry.at("short", default: ""),
       artshort: entry.at("artshort", default: "a"),
       plural: entry.at("plural", default: ""),
       long: entry.at("long", default: ""),
