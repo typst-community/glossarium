@@ -458,11 +458,7 @@
   // Select all figure refs and filter by __glossarium_figure
   // Transform the ref to the glossary term
   show ref: r => {
-    if (
-      r.element != none and r.element.func() == figure and r
-        .element
-        .kind == __glossarium_figure
-    ) {
+    if (r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure) {
       // call to the general citing function
       let key = str(r.target)
       if key.ends-with(":pl") {
@@ -492,7 +488,7 @@
   for entry in entry-list {
     new-list.push((
       key: entry.key,
-      short: entry.short,
+      short: entry.short.at("short", default: ""),
       artshort: entry.at("artshort", default: "a"),
       plural: entry.at("plural", default: ""),
       long: entry.at("long", default: ""),
@@ -764,9 +760,7 @@
     let group-entries = entries.filter(x => x.at("group") == group)
     let group-ref-counts = group-entries.map(count-refs)
 
-    let print-group = (
-      group != "" and (show-all == true or group-ref-counts.any(x => x > 0))
-    )
+    let print-group = (group != "" and (show-all == true or group-ref-counts.any(x => x > 0)))
 
     // Only print group name if any entries are referenced
     if print-group {
@@ -889,9 +883,7 @@
     let el = if sys.version <= version(0, 11, 1) {
       entries
     } else if entry-list != none {
-      __glossary_entries.get().values().filter(x => (
-        x.key in entry-list.map(x => x.key)
-      ))
+      __glossary_entries.get().values().filter(x => (x.key in entry-list.map(x => x.key)))
     }
     user-print-glossary(
       el,
