@@ -1,0 +1,9 @@
+[ver:1,total:900]
+.gtm/terminal.app:472,1727863200:472,r
+themes/default.typ:232,1727863200:232,m
+tests/benchmark-569cb5d.md:74,1727863200:74,d
+tests/benchmark-f55d66d.md:54,1727863200:54,d
+tests/debug/debug.typ:24,1727863200:24,r
+tests/non-regression/only-one-empty-group.typ:20,1727863200:20,m
+advanced-docs/main.typ:12,1727863200:12,r
+tests/debug/debug.pdf:12,1727863200:12,m
