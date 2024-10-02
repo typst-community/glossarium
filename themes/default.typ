@@ -126,11 +126,11 @@
   let attr = entry.at(key, default: "")
   return attr != "" and attr != []
 }
+#let has-short(entry) = __has_attribute(entry, "short")
 #let has-long(entry) = __has_attribute(entry, "long")
 #let has-artshort(entry) = __has_attribute(entry, "artshort")
-#let has-plural(entry) = __has_attribute(entry, "plural")
-#let has-long(entry) = __has_attribute(entry, "long")
 #let has-artlong(entry) = __has_attribute(entry, "artlong")
+#let has-plural(entry) = __has_attribute(entry, "plural")
 #let has-longplural(entry) = __has_attribute(entry, "longplural")
 #let has-description(entry) = __has_attribute(entry, "description")
 #let has-group(entry) = __has_attribute(entry, "group")
@@ -229,6 +229,7 @@
     // Conditions
     let is-first-or-long = __is_first_or_long(here(), key, long: long)
     let has-long = has-long(entry)
+    let has-short = has-short(entry)
 
     // Link text
     let link-text = none
@@ -272,6 +273,7 @@
 
     // Conditions
     let is-first-or-long = __is_first_or_long(here(), key, long: long)
+    let has-short = has-short(entry)
     let has-plural = has-plural(entry)
     let has-long = has-long(entry)
     let has-longplural = has-longplural(entry)
@@ -456,7 +458,11 @@
   // Select all figure refs and filter by __glossarium_figure
   // Transform the ref to the glossary term
   show ref: r => {
-    if (r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure) {
+    if (
+      r.element != none and r.element.func() == figure and r
+        .element
+        .kind == __glossarium_figure
+    ) {
       // call to the general citing function
       let key = str(r.target)
       if key.ends-with(":pl") {
@@ -758,7 +764,9 @@
     let group-entries = entries.filter(x => x.at("group") == group)
     let group-ref-counts = group-entries.map(count-refs)
 
-    let print-group = (group != "" and (show-all == true or group-ref-counts.any(x => x > 0)))
+    let print-group = (
+      group != "" and (show-all == true or group-ref-counts.any(x => x > 0))
+    )
 
     // Only print group name if any entries are referenced
     if print-group {
@@ -881,7 +889,9 @@
     let el = if sys.version <= version(0, 11, 1) {
       entries
     } else if entry-list != none {
-      __glossary_entries.get().values().filter(x => x.key in entry-list.map(x => x.key))
+      __glossary_entries.get().values().filter(x => (
+        x.key in entry-list.map(x => x.key)
+      ))
     }
     user-print-glossary(
       el,

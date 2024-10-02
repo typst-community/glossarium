@@ -4,7 +4,7 @@
     // (
     //   key: "key",
     //   short: "111111",
-    //   group: "vvv"
+      // group: "vvv"
     // ),
     (
       key: "key2",
