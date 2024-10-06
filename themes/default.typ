@@ -26,7 +26,7 @@
 // Errors types
 #let __key_not_found = "key_not_found"
 #let __attribute_is_empty = "attribute_is_empty"
-#let __glossary_is_empty = "__glossary_is_empty"
+#let __glossary_is_empty = "glossary_is_empty"
 #let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
 #let __unknown_error = "unknown_error"
 
@@ -854,7 +854,7 @@
 // print-glossary(entry-list)
 // ```
 #let print-glossary(
-  entry-list, // TODO: deprecate in v0.12.0
+  entry-list,
   show-all: false,
   disable-back-references: false,
   user-print-glossary: default-print-glossary,

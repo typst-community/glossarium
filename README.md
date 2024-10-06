@@ -180,8 +180,10 @@ I recommend setting a show rule for the links to that your readers understand th
 >  )
 > ```
 
-> [
+> [!NOTE] Deprecate `location` argument in queries
 
+> [!TIP] `short` is no longer **required**, but **semi-optional**.
+> Accept `short` or `long` for an entry, but not neither.
 
 ### 0.4.1
 
