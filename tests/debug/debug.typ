@@ -81,11 +81,30 @@
     group: "G",
   ),
 )
+#let entry-list-4 = (
+  (
+    key: "potato H",
+    short: "potato@H",
+    description: [This potato only has a short key.],
+  ),
+  (
+    key: "potato I",
+    long: "long potato@I",
+    description: [This potato only has a long key.],
+  ),
+)
+#let entry-list-5 = (
+  (
+    key: "potato J",
+    description: [This potato has neither a short nor a long key.],
+  ),
+)
 #for entries in (
   entry-list-0,
   entry-list-1,
   entry-list-2,
   entry-list-3,
+  entry-list-4,
 ) {
   register-glossary(entries)
 }
@@ -242,6 +261,18 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
   == Test `#print-glossary(none)` error
 
   // #print-glossary(none)
+
+  == Test only short/long
+
+  #print-glossary(
+    entry-list-4,
+    show-all: true,
+    disable-back-references: true,
+  )
+
+  == Test neither short nor long error
+
+  // #register-glossary(entry-list-5)
 
   == `#default-print-reference.with(show-all: true)`
 

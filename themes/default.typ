@@ -27,6 +27,7 @@
 #let __key_not_found = "key_not_found"
 #let __attribute_is_empty = "attribute_is_empty"
 #let __glossary_is_empty = "__glossary_is_empty"
+#let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -49,6 +50,8 @@
   } else if kind == __attribute_is_empty {
     let attr = kwargs.at("attr")
     msg = "requested attribute " + attr + "is empty for key '" + key + "'"
+  } else if kind == __entry_has_neither_short_nor_long {
+    msg = "entry '" + key + "' has neither short nor long form"
   } else if kind == __glossary_is_empty {
     msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
   } else {
@@ -486,6 +489,9 @@
 #let __normalize_entry_list(entry-list) = {
   let new-list = ()
   for entry in entry-list {
+    if not has-short(entry) and not has-long(entry) {
+      panic(__error_message(entry.key, __entry_has_neither_short_nor_long))
+    }
     new-list.push((
       key: entry.key,
       short: entry.at("short", default: ""),
