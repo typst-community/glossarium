@@ -8,10 +8,19 @@ description = "Glossarium is a simple, easily customizable typst glossary."
 repository = "https://github.com/typst-community/glossarium"
 exclude = [
     "tbump.toml",
-    "examples/*",
     "makefile",
+    "flake.nix",
+    "flake.lock",
+    "justfile",
+    "examples",
+    "package.sh",
     "tests",
-    ".gitignore",
-    ".github/*",
+    "advanced-docs",
+    "docs",
+    ".github",
     ".vscode",
+    ".gtm",
+    ".git",
+    ".gitignore",
+    "**/*.pdf",
 ]
