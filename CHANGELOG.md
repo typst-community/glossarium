@@ -4,7 +4,8 @@
 
 ## 0.4.2
 
-> [!TIP] For Typst v0.12.0 and later
+> [!TIP]
+> For Typst v0.12.0 and later
 > A new function is introduced `register-glossary`.
 > Recommended usage is the following:
 > ```diff
@@ -21,9 +22,11 @@
 >  )
 > ```
 
-> [!NOTE] Deprecate `location` argument in queries
+> [!NOTE]
+> Deprecate `location` argument in queries
 
-> [!TIP] `short` is no longer **required**, but **semi-optional**.
+> [!TIP]
+> `short` is no longer **required**, but **semi-optional**.
 > Accept `short` or `long` for an entry, but not neither.
 
 ## 0.4.1
