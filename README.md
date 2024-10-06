@@ -12,7 +12,7 @@ Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX gl
 ## Fast start
 
 ```typ
-#import "@preview/glossarium:0.4.0": make-glossary, register-glossary, print-glossary, gls, glspl
+#import "@preview/glossarium:0.4.2": make-glossary, register-glossary, print-glossary, gls, glspl
 #show: make-glossary
 #let entry-list = (
   (
@@ -40,7 +40,7 @@ This manual assume you have a good enough understanding of typst markup and scri
 For Typst 0.6.0 or later import the package from the typst preview repository:
 
 ```typ
-#import "@preview/glossarium:0.4.0": make-glossary, register-glossary, print-glossary, gls, glspl
+#import "@preview/glossarium:0.4.2": make-glossary, register-glossary, print-glossary, gls, glspl
 ```
 
 For Typst before 0.6.0 or to use **glossarium** as a local module, download the package files into your project folder and import `glossarium.typ`:
