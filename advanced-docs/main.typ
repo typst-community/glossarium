@@ -87,7 +87,7 @@ This section shows how to change the default behaviour of `glossarium` by
 implementing user functions. It is recommended to keep to the user available
 interface and not to change the default behaviour of the package. If you have
 any suggestions or need help, please open an issue on the
-#link("https://github.com/ENIB-Community/glossarium")[GitHub repository].
+#link("https://github.com/typst-community/glossarium")[GitHub repository].
 
 There are effectively two requirements for a user to use `glossarium`:
 + Write a #typc("show: make-glossary") rule to transform all

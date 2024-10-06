@@ -1,4 +1,4 @@
-// EXAMPLE MADE BY Philipp Jungkamp (https://github.com/PJungkamp) in issue: https://github.com/ENIB-Community/glossarium/issues/15
+// EXAMPLE MADE BY Philipp Jungkamp (https://github.com/PJungkamp) in issue: https://github.com/typst-community/glossarium/issues/15
 
 // The glossary command here is modeled after the bibliography command and accepts similar arguments.
 
