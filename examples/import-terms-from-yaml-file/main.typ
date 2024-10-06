@@ -5,66 +5,65 @@
 #import "../../glossarium.typ": *
 // Replace the local import with a import to the preview namespace.
 // If you don't know what that mean, please go read typst documentation on how to import packages at https://typst.app/docs/packages/.
+#let read-glossary-entries(file) = {
+  let entries = yaml(file)
 
-#let glossary(files, title: "Glossary", full: false) = {
-  let read-glossary-entries(file) = {
-    let entries = yaml(file)
+  assert(
+    type(entries) == dictionary,
+    message: "The glossary at `" + file + "` is not a dictionary",
+  )
 
+  for (k, v) in entries.pairs() {
     assert(
-      type(entries) == dictionary,
-      message: "The glossary at `" + file + "` is not a dictionary",
+      type(v) == dictionary,
+      message: "The glossary entry `" + k + "` in `" + file + "` is not a dictionary",
     )
 
-    for (k, v) in entries.pairs() {
+    for key in v.keys() {
       assert(
-        type(v) == dictionary,
-        message: "The glossary entry `" + k + "` in `" + file + "` is not a dictionary",
+        key in ("short", "long", "description", "group"),
+        message: "Found unexpected key `" + key + "` in glossary entry `" + k + "` in `" + file + "`",
       )
-
-      for key in v.keys() {
-        assert(
-          key in ("short", "long", "description", "group"),
-          message: "Found unexpected key `" + key + "` in glossary entry `" + k + "` in `" + file + "`",
-        )
-      }
-
-      assert(
-        type(v.short) == str,
-        message: "The short form of glossary entry `" + k + "` in `" + file + "` is not a string",
-      )
-
-      if "long" in v {
-        assert(
-          type(v.long) == str,
-          message: "The long form of glossary entry `" + k + "` in `" + file + "` is not a string",
-        )
-      }
-
-      if "description" in v {
-        assert(
-          type(v.description) == str,
-          message: "The description of glossary entry `" + k + "` in `" + file + "` is not a string",
-        )
-      }
-
-      if "group" in v {
-        assert(
-          type(v.group) == str,
-          message: "The optional group of glossary entry `" + k + "` in `" + file + "` is not a string",
-        )
-      }
     }
 
-    return entries.pairs().map(((key, entry)) => (
-      key: key,
-      short: eval(entry.short, mode: "markup"),
-      long: eval(entry.at("long", default: ""), mode: "markup"),
-      description: eval(entry.at("description", default: ""), mode: "markup"),
-      group: entry.at("group", default: ""),
-      file: file,
-    ))
+    assert(
+      type(v.short) == str,
+      message: "The short form of glossary entry `" + k + "` in `" + file + "` is not a string",
+    )
+
+    if "long" in v {
+      assert(
+        type(v.long) == str,
+        message: "The long form of glossary entry `" + k + "` in `" + file + "` is not a string",
+      )
+    }
+
+    if "description" in v {
+      assert(
+        type(v.description) == str,
+        message: "The description of glossary entry `" + k + "` in `" + file + "` is not a string",
+      )
+    }
+
+    if "group" in v {
+      assert(
+        type(v.group) == str,
+        message: "The optional group of glossary entry `" + k + "` in `" + file + "` is not a string",
+      )
+    }
   }
 
+  return entries.pairs().map(((key, entry)) => (
+    key: key,
+    short: eval(entry.at("short", default: ""), mode: "markup"),
+    long: eval(entry.at("long", default: ""), mode: "markup"),
+    description: eval(entry.at("description", default: ""), mode: "markup"),
+    group: entry.at("group", default: ""),
+    file: file,
+  ))
+}
+
+#let read-glossary(files) = {
   let entries = ()
 
   if type(files) != array {
@@ -84,18 +83,20 @@
     entries += new
   }
 
-  [= #title]
-  register-glossary(entries)
-  print-glossary(entries, show-all: full)
+  return entries
 }
 
 #set page(paper: "a5")
 
 #show: make-glossary
+#let entries = read-glossary("glossary.yml")
+#register-glossary(entries)
 
 = Test Document
 
 Reference to @ntc \
 Reference to @bor
 
-#glossary("glossary.yml")
+= Glossary
+
+#print-glossary(entries, show-all: false)

@@ -50,7 +50,7 @@
     let attr = kwargs.at("attr")
     msg = "requested attribute " + attr + "is empty for key '" + key + "'"
   } else if kind == __glossary_is_empty {
-    msg = "glossary is empty. Register entries using `register-glossary(entry-list)`."
+    msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
   } else {
     msg = "unknown error"
   }

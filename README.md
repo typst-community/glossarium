@@ -1,23 +1,5 @@
 # Typst glossary
 
-> [!WARNING] For Typst v0.11.0 and later
-> Due to changes in the `typst` compiler (`context`), a new function is needed, i.e., `register-glossary`.
-> Recommended usage is the following:
-> ```diff
->  #import "@preview/glossarium:0.4.0": make-glossary, register-glossary, print-glossary, gls, glspl
->  #show: make-glossary
-> + #let entry-list = (...)
-> + #register-glossary(entry-list)
-> ... // Your document body
->  #print-glossary(
-> - (
-> -   ...
-> - )
-> +  entry-list
->  )
-> ```
-
-
 > Glossarium is based in great part of the work of [Sébastien d'Herbais de Thun](https://github.com/Dherse) from his master thesis available at: <https://github.com/Dherse/masterproef>. His glossary is available under the MIT license [here](https://github.com/Dherse/masterproef/blob/main/elems/acronyms.typ).
 
 Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX glossaries package](https://www.ctan.org/pkg/glossaries) . You can see various examples showcasing the different features in the `examples` folder.
@@ -176,6 +158,26 @@ I recommend setting a show rule for the links to that your readers understand th
 ## Changelog
 
 ### Unreleased
+
+### 0.4.2
+
+> [!TIP] For Typst v0.12.0 and later
+> A new function is introduced `register-glossary`.
+> Recommended usage is the following:
+> ```diff
+>  #import "@preview/glossarium:0.4.0": make-glossary, register-glossary, print-glossary, gls, glspl
+>  #show: make-glossary
+> + #let entry-list = (...)
+> + #register-glossary(entry-list)
+> ... // Your document body
+>  #print-glossary(
+> - (
+> -   ...
+> - )
+> +  entry-list
+>  )
+> ```
+
 
 ### 0.4.1
 
