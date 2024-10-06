@@ -1,4 +1,4 @@
-#import "../glossarium.typ": *
+#import "../themes/default.typ": *
 
 #show: make-glossary
 #set page(paper: "a4")
@@ -64,6 +64,7 @@
     group: "Countries",
   ),
 )
+#register-glossary(entry-list)
 #let entries = __normalize_entry_list(entry-list)
 #let groups = entries.map(x => x.at("group")).dedup()
 

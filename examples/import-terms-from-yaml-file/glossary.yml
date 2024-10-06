@@ -3,7 +3,7 @@
 ntc:
   short: NTC
   long: Nonlinear Transform Coding
-  description: | 
+  description: |
     This is the opposite of @ltc.
   group: Nonlinear
 
@@ -15,5 +15,5 @@ ltc:
   group: Linear
 
 bor:
-  short: DEF 
-  long: Default 
+  short: DEF
+  long: Default
