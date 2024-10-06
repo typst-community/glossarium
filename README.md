@@ -1,5 +1,6 @@
 # Typst glossary
 
+> [!TIP] Acknowledgements
 > Glossarium is based in great part of the work of [Sébastien d'Herbais de Thun](https://github.com/Dherse) from his master thesis available at: <https://github.com/Dherse/masterproef>. His glossary is available under the MIT license [here](https://github.com/Dherse/masterproef/blob/main/elems/acronyms.typ).
 
 Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX glossaries package](https://www.ctan.org/pkg/glossaries) . You can see various examples showcasing the different features in the `examples` folder.
@@ -8,6 +9,30 @@ Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX gl
 
 ## Manual
 
+## Fast start
+
+```typ
+#import "@preview/glossarium:0.4.0": make-glossary, register-glossary, print-glossary, gls, glspl
+#show: make-glossary
+#let entry-list = (
+  (
+    key: "kuleuven",
+    short: "KU Leuven"
+    long: "Katholieke Universiteit Leuven"
+    description: "A university in Belgium."
+  ),
+  ...
+)
+#register-glossary(entry-list)
+.. // Your document body
+#print-glossary(
+(
+  ...
+)
+ entry-list
+)
+```
+
 ### Import and setup
 
 This manual assume you have a good enough understanding of typst markup and scripting.
@@ -15,13 +40,13 @@ This manual assume you have a good enough understanding of typst markup and scri
 For Typst 0.6.0 or later import the package from the typst preview repository:
 
 ```typ
-#import "@preview/glossarium:0.4.0": make-glossary, print-glossary, gls, glspl
+#import "@preview/glossarium:0.4.0": make-glossary, register-glossary, print-glossary, gls, glspl
 ```
 
 For Typst before 0.6.0 or to use **glossarium** as a local module, download the package files into your project folder and import `glossarium.typ`:
 
 ```typ
-#import "glossarium.typ": make-glossary, print-glossary, gls, glspl
+#import "glossarium.typ": make-glossary, register-glossary, print-glossary, gls, glspl
 ```
 
 After importing the package and before making any calls to `gls`,` print-glossary` or `glspl`, please ***MAKE SURE*** you add this line
