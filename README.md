@@ -21,14 +21,11 @@ Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX gl
     long: "Katholieke Universiteit Leuven"
     description: "A university in Belgium."
   ),
-  ...
+  // Add more terms
 )
 #register-glossary(entry-list)
-.. // Your document body
+// Your document body
 #print-glossary(
-(
-  ...
-)
  entry-list
 )
 ```
