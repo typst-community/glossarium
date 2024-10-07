@@ -593,8 +593,10 @@
   let caption = []
   let txt = text.with(weight: 600)
 
-  if has-long(entry) {
+  if has-long(entry) and has-short(entry) {
     caption += txt(emph(entry.short) + [ -- ] + entry.long)
+  } else if has-long(entry) {
+    caption += txt(entry.long)
   } else {
     caption += txt(emph(entry.short))
   }
