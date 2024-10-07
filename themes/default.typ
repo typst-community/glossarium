@@ -683,6 +683,7 @@
   user-print-back-references: default-print-back-references,
 ) = {
   return [
+    #show figure.caption.where(kind: __glossarium_figure): align.with(left)
     #show figure.where(kind: __glossarium_figure): it => it.caption
     #par(
       hanging-indent: 1em,
