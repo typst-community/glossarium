@@ -683,8 +683,11 @@
   user-print-back-references: default-print-back-references,
 ) = {
   return [
-    #show figure.caption.where(kind: __glossarium_figure): align.with(left)
-    #show figure.where(kind: __glossarium_figure): it => it.caption
+    #show figure.where(kind: __glossarium_figure): it => if sys.version >= version(0, 12, 0) {
+      align(start, it.caption)
+    } else {
+      it.caption
+    }
     #par(
       hanging-indent: 1em,
       first-line-indent: 0em,
