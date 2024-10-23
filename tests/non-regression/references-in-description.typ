@@ -10,7 +10,7 @@
   (key: "d", short: "d", long: "D", desc: [test d @e]),
   (key: "e", short: "e", long: "E", desc: [test e]),
 )
-// #register-glossary(glossary-terms)
+#register-glossary(glossary-terms)
 
 @a
 
