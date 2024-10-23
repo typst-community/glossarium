@@ -180,6 +180,7 @@
     // Conditions
     let is-first-or-long = __is_first_or_long(here(), key, long: long)
     let has-long = has-long(entry)
+    let has-short = has-short(entry)
 
     // Link text
     // 1. If `display` attribute is provided, use it
@@ -200,7 +201,11 @@
     if display != none {
       link-text += [#display]
     } else if is-first-or-long and has-long and long != false {
-      link-text += [#ent-long (#ent-short#suffix)]
+      if has-short {
+        link-text += [#ent-long (#ent-short#suffix)]
+      } else {
+        link-text += [#ent-long]
+      }
     } else {
       link-text += [#ent-short#suffix]
     }
@@ -238,14 +243,18 @@
     let link-text = none
     let article = none
     if is-first-or-long and has-long and long != false {
-      link-text = [#ent-long (#ent-short#suffix)]
+      if has-short {
+        link-text += [#ent-long (#ent-short#suffix)]
+      } else {
+        link-text += [#ent-long]
+      }
       article = ent-artlong
-    } else if has-short {
-      // Default to short
-      link-text += [#ent-short#suffix]
+    } else if has-long {
+      link-text += [#ent-long#suffix]
+      article = ent-artlong
     } else {
       // Default to short
-      link-text = [#entry.short#suffix]
+      link-text = [#ent-short#suffix]
       article = ent-artshort
     }
 
@@ -301,11 +310,15 @@
 
     // Link text
     let link-text = if is-first-or-long and has-long and long != false {
-      [#longplural (#shortplural)]
-    } else if has-short {
-      // Default to short
-      [#shortplural]
+      if has-short {
+        [#longplural (#shortplural)]
+      } else {
+        [#longplural]
+      }
+    } else if has-long {
+      [#longplural]
     } else {
+      // Default to short
       [#shortplural]
     }
 
