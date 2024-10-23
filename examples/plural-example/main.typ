@@ -6,9 +6,9 @@
 #let entry-list = (
   (
       key: "potato",
-      short: "potato",
+      long: "potato",
       // "plural" will be used when "short" should be pluralized
-      plural: "potatoes",
+      longplural: "potatoes",
       description: [#lorem(10)],
     ),
   (
@@ -27,7 +27,7 @@
   ),
   (
     key: "buffer",
-    short: "buffer",
+    long: "buffer",
     description: "A place to store stuff",
   ),
 )

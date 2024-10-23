@@ -270,6 +270,18 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
     disable-back-references: true,
   )
 
+  #gls("potato I")
+
+  #glspl("potato I")
+
+  #agls("potato I")
+
+  #gls("potato H")
+
+  #agls("potato H")
+
+  #glspl("potato H")
+
   == Test neither short nor long error
 
   // #register-glossary(entry-list-5)
