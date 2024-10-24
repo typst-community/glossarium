@@ -17,9 +17,9 @@ Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX gl
 #let entry-list = (
   (
     key: "kuleuven",
-    short: "KU Leuven"
-    long: "Katholieke Universiteit Leuven"
-    description: "A university in Belgium."
+    short: "KU Leuven",
+    long: "Katholieke Universiteit Leuven",
+    description: "A university in Belgium.",
   ),
   // Add more terms
 )
