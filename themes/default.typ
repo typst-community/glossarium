@@ -471,6 +471,12 @@
 // #show: make-glossary
 // ```
 #let make-glossary(body) = {
+  // Fix figure caption alignement
+  show figure.where(kind: __glossarium_figure): it => if sys.version >= version(0, 12, 0) {
+    align(start, it.caption)
+  } else {
+    it.caption
+  }
   // Select all figure refs and filter by __glossarium_figure
   // Transform the ref to the glossary term
   show ref: r => {
@@ -696,11 +702,6 @@
   user-print-back-references: default-print-back-references,
 ) = {
   return [
-    #show figure.where(kind: __glossarium_figure): it => if sys.version >= version(0, 12, 0) {
-      align(start, it.caption)
-    } else {
-      it.caption
-    }
     #par(
       hanging-indent: 1em,
       first-line-indent: 0em,
