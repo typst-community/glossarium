@@ -249,13 +249,13 @@
         link-text += [#ent-long]
       }
       article = ent-artlong
-    } else if has-long {
-      link-text += [#ent-long#suffix]
-      article = ent-artlong
-    } else {
+    } else if has-short {
       // Default to short
       link-text = [#ent-short#suffix]
       article = ent-artshort
+    } else {
+      link-text += [#ent-long#suffix]
+      article = ent-artlong
     }
 
     // Return
@@ -315,11 +315,11 @@
       } else {
         [#longplural]
       }
-    } else if has-long {
-      [#longplural]
-    } else {
+    } else if has-short {
       // Default to short
       [#shortplural]
+    } else {
+      [#longplural]
     }
 
     return __link_and_label(entry.key, link-text)
