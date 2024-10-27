@@ -216,6 +216,28 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
 
 #gls-group("potato D")
 
+== #count-refs
+
+#context count-refs((key: "potato D"))
+
+== #count-all-refs
+
+All refs: #context count-all-refs()
+
+Only list 4: #context count-all-refs(entry-list: entry-list-4)
+
+== #there-are-refs
+
+true: #context there-are-refs()
+
+false: #context there-are-refs(groups: (" ",))
+
+#context if there-are-refs(entry-list: ((key: "potato A"),)) [
+  There are refs to potato A in the document.
+] else [
+  There are no refs to potato A in the document.
+]
+
 == test `__attribute_is_empty` error
 
 // #gls-long("potato A")
