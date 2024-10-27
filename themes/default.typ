@@ -870,6 +870,7 @@
 //  groups (array<str>): the list of groups to be displayed. `""` is the default group.
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
+//  group-heading-level (int): force the level of the group heading
 //  ...
 //
 // # Warnings
