@@ -497,11 +497,11 @@
   body
 }
 
-// __normalize_entry_list(entry-list) -> list<dictionary>
+// __normalize_entry_list(entry-list) -> array<dictionary>
 // Add default values to each entry.
 //
 // # Arguments
-//  entry-list (list<dictionary>): the list of entries
+//  entry-list (array<dictionary>): the list of entries
 //
 // # Returns
 // The normalized entry list
@@ -585,7 +585,7 @@
 // Return the number of references for each entry in the document
 
 // # Arguments
-// entry-list (list<dictionary>): the list of entries. Defaults to all entries
+// entry-list (array<dictionary>): the list of entries. Defaults to all entries
 // groups (array<str>): the list of groups to be considered. `""` is the default group.
 //
 // # Returns
@@ -617,7 +617,7 @@
 // Check if there are references to the entries in the document
 //
 // # Arguments
-// entry-list (list<dictionary>): the list of entries. Defaults to all entries
+// entry-list (array<dictionary>): the list of entries. Defaults to all entries
 // groups (array<str>): the list of groups to be considered. `""` is the default group.
 //
 // # Returns
@@ -937,7 +937,7 @@
 // Print the glossary
 //
 // # Arguments
-//  entry-list (list<dictionary>): the list of entries
+//  entry-list (array<dictionary>): the list of entries
 //  groups (array<str>): the list of groups to be displayed. `""` is the default group.
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
