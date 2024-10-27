@@ -626,6 +626,7 @@
 //  entry,
 //  show-all: false,
 //  disable-back-references: false,
+//  minimum-refs: 1,
 //  user-print-title: default-print-title,
 //  user-print-description: default-print-description,
 //  user-print-back-references: default-print-back-references,
@@ -636,6 +637,7 @@
 //  entry (dictionary): the entry
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
+//  minimum-refs (int): minimum number of references to show the entry
 //  ...
 //
 // # Returns
@@ -644,6 +646,7 @@
   entry,
   show-all: false,
   disable-back-references: false,
+  minimum-refs: 1,
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
@@ -651,7 +654,7 @@
   context {
     let caption = []
 
-    if show-all == true or count-refs(entry) != 0 {
+    if show-all == true or count-refs(entry) >= minimum-refs {
       // Title
       caption += user-print-title(entry)
 
@@ -677,6 +680,7 @@
 //  entry,
 //  show-all: false,
 //  disable-back-references: false,
+//  minimum-refs: 1,
 //  user-print-gloss: default-print-gloss,
 //  user-print-title: default-print-title,
 //  user-print-description: default-print-description,
@@ -688,6 +692,7 @@
 //  entry (dictionary): the entry
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
+//  minimum-refs (int): minimum number of references to show the entry
 //  ..;
 //
 // # Returns
@@ -696,6 +701,7 @@
   entry,
   show-all: false,
   disable-back-references: false,
+  minimum-refs: 1,
   user-print-gloss: default-print-gloss,
   user-print-title: default-print-title,
   user-print-description: default-print-description,
@@ -714,6 +720,7 @@
           entry,
           show-all: show-all,
           disable-back-references: disable-back-references,
+          minimum-refs: minimum-refs,
           user-print-title: user-print-title,
           user-print-description: user-print-description,
           user-print-back-references: user-print-back-references,
@@ -742,6 +749,7 @@
 //  show-all: false,
 //  disable-back-references: false,
 //  group-heading-level: none,
+//  minimum-refs: 1,
 //  user-print-reference: default-print-reference
 //  user-group-break: default-group-break,
 //  user-print-gloss: default-print-gloss,
@@ -757,6 +765,7 @@
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
 //  group-heading-level (int): force the level of the group heading
+//  minimum-refs (int): minimum number of references to show the entry
 //  ...
 //
 // # Warnings
@@ -772,6 +781,7 @@
   show-all: false,
   disable-back-references: false,
   group-heading-level: none,
+  minimum-refs: 1,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
   user-print-gloss: default-print-gloss,
@@ -792,7 +802,7 @@
     let group-entries = entries.filter(x => x.at("group") == group)
     let group-ref-counts = group-entries.map(count-refs)
 
-    let print-group = (group != "" and (show-all == true or group-ref-counts.any(x => x > 0)))
+    let print-group = (group != "" and (show-all == true or group-ref-counts.any(x => x >= minimum-refs)))
 
     // Only print group name if any entries are referenced
     if print-group {
@@ -804,6 +814,7 @@
         entry,
         show-all: show-all,
         disable-back-references: disable-back-references,
+        minimum-refs: minimum-refs,
         user-print-gloss: user-print-gloss,
         user-print-title: user-print-title,
         user-print-description: user-print-description,
@@ -855,6 +866,7 @@
 //  show-all: false,
 //  disable-back-references: false,
 //  group-heading-level: none,
+//  minimum-refs: 1,
 //  user-print-glossary: default-print-glossary,
 //  user-print-reference: default-print-reference,
 //  user-group-break: default-group-break,
@@ -871,6 +883,7 @@
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
 //  group-heading-level (int): force the level of the group heading
+//  minimum-refs (int): minimum number of references to show the entry
 //  ...
 //
 // # Warnings
@@ -889,6 +902,7 @@
   show-all: false,
   disable-back-references: false,
   group-heading-level: none,
+  minimum-refs: 1,
   user-print-glossary: default-print-glossary,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
@@ -940,6 +954,7 @@
       show-all: show-all,
       disable-back-references: disable-back-references,
       group-heading-level: group-heading-level,
+      minimum-refs: minimum-refs,
       user-print-reference: user-print-reference,
       user-group-break: user-group-break,
       user-print-gloss: user-print-gloss,
