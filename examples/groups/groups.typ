@@ -30,7 +30,7 @@
       long: "Default2",
       description: lorem(25),
       group: "", // Please note that an empty group has the same effect as no group
-    ),
+  ),
 )
 #register-glossary(entry-list)
 
@@ -50,5 +50,70 @@ Reference to @bor
 
 #print-glossary(
   entry-list,
+  show-all: true,
+)
+
+= Glossary with custom group heading level
+
+#let entry-list-2 = (
+  (
+    key: "A",
+    short: "A",
+    group: "Group A",
+  ),
+  (
+    key: "B",
+    short: "B",
+    group: "Group B",
+  ),
+)
+#register-glossary(entry-list-2)
+
+Reference to @A
+Reference to @B
+
+#print-glossary(
+  entry-list-2,
+  show-all: true,
+  group-heading-level: 3,
+)
+
+= Glossary with custom group display
+
+#let entry-list-3 = (
+  (
+    key: "C",
+    short: "C",
+    group: "Group C",
+  ),
+  (
+    key: "D",
+    short: "D",
+    group: "Group D",
+  ),
+  (
+    key: "E",
+    short: "E",
+  ),
+)
+#register-glossary(entry-list-3)
+
+// Reference to @C // Error: Reference to @C not found
+// Reference to @D // Error: Reference to @D not found
+Reference to @E (no group)
+
+== Show default group
+
+#print-glossary(
+  entry-list-3,
+  groups: ("",),
+  show-all: true,
+)
+
+== Show Group C and Group D
+
+#print-glossary(
+  entry-list-3,
+  groups: ("Group C", "Group D"),
   show-all: true,
 )
