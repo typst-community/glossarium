@@ -741,6 +741,7 @@
 //  groups,
 //  show-all: false,
 //  disable-back-references: false,
+//  group-heading-level: none,
 //  user-print-reference: default-print-reference
 //  user-group-break: default-group-break,
 //  user-print-gloss: default-print-gloss,
@@ -755,6 +756,7 @@
 //  groups (array<str>): the list of groups
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
+//  group-heading-level (int): force the level of the group heading
 //  ...
 //
 // # Warnings
@@ -769,6 +771,7 @@
   groups,
   show-all: false,
   disable-back-references: false,
+  group-heading-level: none,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
   user-print-gloss: default-print-gloss,
@@ -777,10 +780,13 @@
   user-print-back-references: default-print-back-references,
 ) = {
   let body = []
-  let previous-headings = query(selector(heading).before(here()))
-  let group-heading-level = 1
-  if previous-headings.len() != 0 {
-    group-heading-level = previous-headings.last().level
+  if group-heading-level == none {
+    let previous-headings = query(selector(heading).before(here()))
+    if previous-headings.len() != 0 {
+      group-heading-level = previous-headings.last().level + 1
+    } else {
+      group-heading-level = 1
+    }
   }
   for group in groups.sorted() {
     let group-entries = entries.filter(x => x.at("group") == group)
@@ -847,6 +853,7 @@
 //  entry-list,
 //  show-all: false,
 //  disable-back-references: false,
+//  group-heading-level: none,
 //  user-print-glossary: default-print-glossary,
 //  user-print-reference: default-print-reference,
 //  user-group-break: default-group-break,
@@ -877,6 +884,7 @@
   entry-list,
   show-all: false,
   disable-back-references: false,
+  group-heading-level: none,
   user-print-glossary: default-print-glossary,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
@@ -916,6 +924,7 @@
       el.map(x => x.at("group")).dedup(),
       show-all: show-all,
       disable-back-references: disable-back-references,
+      group-heading-level: group-heading-level,
       user-print-reference: user-print-reference,
       user-group-break: user-group-break,
       user-print-gloss: user-print-gloss,
