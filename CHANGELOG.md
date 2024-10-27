@@ -1,6 +1,67 @@
 # Changelog
 
-## Unreleased
+## 0.5.1
+
+> [!TIP]
+> New group options have been added: `print-glossary(groups: array<str>)` to
+> display only the specified groups.
+> ```typ
+> #print-glossary(
+>   // ...
+>   groups: ("Group A", "Group B", "") // "" is the default group
+> )
+> ```
+> and `print-glossary(group-heading-level: int)` to set the heading level for
+> groups regardless of the previous heading level.
+> ```typ
+> #print-glossary(
+>   // ...
+>   group-heading-level: 3
+> )
+> ```
+
+> [!TIP]
+> A new parameter `print-glossary(minimum-ref: int)` has been added to filter
+> entries with a minimum number of references.
+> ```typ
+> #print-glossary(
+>   // ...
+>   minimum-ref: 2
+> )
+> ```
+
+> [!TIP]
+> New counting functions have been added: `count-all-refs` and `there-are-refs`
+> in addition to `count-refs`.
+> ```typ
+> #context count-all-refs()
+> #context if there-are-refs() [
+>   = Glossary
+> ]
+> ```
+
+> [!NOTE]
+> - Fix terms references for long-only terms.
+> - Fix missing commas in fast start
+
+> [!NOTE]
+> Add missing changelog!
+
+
+## 0.5.0
+
+> [!WARNING]
+> Starting from Typst v0.12.0 and later, only a single level of indirection
+> in the description is supported. This means that the description of an entry
+> cannot contain another glossary reference with more than once. See the example
+> at
+> [`references-in-description`](https://github.com/typst-community/glossarium/blob/master/tests/non-regression/references-in-description.typ)
+
+> [!NOTE]
+> Fix `figure.caption` alignement for glossary entries.
+
+> [!NOTE]
+> Allow terms to have either `short` or `long` or both.
 
 ## 0.4.2
 
@@ -21,6 +82,12 @@
 > +  entry-list
 >  )
 > ```
+
+> [!TIP]
+> An interface for user customization has been provided through parameters in
+> `print-glossary`. See the documentation in
+> [`advanced-docs`](https://github.com/typst-community/glossarium/blob/master/advanced-docs/main.pdf)
+> for more details.
 
 > [!NOTE]
 > Deprecate `location` argument in queries
