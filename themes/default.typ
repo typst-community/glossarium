@@ -564,17 +564,76 @@
 }
 
 // count-refs(entry) -> int
-// Count the number of references to the entry
+// Count the number of references to the entry in the document
 //
 // # Arguments
 // entry (dictionary): the entry
 //
 // # Returns
 // The number of references to the entry
+//
+// # Usage
+// ```typ
+// #context count-refs((key: "potato"))
+// ```
 #let count-refs(entry) = {
   let refs = __query_labels_with_key(here(), entry.key)
   return refs.len()
 }
+
+// count-all-refs(entry-list: none, groups: none) -> array<(str, int)>
+// Return the number of references for each entry in the document
+
+// # Arguments
+// entry-list (list<dictionary>): the list of entries. Defaults to all entries
+// groups (array<str>): the list of groups to be considered. `""` is the default group.
+//
+// # Returns
+// The number of references for each entry across the document
+//
+// # Usage
+// ```typ
+// #context count-all-refs()
+// ```
+#let count-all-refs(entry-list: none, groups: none) = {
+  let el = if entry-list == none {
+    __glossary_entries.get().values()
+  } else {
+    entry-list
+  }
+  let g = if groups == none {
+    el.map(x => x.at("group", default: "")).dedup()
+  } else if type(groups) == array {
+    groups
+  } else {
+    panic("groups must be an array of strings, e.g., (\"\",)")
+  }
+  el = el.filter(x => x.at("group", default: "") in g)
+  let counts = el.map(x => (x.key, count-refs(x)))
+  return counts
+}
+
+// there-are-refs(entry-list: none, groups: none) -> bool
+// Check if there are references to the entries in the document
+//
+// # Arguments
+// entry-list (list<dictionary>): the list of entries. Defaults to all entries
+// groups (array<str>): the list of groups to be considered. `""` is the default group.
+//
+// # Returns
+// True if there are references to the entries in the document
+//
+// # Usage
+// ```typ
+// #context if there-are-refs() {
+//   [= Glossary]
+// }
+// ```
+#let there-are-refs(entry-list: none, groups: none) = {
+  let counts = count-all-refs(entry-list: entry-list, groups: groups)
+  return counts.to-dict().values().any(x => x > 0)
+}
+
 
 // default-print-back-references(entry) -> contextual content
 // Print the back references of the entry
