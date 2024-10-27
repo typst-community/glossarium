@@ -851,6 +851,7 @@
 
 // print-glossary(
 //  entry-list,
+//  groups: (),
 //  show-all: false,
 //  disable-back-references: false,
 //  group-heading-level: none,
@@ -866,6 +867,7 @@
 //
 // # Arguments
 //  entry-list (list<dictionary>): the list of entries
+//  groups (array<str>): the list of groups to be displayed. `""` is the default group.
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
 //  ...
@@ -882,6 +884,7 @@
 // ```
 #let print-glossary(
   entry-list,
+  groups: (),
   show-all: false,
   disable-back-references: false,
   group-heading-level: none,
@@ -895,6 +898,9 @@
 ) = {
   if entry-list == none {
     panic("entry-list is required")
+  }
+  if type(groups) != array {
+    panic("groups must be an array")
   }
   let entries = ()
   if sys.version <= version(0, 11, 1) {
@@ -914,14 +920,22 @@
   // Glossary
   let body = []
   body += context {
+    // Entries
     let el = if sys.version <= version(0, 11, 1) {
       entries
     } else if entry-list != none {
       __glossary_entries.get().values().filter(x => (x.key in entry-list.map(x => x.key)))
     }
+
+    // Groups
+    let g = if groups == () {
+      el.map(x => x.at("group")).dedup()
+    } else {
+      groups
+    }
     user-print-glossary(
       el,
-      el.map(x => x.at("group")).dedup(),
+      g,
       show-all: show-all,
       disable-back-references: disable-back-references,
       group-heading-level: group-heading-level,
