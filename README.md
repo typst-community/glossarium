@@ -210,3 +210,18 @@ I recommend setting a show rule for the links to that your readers understand th
 #show link: set text(fill: blue.darken(60%))
 // links are now blue !
 ```
+
+It is also possible to apply styling specifically to the glossarium references, like in this example:
+```typ
+#show ref: it => {
+  let el = it.element
+  if el != none and el.func() == figure and el.kind == "glossarium_entry" {
+    // Make the glossarium entry references dark blue
+    text(fill: blue.darken(60%))
+  } else {
+    // Other references as usual.
+    it
+  }
+}
+```
+By adding `else if` clauses for different functions and kinds, each type of reference can be given a different style. 
