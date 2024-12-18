@@ -314,4 +314,11 @@ false: #context there-are-refs(groups: (" ",))
 
   #default-print-reference.with(show-all: true)(entry-list-2.last())
 
+  == Test use-key-as-short
+
+  #let entry-list-6 = ((key: "potato-use-key-as-short"),)
+  #register-glossary(entry-list-6)
+  #print-glossary(entry-list-6)
+  @potato-use-key-as-short
+
 ]

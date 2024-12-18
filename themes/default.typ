@@ -508,18 +508,19 @@
 //
 // # Arguments
 //  entry-list (array<dictionary>): the list of entries
+//  use-key-as-short (bool): flag to use the key as the short form
 //
 // # Returns
 // The normalized entry list
-#let __normalize_entry_list(entry-list) = {
+#let __normalize_entry_list(entry-list, use-key-as-short: true) = {
   let new-list = ()
   for entry in entry-list {
-    if not has-short(entry) and not has-long(entry) {
+    if not use-key-as-short and not has-short(entry) and not has-long(entry) {
       panic(__error_message(entry.key, __entry_has_neither_short_nor_long))
     }
     new-list.push((
       key: entry.key,
-      short: entry.at("short", default: ""),
+      short: entry.at("short", default: if use-key-as-short { entry.key } else { "" }),
       artshort: entry.at("artshort", default: "a"),
       plural: entry.at("plural", default: ""),
       long: entry.at("long", default: ""),
@@ -914,17 +915,18 @@
   })
 }
 
-// register-glossary(entry-list) -> none
+// register-glossary(entry-list, use-key-as-short: true) -> none
 // Register the glossary entries
 //
 // # Arguments
-// entries (array<dictionary>): the list of entries
-#let register-glossary(entry-list) = {
+//  entries (array<dictionary>): the list of entries
+//  use-key-as-short (bool): flag to use the key as the short form
+#let register-glossary(entry-list, use-key-as-short: true) = {
   if sys.version <= version(0, 11, 1) {
     return
   }
   // Normalize entry-list
-  let entries = __normalize_entry_list(entry-list)
+  let entries = __normalize_entry_list(entry-list, use-key-as-short: use-key-as-short)
 
   __update_glossary(entries)
 }
