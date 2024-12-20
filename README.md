@@ -1,15 +1,16 @@
 # Typst glossary
 
 > [!TIP]
-> Glossarium is based in great part of the work of [Sébastien d'Herbais de Thun](https://github.com/Dherse) from his master thesis available at: <https://github.com/Dherse/masterproef>. His glossary is available under the MIT license [here](https://github.com/Dherse/masterproef/blob/main/elems/acronyms.typ).
+> Glossarium is based in great part of the work of [Sébastien d'Herbais de Thun](https://github.com/Dherse) from his master thesis available at: <https://github.com/Dherse/masterproef>.
+> His glossary is available under the MIT license [here](https://github.com/Dherse/masterproef/blob/main/elems/acronyms.typ).
 
-Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX glossaries package](https://www.ctan.org/pkg/glossaries) . You can see various examples showcasing the different features in the `examples` folder.
+Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX
+glossaries package](https://www.ctan.org/pkg/glossaries) . You can see various
+examples showcasing the different features in the `examples` folder.
 
-![Screenshot](.github/example.png)
+![Screenshot of a glossary output using glossarium in Typst. A heading with text "Glossary" is displayed, and below four gloss are printed. Each gloss has its short and long form in bold separated by a dash. The description follows after a colon character. A list of the backreferences is given at the end.](.github/example.png)
 
-## Manual
-
-## Fast start
+# Fast start
 
 ```typ
 #import "@preview/glossarium:0.5.1": make-glossary, register-glossary, print-glossary, gls, glspl
@@ -30,23 +31,33 @@ Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX gl
 )
 ```
 
-### Import and setup
+# I don't like it!
 
-This manual assume you have a good enough understanding of typst markup and scripting.
+Take a look at:
+- [`acrostiche`](https://typst.app/universe/package/acrostiche)
+- [`glossy`](https://typst.app/universe/package/glossy)
 
-For Typst 0.6.0 or later import the package from the typst preview repository:
+and [many](https://typst.app/universe/search?q=acro) [others](https://typst.app/universe/search?q=glo)
+
+# Detailed guide
+
+## Import and setup
+
+Import the package from the typst preview repository:
 
 ```typ
 #import "@preview/glossarium:0.5.1": make-glossary, register-glossary, print-glossary, gls, glspl
 ```
 
-For Typst before 0.6.0 or to use **glossarium** as a local module, download the package files into your project folder and import `glossarium.typ`:
+To use **glossarium** as a vendored module, download the package files into your project folder and import `glossarium.typ`:
 
 ```typ
 #import "glossarium.typ": make-glossary, register-glossary, print-glossary, gls, glspl
 ```
 
-After importing the package and before making any calls to `gls`,` print-glossary` or `glspl`, please ***MAKE SURE*** you add this line
+## Making the glossary
+
+After importing the package and before making any calls to `gls`, ` print-glossary` or `glspl`, please ***MAKE SURE*** you add this line
 ```typ
 #show: make-glossary
 ```
@@ -63,13 +74,12 @@ After importing the package and before making any calls to `gls`,` print-glossar
 > `make-glossary` can conflict with _global_ figure show rules. Write the user figure show rule before `make-glossary` to avoid any conflicts.
 > ![image illustrating a show rule conflict when the user figure show rule is written after make-glossary making the glossary disappear but no effect when it is written before make-glossary.](.github/show_rule_conflict.png)
 
-### Registering the glossary
+## Registering the glossary
 
-First we have to define the terms.
-A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/) as follows:
+A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/).
 
 | Key           | Type              | Required/Optional | Description                                                                                  |
-| ------------- | ----------------- | ----------------- | -------------------------------------------------------------------------------------------- |
+| :------------ | :---------------- | :---------------- | :------------------------------------------------------------------------------------------- |
 | `key`         | string            | required          | Case-sensitive, unique identifier used to reference the term.                                |
 | `short`       | string            | semi-optional     | The short form of the term replacing the term citation.                                      |
 | `long`        | string or content | semi-optional     | The long form of the term, displayed in the glossary and on the first citation of the term.  |
@@ -78,21 +88,29 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/) as 
 | `longplural`  | string or content | optional          | The pluralized long form of the term.                                                        |
 | `group`       | string            | optional          | Case-sensitive group the term belongs to. The terms are displayed by groups in the glossary. |
 
+
+```typ
+#register-glossary(entry-list)
+```
+
 ```typ
 #let entry-list = (
-  // minimal term
+  // Use key as short by default
+  (
+    key: "kuleuven",
+  ),
+  // Add SHORT
   (
     key: "kuleuven",
     short: "KU Leuven"
   ),
-  // a term with a long form and a group
+  // Add LONG
   (
     key: "unamur",
     short: "UNamur",
     long: "Namur University",
-    group: "Universities"
   ),
-  // a term with a markup description
+  // Add a DESCRIPTION
   (
     key: "oidc",
     short: "OIDC",
@@ -101,17 +119,15 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/) as 
       OpenID is an open standard and decentralized authentication protocol promoted by the non-profit
       #link("https://en.wikipedia.org/wiki/OpenID#OpenID_Foundation")[OpenID Foundation].
     ],
-    group: "Acronyms",
   ),
-  // a term with a short plural
+  // Add a PLURAL form
   (
     key: "potato",
     short: "potato",
     // "plural" will be used when "short" should be pluralized
     plural: "potatoes",
-    description: [#lorem(10)],
   ),
-  // a term with a long plural
+  // Add a LONGPLURAL form
   (
     key: "dm",
     short: "DM",
@@ -120,16 +136,17 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/) as 
     longplural: "diagonal matrices",
     description: "Probably some math stuff idk",
   ),
+  // Add a GROUP
+  (
+    key: "kuleuven",
+    short: "KU Leuven",
+    // The terms are displayed by groups in the glossary
+    group: "Universities",
+  ),
 )
 ```
 
-Then the terms are passed as a list to `register-glossary`
-
-```typ
-#register-glossary(entry-list)
-```
-
-### Printing the glossary
+## Printing the glossary
 
 Now, you can display the glossary using the `print-glossary` function.
 
@@ -145,7 +162,7 @@ By default, group breaks use `linebreaks`. This behaviour can be changed by sett
 
 You can call this function from anywhere in your document.
 
-### Referencing terms.
+## Referencing terms.
 
 Referencing terms is done using the key of the terms using the `gls` function or the reference syntax.
 
@@ -159,7 +176,7 @@ Referencing terms is done using the key of the terms using the `gls` function or
 @oidc
 ```
 
-#### Handling plurals
+## Handling plurals
 
 You can use the `glspl` function and the references supplements to pluralize terms.
 The `plural` key will be used when `short` should be pluralized and `longplural` will be used when `long` should be pluralized. If the `plural` key is missing then glossarium will add an 's' at the end of the short form as a fallback.
@@ -170,7 +187,7 @@ The `plural` key will be used when `short` should be pluralized and `longplural`
 
 Please look at the examples regarding plurals.
 
-#### Overriding the text shown
+## Overriding the text shown
 
 You can also override the text displayed by setting the `display` argument.
 
@@ -178,7 +195,7 @@ You can also override the text displayed by setting the `display` argument.
 #gls("oidc", display: "whatever you want")
 ```
 
-## Final tips
+## Styling references links
 
 I recommend setting a show rule for the links to that your readers understand that they can click on the references to go to the term in the glossary.
 
