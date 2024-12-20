@@ -1,6 +1,7 @@
+
+// @typstyle off
 #import "../../glossarium.typ": make-glossary, register-glossary, print-glossary, gls, glspl, agls, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group
-// Replace the local import with a import to the preview namespace.
-// If you don't know what that mean, please go read typst documentation on how to import packages at https://typst.app/docs/packages/.
+// #import "@preview/glossarium:0.5.1": make-glossary, register-glossary, print-glossary, gls, glspl, agls, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group
 #show: make-glossary
 #let entry-list = (
   (

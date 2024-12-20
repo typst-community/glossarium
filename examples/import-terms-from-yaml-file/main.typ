@@ -3,8 +3,7 @@
 // The glossary command here is modeled after the bibliography command and accepts similar arguments.
 
 #import "../../glossarium.typ": *
-// Replace the local import with a import to the preview namespace.
-// If you don't know what that mean, please go read typst documentation on how to import packages at https://typst.app/docs/packages/.
+// #import "@preview/glossarium:0.5.1": *
 #let read-glossary-entries(file) = {
   let entries = yaml(file)
 
