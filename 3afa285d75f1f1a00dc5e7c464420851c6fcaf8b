@@ -1,0 +1,12 @@
+[ver:1,total:1019]
+.gtm/terminal.app:500,1734688800:500,r
+glossarium.typ:110,1734688800:110,m
+advanced-docs/main.typ:82,1734688800:82,r
+themes/default.typ:80,1734688800:80,m
+examples/import-terms-from-yaml-file/main.typ:75,1734688800:75,m
+examples/plural-example/main.typ:45,1734688800:45,m
+tests/non-regression/only-one-empty-group.typ:35,1734688800:35,m
+tests/non-regression/references-in-description.typ:30,1734688800:30,m
+tests/styling/styling.typ:30,1734688800:30,r
+examples/groups/groups.typ:22,1734688800:22,m
+CHANGELOG.md:10,1734688800:10,r
