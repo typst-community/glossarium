@@ -1,3 +1,4 @@
+
 // https://github.com/typst-community/glossarium/issues/55#issuecomment-2388176204
 // #import "@preview/glossarium:0.4.1": make-glossary, print-glossary, gls, glspl
 #import "../../themes/default.typ": *

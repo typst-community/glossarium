@@ -1,22 +1,21 @@
 #import "../../themes/default.typ": *
 #show: make-glossary
 #let entries = (
-    // (
-    //   key: "key",
-    //   short: "111111",
-      // group: "vvv"
-    // ),
-    (
-      key: "key2",
-      short: "222222",
-      // group: "vvv"
-    ),
-
-    (
-      key: "key1",
-      short: "111111",
-      // group: "voila",
-    ),
+  // (
+  //   key: "key",
+  //   short: "111111",
+  // group: "vvv"
+  // ),
+  (
+    key: "key2",
+    short: "222222",
+    // group: "vvv"
+  ),
+  (
+    key: "key1",
+    short: "111111",
+    // group: "voila",
+  ),
 )
 #register-glossary(entries)
 #set page(numbering: "1")

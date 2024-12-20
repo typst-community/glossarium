@@ -1,3 +1,4 @@
+
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,7 +22,9 @@
 #let glossarium_version = "0.5.1"
 
 // error prefix
-#let __glossarium_error_prefix = "glossarium@" + glossarium_version + " error : "
+#let __glossarium_error_prefix = (
+  "glossarium@" + glossarium_version + " error : "
+)
 
 // Errors types
 #let __key_not_found = "key_not_found"
@@ -476,16 +479,16 @@
     if sys.version >= version(0, 12, 0) {
       align(start, it.caption)
     } else {
-      it.caption
+      it.body
     }
   }
   // Select all figure refs and filter by __glossarium_figure
   // Transform the ref to the glossary term
   show ref: r => {
     if (
-      r.element != none and r.element.func() == figure and r
-        .element
-        .kind == __glossarium_figure
+      r.element != none
+        and r.element.func() == figure
+        and r.element.kind == __glossarium_figure
     ) {
       // call to the general citing function
       let key = str(r.target)
@@ -520,7 +523,10 @@
     }
     new-list.push((
       key: entry.key,
-      short: entry.at("short", default: if use-key-as-short { entry.key } else { "" }),
+      short: entry.at(
+        "short",
+        default: if use-key-as-short { entry.key } else { "" },
+      ),
       artshort: entry.at("artshort", default: "a"),
       plural: entry.at("plural", default: ""),
       long: entry.at("long", default: ""),
@@ -562,12 +568,12 @@
     )
     .values
     .map(x => {
-    let page-numbering = x.page-numbering()
-    if page-numbering == none {
-      page-numbering = "1"
-    }
-    return link(x)[#numbering(page-numbering, ..counter(page).at(x))]
-  })
+      let page-numbering = x.page-numbering()
+      if page-numbering == none {
+        page-numbering = "1"
+      }
+      return link(x)[#numbering(page-numbering, ..counter(page).at(x))]
+    })
 }
 
 // count-refs(entry) -> int
@@ -869,9 +875,10 @@
     let group-ref-counts = group-entries.map(count-refs)
 
     let print-group = (
-      group != "" and (
-        show-all == true or group-ref-counts.any(x => x >= minimum-refs)
-      )
+      group != ""
+        and (
+          show-all == true or group-ref-counts.any(x => x >= minimum-refs)
+        )
     )
 
     // Only print group name if any entries are referenced
@@ -879,7 +886,6 @@
       body += [#heading(group, level: group-heading-level)]
     }
     for entry in group-entries.sorted(key: x => x.key) {
-
       body += user-print-reference(
         entry,
         show-all: show-all,
@@ -926,7 +932,10 @@
     return
   }
   // Normalize entry-list
-  let entries = __normalize_entry_list(entry-list, use-key-as-short: use-key-as-short)
+  let entries = __normalize_entry_list(
+    entry-list,
+    use-key-as-short: use-key-as-short,
+  )
 
   __update_glossary(entries)
 }
@@ -1010,9 +1019,12 @@
     let el = if sys.version <= version(0, 11, 1) {
       entries
     } else if entry-list != none {
-      __glossary_entries.get().values().filter(x => (
-        x.key in entry-list.map(x => x.key)
-      ))
+      __glossary_entries
+        .get()
+        .values()
+        .filter(x => (
+          x.key in entry-list.map(x => x.key)
+        ))
     }
 
     // Groups

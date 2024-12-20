@@ -5,20 +5,20 @@
 #show: make-glossary
 #let entry-list = (
   (
-      key: "potato",
-      long: "potato",
-      // "plural" will be used when "short" should be pluralized
-      longplural: "potatoes",
-      description: [#lorem(10)],
-    ),
+    key: "potato",
+    long: "potato",
+    // "plural" will be used when "short" should be pluralized
+    longplural: "potatoes",
+    description: [#lorem(10)],
+  ),
   (
-      key: "dm",
-      short: "DM",
-      long: "diagonal matrix",
-      // "longplural" will be used when "long" should be pluralized
-      longplural: "diagonal matrices",
-      description: "Probably some math stuff idk",
-    ),
+    key: "dm",
+    short: "DM",
+    long: "diagonal matrix",
+    // "longplural" will be used when "long" should be pluralized
+    longplural: "diagonal matrices",
+    description: "Probably some math stuff idk",
+  ),
   (
     key: "cpu",
     short: "CPU",

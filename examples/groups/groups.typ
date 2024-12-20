@@ -25,11 +25,11 @@
     description: lorem(25),
   ),
   (
-      key: "bor2",
-      short: "DEF2",
-      long: "Default2",
-      description: lorem(25),
-      group: "", // Please note that an empty group has the same effect as no group
+    key: "bor2",
+    short: "DEF2",
+    long: "Default2",
+    description: lorem(25),
+    group: "", // Please note that an empty group has the same effect as no group
   ),
 )
 #register-glossary(entry-list)

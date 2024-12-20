@@ -16,51 +16,79 @@
   for (k, v) in entries.pairs() {
     assert(
       type(v) == dictionary,
-      message: "The glossary entry `" + k + "` in `" + file + "` is not a dictionary",
+      message: "The glossary entry `"
+        + k
+        + "` in `"
+        + file
+        + "` is not a dictionary",
     )
 
     for key in v.keys() {
       assert(
         key in ("short", "long", "description", "group"),
-        message: "Found unexpected key `" + key + "` in glossary entry `" + k + "` in `" + file + "`",
+        message: "Found unexpected key `"
+          + key
+          + "` in glossary entry `"
+          + k
+          + "` in `"
+          + file
+          + "`",
       )
     }
 
     assert(
       type(v.short) == str,
-      message: "The short form of glossary entry `" + k + "` in `" + file + "` is not a string",
+      message: "The short form of glossary entry `"
+        + k
+        + "` in `"
+        + file
+        + "` is not a string",
     )
 
     if "long" in v {
       assert(
         type(v.long) == str,
-        message: "The long form of glossary entry `" + k + "` in `" + file + "` is not a string",
+        message: "The long form of glossary entry `"
+          + k
+          + "` in `"
+          + file
+          + "` is not a string",
       )
     }
 
     if "description" in v {
       assert(
         type(v.description) == str,
-        message: "The description of glossary entry `" + k + "` in `" + file + "` is not a string",
+        message: "The description of glossary entry `"
+          + k
+          + "` in `"
+          + file
+          + "` is not a string",
       )
     }
 
     if "group" in v {
       assert(
         type(v.group) == str,
-        message: "The optional group of glossary entry `" + k + "` in `" + file + "` is not a string",
+        message: "The optional group of glossary entry `"
+          + k
+          + "` in `"
+          + file
+          + "` is not a string",
       )
     }
   }
 
-  return entries.pairs().map(((key, entry)) => (
-    key: key,
-    short: eval(entry.at("short", default: ""), mode: "markup"),
-    long: eval(entry.at("long", default: ""), mode: "markup"),
-    description: eval(entry.at("description", default: ""), mode: "markup"),
-    group: entry.at("group", default: ""),
-    file: file,
-  ))
+  return entries
+    .pairs()
+    .map(((key, entry)) => (
+      key: key,
+      short: eval(entry.at("short", default: ""), mode: "markup"),
+      long: eval(entry.at("long", default: ""), mode: "markup"),
+      description: eval(entry.at("description", default: ""), mode: "markup"),
+      group: entry.at("group", default: ""),
+      file: file,
+    ))
 }
 
 #let read-glossary(files) = {
@@ -76,7 +104,15 @@
     for entry in new {
       let duplicate = entries.find(e => e.key == entry.key)
       if duplicate != none {
-        panic("Found duplicate key `" + entry.key + "` in files `" + entry.file + "` and `" + duplicate.file + "`")
+        panic(
+          "Found duplicate key `"
+            + entry.key
+            + "` in files `"
+            + entry.file
+            + "` and `"
+            + duplicate.file
+            + "`",
+        )
       }
     }
 
