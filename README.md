@@ -55,6 +55,13 @@ To use **glossarium** as a vendored module, download the package files into your
 #import "glossarium.typ": make-glossary, register-glossary, print-glossary, gls, glspl
 ```
 
+To use **glossarium** locally, create a new package namespace on your system:
+- follows the instructions at [typst/packages](https://github.com/typst/packages?tab=readme-ov-file#local-packages)
+- import glossarium (if your namespace is named `local`):
+  ```typ
+  #import "@local/glossarium:0.5.1": make-glossary, register-glossary, print-glossary, gls, glspl
+  ```
+
 ## Making the glossary
 
 After importing the package and before making any calls to `gls`, ` print-glossary` or `glspl`, please ***MAKE SURE*** you add this line
