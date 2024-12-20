@@ -51,9 +51,17 @@ After importing the package and before making any calls to `gls`,` print-glossar
 #show: make-glossary
 ```
 
-> *WHY DO WE NEED THAT ?* : In order to be able to create references to the terms in your glossary using typst ref syntax `@key` glossarium needs to setup some [show rules](https://typst.app/docs/tutorial/advanced-styling/) before any references exist. This is due to the way typst works, there is no workaround.
+> [!NOTE]
+> <h3 align="center">*WHY DO WE NEED THAT?*</h3>
 >
->Therefore I recommend that you always put the `#show: ...` statement on the line just below the `#import` statement.
+> In order to be able to create references to the terms in your glossary using typst [reference  syntax](https://typst.app/docs/reference/model/ref/) `@key` glossarium needs to setup some [show rules](https://typst.app/docs/tutorial/advanced-styling/) before any references exist.
+
+> [!CAUTION]
+> <h3 align="center">*SHOW RULES CONFLICTS*</h3>
+>
+> Prefer to use the [selector](https://typst.app/docs/reference/foundations/function/#definitions-where) `figure.where(kind: "image")` or other kinds to avoid conflicts with `glossarium_entry`.
+> `make-glossary` can conflict with _global_ figure show rules. Write the user figure show rule before `make-glossary` to avoid any conflicts.
+> ![image illustrating a show rule conflict when the user figure show rule is written after make-glossary making the glossary disappear but no effect when it is written before make-glossary.](.github/show_rule_conflict.png)
 
 ### Registering the glossary
 
