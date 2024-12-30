@@ -224,4 +224,5 @@ It is also possible to apply styling specifically to the glossarium references, 
   }
 }
 ```
-By adding `else if` clauses for different functions and kinds, each type of reference can be given a different style. 
+(Thanks to flokl for the [solution](https://forum.typst.app/t/how-do-you-apply-a-style-to-glossarium-references-that-is-different-to-other-reference-types/2089/2?u=ogre) on the Typst forums).
+By adding `else if` clauses for different functions and kinds, each type of reference can be given a different style.
