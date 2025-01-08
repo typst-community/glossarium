@@ -31,6 +31,7 @@
 #let __attribute_is_empty = "attribute_is_empty"
 #let __glossary_is_empty = "glossary_is_empty"
 #let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
+#let __make_glossary_not_called = "make_glossary_not_called"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -57,6 +58,8 @@
     msg = "entry '" + key + "' has neither short nor long form"
   } else if kind == __glossary_is_empty {
     msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
+  } else if kind == __make_glossary_not_called {
+    msg = "make-glossary not called. Add `#show: make-glossary` at the beginning of the document."
   } else {
     msg = "unknown error"
   }
@@ -474,6 +477,7 @@
 // #show: make-glossary
 // ```
 #let make-glossary(body) = {
+  [#metadata("glossarium:make-glossary")<glossarium:make-glossary>]
   // Fix figure caption alignement
   show figure.where(kind: __glossarium_figure): it => {
     if sys.version >= version(0, 12, 0) {
@@ -486,9 +490,7 @@
   // Transform the ref to the glossary term
   show ref: r => {
     if (
-      r.element != none
-        and r.element.func() == figure
-        and r.element.kind == __glossarium_figure
+      r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
     ) {
       // call to the general citing function
       let key = str(r.target)
@@ -991,6 +993,11 @@
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
 ) = {
+  context {
+    if query(<glossarium:make-glossary>).len() == 0 {
+      panic(__error_message(none, __make_glossary_not_called))
+    }
+  }
   if entry-list == none {
     panic("entry-list is required")
   }
