@@ -1,5 +1,5 @@
 #import "../../themes/default.typ": *
-// #show: make-glossary
+#show: make-glossary
 #let entry-list = (
   (
     key: "potato",
