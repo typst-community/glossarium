@@ -80,8 +80,6 @@ After importing the package and before making any calls to `gls`, ` print-glossa
 > Prefer to use the [selector](https://typst.app/docs/reference/foundations/function/#definitions-where) `figure.where(kind: "image")` or other kinds to avoid conflicts with `glossarium_entry`.
 > `make-glossary` can conflict with _global_ figure show rules. Write the user figure show rule before `make-glossary` to avoid any conflicts.
 > ![image illustrating a show rule conflict when the user figure show rule is written after make-glossary making the glossary disappear but no effect when it is written before make-glossary.](.github/show_rule_conflict.png)
-> 
-> This also applies to `ref` show rules.
 
 ## Registering the glossary
 
