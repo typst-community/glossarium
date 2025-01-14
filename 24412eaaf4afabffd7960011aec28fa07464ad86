@@ -1,0 +1,7 @@
+[ver:1,total:1290]
+tests/non-regression/show-ref.typ:864,1736870400:864,r
+.gtm/terminal.app:330,1736496000:240,1736870400:90,r
+justfile:60,1736337600:30,1736870400:30,r
+themes/default.typ:12,1736870400:12,r
+tests/styling/styling.typ:12,1736870400:12,r
+tests/debug/debug.typ:12,1736870400:12,r
