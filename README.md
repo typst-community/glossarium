@@ -211,8 +211,13 @@ I recommend setting a show rule for the links to that your readers understand th
 // links are now blue !
 ```
 
-It is also possible to apply styling specifically to the glossarium references, like in this example:
+It is also possible to apply styling specifically to the glossarium references with a `show ref` rule. Make sure this rule comes **after** `make-glossary`.
+
+This approach only styles references that use `@ref` and `@ref:pl` instead of `gls("ref")` and `glspl("ref)`.
+
 ```typ
+#show: make-glossary
+
 #show ref: it => {
   let el = it.element
   if el != none and el.func() == figure and el.kind == "glossarium_entry" {
@@ -224,5 +229,25 @@ It is also possible to apply styling specifically to the glossarium references, 
   }
 }
 ```
+
 (Thanks to flokl for the [solution](https://forum.typst.app/t/how-do-you-apply-a-style-to-glossarium-references-that-is-different-to-other-reference-types/2089/2?u=ogre) on the Typst forums).
 By adding `else if` clauses for different functions and kinds, each type of reference can be given a different style.
+
+Note that when using the `show ref` rule approach together with a `show link` rule the styling in the `show ref` rule gets overwritten. To avoid this change the `show link` rule to only style `str` links (like website or mailto links).
+
+```typ
+#show link: it => {
+  if type(it.dest) == str {
+    // Make website or mailto links underlined and gray
+    set text(fill: gray.darken(80%))
+    underline(
+      stroke: (paint: gray, thickness: 0.5pt, dash: "densely-dashed"),
+      offset: 4pt,
+      it,
+    )
+  } else {
+    // Other links (like glossarium) as usual
+    it
+  }
+}
+```
