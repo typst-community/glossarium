@@ -782,31 +782,29 @@
   user-print-back-references: default-print-back-references,
 ) = {
   return [
-    #par(
+    #set par(
       hanging-indent: 1em,
       first-line-indent: 0em,
-    )[
-      #figure(
-        supplement: "",
-        kind: __glossarium_figure,
-        numbering: none,
-        caption: user-print-gloss(
-          entry,
-          show-all: show-all,
-          disable-back-references: disable-back-references,
-          minimum-refs: minimum-refs,
-          user-print-title: user-print-title,
-          user-print-description: user-print-description,
-          user-print-back-references: user-print-back-references,
-        ),
-      )[]#label(entry.key)
-      // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
-      #figure(
-        kind: __glossarium_figure,
-        supplement: "",
-      )[] #label(entry.key + ":pl")
-    ]
-    #parbreak()
+    )
+    #figure(
+      supplement: "",
+      kind: __glossarium_figure,
+      numbering: none,
+      caption: user-print-gloss(
+        entry,
+        show-all: show-all,
+        disable-back-references: disable-back-references,
+        minimum-refs: minimum-refs,
+        user-print-title: user-print-title,
+        user-print-description: user-print-description,
+        user-print-back-references: user-print-back-references,
+      ),
+    )[]#label(entry.key)
+    // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
+    #figure(
+      kind: __glossarium_figure,
+      supplement: "",
+    )[] #label(entry.key + ":pl")
   ]
 }
 
