@@ -515,6 +515,14 @@
     if not use-key-as-short and not has-short(entry) and not has-long(entry) {
       panic(__error_message(entry.key, __entry_has_neither_short_nor_long))
     }
+    let unknown_keys = entry
+      .keys()
+      .filter(x => (
+        x not in ("key", "short", "artshort", "plural", "long", "artlong", "longplural", "description", "group")
+      ))
+    if unknown_keys.len() > 0 {
+      panic("entry `" + entry.key + "` has unknown keys: " + unknown_keys.join(", "))
+    }
     new-list.push((
       key: entry.key,
       short: entry.at(
