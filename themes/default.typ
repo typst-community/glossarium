@@ -475,7 +475,7 @@
     if sys.version >= version(0, 12, 0) {
       align(start, it.caption)
     } else {
-      it.body
+      it.caption
     }
   }
   // Select all figure refs and filter by __glossarium_figure
