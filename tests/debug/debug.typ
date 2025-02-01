@@ -312,7 +312,7 @@ false: #context there-are-refs(groups: (" ",))
 
   Forcibly print nonreference entry.
 
-  #default-print-reference.with(show-all: true)(entry-list-2.last())
+  #context default-print-reference.with(show-all: true)(entry-list-2.last())
 
   == Test use-key-as-short
 

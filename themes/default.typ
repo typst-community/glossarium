@@ -144,7 +144,7 @@
 #let has-description(entry) = __has_attribute(entry, "description")
 #let has-group(entry) = __has_attribute(entry, "group")
 
-// __link_and_label(key, text, prefix: none, suffix: none) -> contextual content
+// __link_and_label(key, text, prefix: none, suffix: none) -> content
 // Build a link and a label
 //
 // # Arguments
@@ -155,14 +155,12 @@
 //
 // # Returns
 // The link and the entry label
-#let __link_and_label(key, text, prefix: none, suffix: none) = (
-  context {
-    return [#prefix#link(
-        label(key),
-        text,
-      )#suffix#label(__glossary_label_prefix + key)]
-  }
-)
+#let __link_and_label(key, text, prefix: none, suffix: none) = {
+  return [#prefix#link(
+      label(key),
+      text,
+    )#suffix#label(__glossary_label_prefix + key)]
+}
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term
@@ -175,49 +173,47 @@
 //
 // # Returns
 // The link and the entry label
-#let gls(key, suffix: none, long: none, display: none) = {
-  context {
-    let entry = __get_entry_with_key(here(), key)
+#let gls(key, suffix: none, long: none, display: none) = context {
+  let entry = __get_entry_with_key(here(), key)
 
-    // Attributes
-    let ent-long = entry.at("long", default: "")
-    let ent-short = entry.at("short", default: "")
+  // Attributes
+  let ent-long = entry.at("long", default: "")
+  let ent-short = entry.at("short", default: "")
 
-    // Conditions
-    let is-first-or-long = __is_first_or_long(here(), key, long: long)
-    let has-long = has-long(entry)
-    let has-short = has-short(entry)
+  // Conditions
+  let is-first-or-long = __is_first_or_long(here(), key, long: long)
+  let has-long = has-long(entry)
+  let has-short = has-short(entry)
 
-    // Link text
-    // 1. If `display` attribute is provided, use it
-    // 2. Else, if
-    //  a. The entry is referenced for the first time OR long form is explicitly requested
-    //      AND
-    //  b. The entry has a nonempty `long` attribute
-    //      AND
-    //  c. long form is not disabled
-    // 3. Else, return the `short` attribute + suffix
-    // Priority order:
-    //  1. `gls(key, display: "text")` will return `text`
-    //  2. `gls(key, long: false)` will return `short+suffix`
-    //  3. If attribute `long` is empty, `gls(key)` will return `short+suffix`
-    //  4. The first `gls(key)` will return `long (short+suffix)`
-    //  5. `gls(key, long: true)` will return `long (short+suffix)`
-    let link-text = []
-    if display != none {
-      link-text += [#display]
-    } else if is-first-or-long and has-long and long != false {
-      if has-short {
-        link-text += [#ent-long (#ent-short#suffix)]
-      } else {
-        link-text += [#ent-long]
-      }
+  // Link text
+  // 1. If `display` attribute is provided, use it
+  // 2. Else, if
+  //  a. The entry is referenced for the first time OR long form is explicitly requested
+  //      AND
+  //  b. The entry has a nonempty `long` attribute
+  //      AND
+  //  c. long form is not disabled
+  // 3. Else, return the `short` attribute + suffix
+  // Priority order:
+  //  1. `gls(key, display: "text")` will return `text`
+  //  2. `gls(key, long: false)` will return `short+suffix`
+  //  3. If attribute `long` is empty, `gls(key)` will return `short+suffix`
+  //  4. The first `gls(key)` will return `long (short+suffix)`
+  //  5. `gls(key, long: true)` will return `long (short+suffix)`
+  let link-text = []
+  if display != none {
+    link-text += [#display]
+  } else if is-first-or-long and has-long and long != false {
+    if has-short {
+      link-text += [#ent-long (#ent-short#suffix)]
     } else {
-      link-text += [#ent-short#suffix]
+      link-text += [#ent-long]
     }
-
-    return __link_and_label(entry.key, link-text)
+  } else {
+    link-text += [#ent-short#suffix]
   }
+
+  return __link_and_label(entry.key, link-text)
 }
 
 // agls(key, suffix: none, long: none) -> contextual content
@@ -230,46 +226,45 @@
 //
 // # Returns
 // The link and the entry label
-#let agls(key, suffix: none, long: none) = {
-  context {
-    let entry = __get_entry_with_key(here(), key)
+#let agls(key, suffix: none, long: none) = context {
+  let entry = __get_entry_with_key(here(), key)
 
-    // Attributes
-    let ent-long = entry.at("long", default: "")
-    let ent-short = entry.at("short", default: "")
-    let ent-artlong = entry.at("artlong", default: "a")
-    let ent-artshort = entry.at("artshort", default: "a")
+  // Attributes
+  let ent-long = entry.at("long", default: "")
+  let ent-short = entry.at("short", default: "")
+  let ent-artlong = entry.at("artlong", default: "a")
+  let ent-artshort = entry.at("artshort", default: "a")
 
-    // Conditions
-    let is-first-or-long = __is_first_or_long(here(), key, long: long)
-    let has-long = has-long(entry)
-    let has-short = has-short(entry)
+  // Conditions
+  let is-first-or-long = __is_first_or_long(here(), key, long: long)
+  let has-long = has-long(entry)
+  let has-short = has-short(entry)
 
-    // Link text
-    let link-text = none
-    let article = none
-    if is-first-or-long and has-long and long != false {
-      if has-short {
-        link-text += [#ent-long (#ent-short#suffix)]
-      } else {
-        link-text += [#ent-long]
-      }
-      article = ent-artlong
-    } else if has-short {
-      // Default to short
-      link-text = [#ent-short#suffix]
-      article = ent-artshort
+  // Link text
+  let link-text = none
+  let article = none
+  if is-first-or-long and has-long and long != false {
+    if has-short {
+      link-text += [#ent-long (#ent-short#suffix)]
     } else {
-      link-text += [#ent-long#suffix]
-      article = ent-artlong
+      link-text += [#ent-long]
     }
-
-    // Return
-    return __link_and_label(entry.key, link-text, prefix: [#article ])
+    article = ent-artlong
+  } else if has-short {
+    // Default to short
+    link-text = [#ent-short#suffix]
+    article = ent-artshort
+  } else {
+    link-text += [#ent-long#suffix]
+    article = ent-artlong
   }
+
+  // Return
+  return __link_and_label(entry.key, link-text, prefix: [#article ])
 }
 
-// glspl(key, long: none) -> contextual content
+
+// glspl(key, long: none) -> content
 // Reference to term with plural form
 //
 // # Arguments
@@ -278,61 +273,59 @@
 //
 // # Returns
 // The link and the entry label
-#let glspl(key, long: none) = {
-  context {
-    let default-plural-suffix = "s"
-    let entry = __get_entry_with_key(here(), key)
+#let glspl(key, long: none) = context {
+  let default-plural-suffix = "s"
+  let entry = __get_entry_with_key(here(), key)
 
-    // Attributes
-    let ent-short = entry.at("short", default: "")
-    let ent-plural = entry.at("plural", default: "")
-    let ent-long = entry.at("long", default: "")
-    let ent-longplural = entry.at("longplural", default: "")
+  // Attributes
+  let ent-short = entry.at("short", default: "")
+  let ent-plural = entry.at("plural", default: "")
+  let ent-long = entry.at("long", default: "")
+  let ent-longplural = entry.at("longplural", default: "")
 
-    // Conditions
-    let is-first-or-long = __is_first_or_long(here(), key, long: long)
-    let has-short = has-short(entry)
-    let has-plural = has-plural(entry)
-    let has-long = has-long(entry)
-    let has-longplural = has-longplural(entry)
+  // Conditions
+  let is-first-or-long = __is_first_or_long(here(), key, long: long)
+  let has-short = has-short(entry)
+  let has-plural = has-plural(entry)
+  let has-long = has-long(entry)
+  let has-longplural = has-longplural(entry)
 
-    let longplural = if not has-longplural and has-long {
-      // Default longplural
-      // if the entry long plural is not provided, then fallback to adding default
-      // default-plural-suffix
-      [#ent-long#default-plural-suffix]
-    } else {
-      [#ent-longplural]
-    }
+  let longplural = if not has-longplural and has-long {
+    // Default longplural
+    // if the entry long plural is not provided, then fallback to adding default
+    // default-plural-suffix
+    [#ent-long#default-plural-suffix]
+  } else {
+    [#ent-longplural]
+  }
 
-    let shortplural = if not has-plural {
-      // Default short plural
-      // if the entry plural is not provided, then fallback to adding default
-      // default-plural-suffix
-      [#ent-short#default-plural-suffix]
-    } else {
-      [#ent-plural]
-    }
+  let shortplural = if not has-plural {
+    // Default short plural
+    // if the entry plural is not provided, then fallback to adding default
+    // default-plural-suffix
+    [#ent-short#default-plural-suffix]
+  } else {
+    [#ent-plural]
+  }
 
-    // Link text
-    let link-text = if is-first-or-long and has-long and long != false {
-      if has-short {
-        [#longplural (#shortplural)]
-      } else {
-        [#longplural]
-      }
-    } else if has-short {
-      // Default to short
-      [#shortplural]
+  // Link text
+  let link-text = if is-first-or-long and has-long and long != false {
+    if has-short {
+      [#longplural (#shortplural)]
     } else {
       [#longplural]
     }
-
-    return __link_and_label(entry.key, link-text)
+  } else if has-short {
+    // Default to short
+    [#shortplural]
+  } else {
+    [#longplural]
   }
+
+  return __link_and_label(entry.key, link-text)
 }
 
-// __gls_attribute(key, attr) -> contextual str|content
+// __gls_attribute(key, attr) -> contextual content
 // Get the specified attribute from entry
 //
 // # Arguments
@@ -341,20 +334,19 @@
 //
 // # Returns
 // The attribute of the term
-#let __gls_attribute(key, attr, link: false) = (
-  context {
-    let entry = __get_entry_with_key(here(), key)
-    if link {
-      return __link_and_label(entry.key, entry.at(attr))
-    } else if attr in entry {
-      return entry.at(attr)
-    } else {
-      panic(__error_message(key, __attribute_is_empty, attr: attr))
-    }
+#let __gls_attribute(key, attr, link: false) = context {
+  let entry = __get_entry_with_key(here(), key)
+  if link {
+    return __link_and_label(entry.key, entry.at(attr))
+  } else if attr in entry {
+    return entry.at(attr)
+  } else {
+    panic(__error_message(key, __attribute_is_empty, attr: attr))
   }
-)
+}
 
-// gls-key(key, link: false) -> str
+
+// gls-key(key, link: false) -> contextual content
 // Get the key of the term
 //
 // # Arguments
@@ -365,7 +357,7 @@
 // The key of the term
 #let gls-key(key, link: false) = __gls_attribute(key, "key", link: link)
 
-// gls-short(key, link: false) -> str
+// gls-short(key, link: false) -> contextual content
 // Get the short form of the term
 //
 // # Arguments
@@ -376,7 +368,7 @@
 // The short form of the term
 #let gls-short(key, link: false) = __gls_attribute(key, "short", link: link)
 
-// gls-artshort(key, link: false) -> str|content
+// gls-artshort(key, link: false) -> contextual content
 // Get the article of the short form
 //
 // # Arguments
@@ -391,7 +383,7 @@
   link: link,
 )
 
-// gls-plural(key, link: false) -> str|content
+// gls-plural(key, link: false) -> contextual content
 // Get the plural form of the term
 //
 // # Arguments
@@ -402,7 +394,7 @@
 // The plural form of the term
 #let gls-plural(key, link: false) = __gls_attribute(key, "plural", link: link)
 
-// gls-long(key, link: false) -> str|content
+// gls-long(key, link: false) -> contextual content
 // Get the long form of the term
 //
 // # Arguments
@@ -413,7 +405,7 @@
 // The long form of the term
 #let gls-long(key, link: false) = __gls_attribute(key, "long", link: link)
 
-// gls-artlong(key, link: false) -> str|content
+// gls-artlong(key, link: false) -> contextual content
 // Get the article of the long form
 //
 // # Arguments
@@ -424,7 +416,7 @@
 // The article of the long form
 #let gls-artlong(key, link: false) = __gls_attribute(key, "artlong", link: link)
 
-// gls-longplural(key, link: false) -> str|content
+// gls-longplural(key, link: false) -> contextual content
 // Get the long plural form of the term
 //
 // # Arguments
@@ -439,7 +431,7 @@
   link: link,
 )
 
-// gls-description(key, link: false) -> str|content
+// gls-description(key, link: false) -> contextual content
 // Get the description of the term
 //
 // # Arguments
@@ -454,7 +446,7 @@
   link: link,
 )
 
-// gls-group(key, link: false) -> str
+// gls-group(key, link: false) -> contextual content
 // Get the group of the term
 //
 // # Arguments
@@ -650,7 +642,7 @@
 }
 
 
-// default-print-back-references(entry) -> contextual content
+// default-print-back-references(entry) -> content
 // Print the back references of the entry
 //
 // # Arguments
@@ -704,7 +696,7 @@
 //  user-print-title: default-print-title,
 //  user-print-description: default-print-description,
 //  user-print-back-references: default-print-back-references,
-// ) -> contextual content
+// ) -> content
 // Print the entry
 //
 // # Arguments
@@ -724,31 +716,30 @@
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
-) = (
-  context {
-    let caption = []
+) = {
+  let caption = []
 
-    if show-all == true or count-refs(entry) >= minimum-refs {
-      // Title
-      caption += user-print-title(entry)
+  if show-all == true or count-refs(entry) >= minimum-refs {
+    // Title
+    caption += user-print-title(entry)
 
-      // Description
-      if has-description(entry) {
-        // Title - Description separator
-        caption += ": "
-        caption += user-print-description(entry)
-      }
-
-      // Back references
-      if disable-back-references != true {
-        caption += " "
-        caption += user-print-back-references(entry)
-      }
+    // Description
+    if has-description(entry) {
+      // Title - Description separator
+      caption += ": "
+      caption += user-print-description(entry)
     }
 
-    return caption
+    // Back references
+    if disable-back-references != true {
+      caption += " "
+      caption += user-print-back-references(entry)
+    }
   }
-)
+
+  return caption
+}
+
 
 // default-print-reference(
 //  entry,
@@ -759,7 +750,7 @@
 //  user-print-title: default-print-title,
 //  user-print-description: default-print-description,
 //  user-print-back-references: default-print-back-references,
-// ) -> contextual content
+// ) -> content
 // Print the entry
 //
 // # Arguments
@@ -954,7 +945,7 @@
 //  user-print-title: default-print-title,
 //  user-print-description: default-print-description,
 //  user-print-back-references: default-print-back-references,
-// ) -> contextual content
+// ) -> content
 // Print the glossary
 //
 // # Arguments
@@ -990,8 +981,8 @@
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
-) = {
-  context {
+) = context {
+  {
     if query(<glossarium:make-glossary>).len() == 0 {
       panic(__error_message(none, __make_glossary_not_called))
     }
@@ -1010,7 +1001,7 @@
     // Update state
     __update_glossary(entries)
   } else {
-    context {
+    {
       if __glossary_entries.get().len() == 0 {
         panic(__error_message(none, __glossary_is_empty))
       }
@@ -1019,7 +1010,7 @@
 
   // Glossary
   let body = []
-  body += context {
+  body += {
     // Entries
     let el = if sys.version <= version(0, 11, 1) {
       entries
