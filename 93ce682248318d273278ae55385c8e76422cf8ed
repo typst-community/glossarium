@@ -1,0 +1,13 @@
+[ver:1,total:2311]
+tests/show-link/show-link.typ:828,1738404000:828,r
+.gtm/terminal.app:612,1737979200:60,1738357200:180,1738400400:197,1738404000:175,r
+../.local/share/typst/packages/local/glossarium/0.5.1/themes/default.typ:360,1737979200:360,r
+.vscode/glossarium.code-workspace:171,1738404000:171,m
+tests/non-regression/show-ref.typ:121,1738400400:71,1738404000:50,d
+tests/show-ref/show-ref.typ:95,1738404000:95,r
+.github/workflows/CI.yml:40,1738404000:40,r
+tests/make-glossary/make-glossary.typ:25,1738404000:25,r
+tests/references-in-description/references-in-description.typ:17,1738404000:17,r
+tests/only-one-empty-group/only-one-empty-group.typ:16,1738404000:16,r
+tests/non-regression/show-ref.pdf:16,1738400400:16,d
+tests/debug/debug.typ:10,1738404000:10,r
