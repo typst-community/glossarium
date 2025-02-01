@@ -222,31 +222,26 @@ This approach only styles references that use `@ref` and `@ref:pl` instead of `g
   let el = it.element
   if el != none and el.func() == figure and el.kind == "glossarium_entry" {
     // Make the glossarium entry references dark blue
-    text(fill: blue.darken(60%))
+    text(fill: blue.darken(60%), it)
   } else {
     // Other references as usual.
     it
   }
 }
 ```
+(Credits go to flokl for the [solution](https://forum.typst.app/t/how-do-you-apply-a-style-to-glossarium-references-that-is-different-to-other-reference-types/2089/2?u=ogre) on the Typst forums).
 
-(Thanks to flokl for the [solution](https://forum.typst.app/t/how-do-you-apply-a-style-to-glossarium-references-that-is-different-to-other-reference-types/2089/2?u=ogre) on the Typst forums).
 By adding `else if` clauses for different functions and kinds, each type of reference can be given a different style.
 
-Note that when using the `show ref` rule approach together with a `show link` rule the styling in the `show ref` rule gets overwritten. To avoid this change the `show link` rule to only style `str` links (like website or mailto links).
+Note that when using the `show ref` rule approach together with a **global** `show link` rule the styling in the `show ref` rule gets overwritten. To avoid this change the `show link` rule to only style specific types, e.g., `str` links (like website or mailto links).
 
 ```typ
 #show link: it => {
   if type(it.dest) == str {
-    // Make website or mailto links underlined and gray
-    set text(fill: gray.darken(80%))
-    underline(
-      stroke: (paint: gray, thickness: 0.5pt, dash: "densely-dashed"),
-      offset: 4pt,
-      it,
-    )
+    // Style links to strings red
+    text(fill: red, it)
   } else {
-    // Other links (like glossarium) as usual
+    // Return other links as usual
     it
   }
 }
