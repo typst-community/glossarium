@@ -550,7 +550,7 @@
 // # Returns
 // The back references as an array of links
 #let get-entry-back-references(entry) = {
-  let term-references = __query_labels_with_key(here(), entry.key)
+  let term-references = __query_labels_with_key(here(), entry.key, before: true)
   return term-references
     .map(x => x.location())
     .sorted(key: x => x.page())
