@@ -13,9 +13,9 @@ build-examples:
     @find examples/**/*.typ -type f -exec sh -c "echo --------- Compiling {} && time {{typst}} compile --root . {}" \;
 
 test:
-     find tests/**/*.typ -type f | xargs -I{} {{typst}} compile --root . {}
+    find tests/**/*.typ -type f | xargs -I{} {{typst}} compile --root . {}
 
-# format typst code (use typstfmt)
+# format typst code
 fmt:
     typstyle format-all
 
