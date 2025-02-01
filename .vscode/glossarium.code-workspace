@@ -4,6 +4,13 @@
             "path": ".."
         }
     ],
+    "extensions": {
+        "recommendations": [
+            "myriad-dreamin.tinymist",
+            "nefrob.vscode-just-syntax",
+            "yzhang.markdown-all-in-one",
+        ]
+    },
     "settings": {},
     "tasks": {
         "version": "2.0.0",
@@ -46,6 +53,9 @@
                 "group": {
                     "kind": "build",
                     "isDefault": true
+                },
+                "runOptions": {
+                    "instanceLimit": 1000
                 }
             }
         ]
