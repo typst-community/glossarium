@@ -1,2 +1,6 @@
 [ver:1,total:120]
 .gtm/terminal.app:120,1738494000:120,r
+
+[ver:1,total:180]
+.gtm/terminal.app:120,1738494000:120,r
+tests/references-in-description/references-in-description.typ:60,1738494000:60,r
