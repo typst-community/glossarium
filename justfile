@@ -1,4 +1,4 @@
-version := "0.5.1"
+version := "0.5.2"
 commit_hash := `git rev-parse --short HEAD`
 benchmark_file := "tests/benchmark-" + commit_hash + ".md"
 benchmark_commands := `find examples/**/*.typ -type f | xargs -I {} printf "'typst compile --root . {}' "`

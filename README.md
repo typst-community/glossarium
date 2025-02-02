@@ -13,7 +13,7 @@ examples showcasing the different features in the `examples` folder.
 # Fast start
 
 ```typ
-#import "@preview/glossarium:0.5.1": make-glossary, register-glossary, print-glossary, gls, glspl
+#import "@preview/glossarium:0.5.2": make-glossary, register-glossary, print-glossary, gls, glspl
 #show: make-glossary
 #let entry-list = (
   (
@@ -46,7 +46,7 @@ and [many](https://typst.app/universe/search?q=acro) [others](https://typst.app/
 Import the package from the typst preview repository:
 
 ```typ
-#import "@preview/glossarium:0.5.1": make-glossary, register-glossary, print-glossary, gls, glspl
+#import "@preview/glossarium:0.5.2": make-glossary, register-glossary, print-glossary, gls, glspl
 ```
 
 To use **glossarium** as a vendored module, download the package files into your project folder and import `glossarium.typ`:
@@ -59,7 +59,7 @@ To use **glossarium** locally, create a new package namespace on your system:
 - follows the instructions at [typst/packages](https://github.com/typst/packages?tab=readme-ov-file#local-packages)
 - import glossarium (if your namespace is named `local`):
   ```typ
-  #import "@local/glossarium:0.5.1": make-glossary, register-glossary, print-glossary, gls, glspl
+  #import "@local/glossarium:0.5.2": make-glossary, register-glossary, print-glossary, gls, glspl
   ```
 
 ## Making the glossary

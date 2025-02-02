@@ -3,7 +3,7 @@
 // The glossary command here is modeled after the bibliography command and accepts similar arguments.
 
 #import "../../glossarium.typ": *
-// #import "@preview/glossarium:0.5.1": *
+// #import "@preview/glossarium:0.5.2": *
 #let read-glossary-entries(file) = {
   let entries = yaml(file)
 
@@ -86,7 +86,7 @@
       long: eval(entry.at("long", default: ""), mode: "markup"),
       description: eval(entry.at("description", default: ""), mode: "markup"),
       group: entry.at("group", default: ""),
-      file: file,
+      // file: file,
     ))
 }
 

@@ -1,7 +1,7 @@
 
 // @typstyle off
 #import "../../glossarium.typ": make-glossary, register-glossary, print-glossary, gls, glspl
-// #import "@preview/glossarium:0.5.1": make-glossary, register-glossary, print-glossary, gls, glspl
+// #import "@preview/glossarium:0.5.2": make-glossary, register-glossary, print-glossary, gls, glspl
 
 #show: make-glossary
 #let entry-list = (

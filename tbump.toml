@@ -1,7 +1,7 @@
 github_url = "https://github.com/typst-community/glossarium/"
 
 [version]
-current = "0.5.1"
+current = "0.5.2"
 
 # Example of a semver regexp.
 # Make sure this matches current_version before
@@ -30,6 +30,9 @@ src = "README.md"
 [[file]]
 src = "themes/**/*.typ"
 search = '#let glossarium_version = "{current_version}"'
+
+[[file]]
+src = "examples/**/*.typ"
 
 [[before_commit]]
 name = "compile examples"
