@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.5.2
+
+> [!TIP]
+> A new option `use-key-as-short` has been added and is enabled by default
+> on `register-glossary`. This option allows writing new entries without
+> specifying the `short` field. The `key` field will be used as the `short`
+> field. If you want to disable this behavior, you can set the option to `false`.
+> ```typ
+> #entry-list = (
+>   (
+>     key: "key",
+>   ),
+> )
+> #register-glossary(entry-list, use-key-as-short: true)
+> @key
+> ```
+
+> [!TIP]
+> Glossarium will now panic if you haven't called `make-glossary` before
+> `print-glossary`.
+
+> [!TIP]
+> Glossarium now panics if you try to register an entries with
+> unknown fields.
+
+> [!IMPORTANT]
+> Fix layout divergence when glossary descriptions are nested.
+
+> [!NOTE]
+> - Fix an issue where backreferences were queried on the whole document,
+>   instead of before `print-glossary`.
+> - Fix a regression for versions of Typst before v0.12.0 where `it.body` was
+>   returned instead of `it.caption` for `make-glossary`.
+
 ## 0.5.1
 
 > [!TIP]
