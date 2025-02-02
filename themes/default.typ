@@ -592,7 +592,7 @@
 // #context count-refs((key: "potato"))
 // ```
 #let count-refs(entry) = {
-  let refs = __query_labels_with_key(here(), entry.key)
+  let refs = __query_labels_with_key(here(), entry.key, before: true)
   return refs.len()
 }
 
