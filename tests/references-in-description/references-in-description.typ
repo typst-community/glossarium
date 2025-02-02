@@ -18,13 +18,6 @@
 
 @a
 
-@b
-
-@c
-
 = Glossary
 
-#print-glossary(
-  glossary-terms,
-  user-print-gloss: (entry, ..) => entry.description,
-)
+#print-glossary(glossary-terms)
