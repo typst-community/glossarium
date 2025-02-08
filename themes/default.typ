@@ -470,12 +470,12 @@
 // ```
 #let make-glossary(body) = {
   [#metadata("glossarium:make-glossary")<glossarium:make-glossary>]
-  // Fix figure caption alignement
+  // Set figure body alignement
   show figure.where(kind: __glossarium_figure): it => {
     if sys.version >= version(0, 12, 0) {
-      align(start, it.caption)
+      align(start, it.body)
     } else {
-      it.caption
+      it.body
     }
   }
   // Select all figure refs and filter by __glossarium_figure
@@ -725,27 +725,27 @@
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
 ) = {
-  let caption = []
-
+  set par(
+    hanging-indent: 1em,
+    first-line-indent: 0em,
+  )
   if show-all == true or count-refs(entry) >= minimum-refs {
     // Title
-    caption += user-print-title(entry)
+    user-print-title(entry)
 
     // Description
     if has-description(entry) {
       // Title - Description separator
-      caption += ": "
-      caption += user-print-description(entry)
+      ": "
+      user-print-description(entry)
     }
 
     // Back references
     if disable-back-references != true {
-      caption += " "
-      caption += user-print-back-references(entry)
+      " "
+      user-print-back-references(entry)
     }
   }
-
-  return caption
 }
 
 
@@ -779,34 +779,27 @@
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
-) = {
-  return [
-    #set par(
-      hanging-indent: 1em,
-      first-line-indent: 0em,
-    )
-    #figure(
-      supplement: "",
-      kind: __glossarium_figure,
-      numbering: none,
-      caption: user-print-gloss(
-        entry,
-        show-all: show-all,
-        disable-back-references: disable-back-references,
-        minimum-refs: minimum-refs,
-        user-print-title: user-print-title,
-        user-print-description: user-print-description,
-        user-print-back-references: user-print-back-references,
-      ),
-    )[]#label(entry.key)
-    // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
-    #figure(
-      kind: __glossarium_figure,
-      supplement: "",
-    )[] #label(entry.key + ":pl")
-  ]
-}
-
+) = [
+  #figure(
+    supplement: "",
+    kind: __glossarium_figure,
+    numbering: none,
+    user-print-gloss(
+      entry,
+      show-all: show-all,
+      disable-back-references: disable-back-references,
+      minimum-refs: minimum-refs,
+      user-print-title: user-print-title,
+      user-print-description: user-print-description,
+      user-print-back-references: user-print-back-references,
+    ),
+  )#label(entry.key)
+  // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
+  #figure(
+    kind: __glossarium_figure,
+    supplement: "",
+  )[]#label(entry.key + ":pl")
+]
 
 // default-group-break() -> content
 // Default group break
@@ -860,7 +853,6 @@
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
 ) = {
-  let body = []
   if group-heading-level == none {
     let previous-headings = query(selector(heading).before(here()))
     if previous-headings.len() != 0 {
@@ -879,13 +871,12 @@
           show-all == true or group-ref-counts.any(x => x >= minimum-refs)
         )
     )
-
     // Only print group name if any entries are referenced
     if print-group {
-      body += [#heading(group, level: group-heading-level)]
+      heading(group, level: group-heading-level)
     }
     for entry in group-entries.sorted(key: x => x.key) {
-      body += user-print-reference(
+      user-print-reference(
         entry,
         show-all: show-all,
         disable-back-references: disable-back-references,
@@ -896,11 +887,8 @@
         user-print-back-references: user-print-back-references,
       )
     }
-
-    body += user-group-break()
+    user-group-break()
   }
-
-  return body
 }
 
 //  __update_glossary(entries) -> none
