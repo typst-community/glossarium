@@ -17,6 +17,9 @@
 #register-glossary(glossary-terms)
 
 @a
+@b
+@c
+@h
 
 = Glossary
 
