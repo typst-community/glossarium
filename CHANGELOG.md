@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.3
+
+> [!IMPORTANT]
+> `glossarium@0.5.3` is compatible with Typst>=0.13.0.
+
+> [!WARNING]
+> `glossarium` internals have changed to use `figure.body` instead
+> of `figure.caption`. If you have custom show rules, please change accordingly.
+
 ## 0.5.2
 
 > [!TIP]
