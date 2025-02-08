@@ -1,0 +1,7 @@
+[ver:1,total:2223]
+tests/0.13.0-figures-linebreak/0.13.0-figures-linebreak.typ:1479,1739008800:1479,r
+.gtm/terminal.app:502,1739008800:318,1739012400:184,r
+justfile:80,1739012400:80,r
+typst.toml:70,1739008800:70,r
+.vscode/glossarium.code-workspace:52,1739012400:52,m
+examples/full-example/main.typ:40,1739012400:40,r
