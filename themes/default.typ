@@ -684,7 +684,7 @@
 // The title of the entry
 #let default-print-title(entry) = {
   let caption = []
-  let txt(it) = strong(text.with(weight: 300)(it))
+  let txt = strong.with(delta: 200)
 
   if has-long(entry) and has-short(entry) {
     caption += txt(emph(entry.short) + [ -- ] + entry.long)
