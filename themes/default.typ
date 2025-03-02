@@ -62,7 +62,7 @@
     msg = "key '" + key + "' not found"
   } else if kind == __attribute_is_empty {
     let attr = kwargs.at("attr")
-    msg = "requested attribute " + attr + "is empty for key '" + key + "'"
+    msg = "requested attribute " + attr + " is empty for key '" + key + "'"
   } else if kind == __entry_has_neither_short_nor_long {
     msg = "entry '" + key + "' has neither short nor long form"
   } else if kind == __glossary_is_empty {
@@ -605,14 +605,14 @@
       key: entry.key,
       short: entry.at(
         "short",
-        default: if use-key-as-short { entry.key } else { "" },
+        default: if use-key-as-short { entry.key } else { none },
       ),
-      artshort: entry.at("artshort", default: "a"),
-      plural: entry.at("plural", default: ""),
-      long: entry.at("long", default: ""),
-      artlong: entry.at("artlong", default: "a"),
-      longplural: entry.at("longplural", default: ""),
-      description: entry.at("description", default: ""),
+      artshort: entry.at("artshort", default: none),
+      plural: entry.at("plural", default: none),
+      long: entry.at("long", default: none),
+      artlong: entry.at("artlong", default: none),
+      longplural: entry.at("longplural", default: none),
+      description: entry.at("description", default: none),
       group: entry.at("group", default: ""),
     ))
   }

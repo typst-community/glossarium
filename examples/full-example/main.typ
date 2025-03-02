@@ -8,8 +8,11 @@
     key: "kuleuven",
     short: "KU Leuven",
     long: "Katholieke Universiteit Leuven",
+    longplural: "Katholieke Universiteiten Leuven",
     description: [Fugiat do fugiat est minim ullamco est eu duis minim nisi tempor adipisicing do _sunt_. #gls("vub")],
     plural: "KU Leuvens",
+    artshort: "the",
+    artlong: "the",
   ),
   (
     key: "uclouvain",
