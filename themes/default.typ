@@ -596,7 +596,7 @@
     let unknown_keys = entry
       .keys()
       .filter(x => (
-        x not in ("key", "short", "artshort", "plural", "long", "artlong", "longplural", "description", "group")
+        x not in ("key", "short", "artshort", "plural", "long", "artlong", "longplural", "description", "group", "sort")
       ))
     if unknown_keys.len() > 0 {
       panic("entry `" + entry.key + "` has unknown keys: " + unknown_keys.join(", "))
@@ -614,6 +614,7 @@
       longplural: entry.at("longplural", default: none),
       description: entry.at("description", default: none),
       group: entry.at("group", default: ""),
+      sort: entry.at("sort", default: entry.key),
     ))
   }
   return new-list
@@ -853,6 +854,8 @@
   disable-back-references: false,
   group-heading-level: none,
   minimum-refs: 1,
+  group-sortkey: g => g,
+  entry-sortkey: e => e.sort,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
   user-print-gloss: default-print-gloss,
@@ -869,7 +872,7 @@
     }
   }
 
-  for group in groups.sorted() {
+  for group in groups.sorted(key: group-sortkey) {
     let group-entries = entries.filter(x => x.at("group") == group)
     let group-ref-counts = group-entries.map(x => count-refs(x.key))
     let print-group = (
@@ -880,7 +883,7 @@
     if print-group {
       heading(group, level: group-heading-level, outlined: false)
     }
-    for entry in group-entries.sorted(key: x => x.key) {
+    for entry in group-entries.sorted(key: entry-sortkey) {
       user-print-reference(
         entry,
         show-all: show-all,
@@ -975,6 +978,8 @@
   disable-back-references: false,
   group-heading-level: none,
   minimum-refs: 1,
+  group-sortkey: g => g,
+  entry-sortkey: e => e.sort,
   user-print-glossary: default-print-glossary,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
@@ -1039,6 +1044,8 @@
       disable-back-references: disable-back-references,
       group-heading-level: group-heading-level,
       minimum-refs: minimum-refs,
+      group-sortkey: group-sortkey,
+      entry-sortkey: entry-sortkey,
       user-print-reference: user-print-reference,
       user-group-break: user-group-break,
       user-print-gloss: user-print-gloss,
