@@ -10,10 +10,10 @@ local:
     cp -r * ~/.local/share/typst/packages/local/glossarium/{{version}}
 
 build-examples:
-    @find examples/**/*.typ -type f -exec sh -c "echo --------- Compiling {} && time {{typst}} compile --root . {}" \;
+    @find examples/**/*.typ -type f -exec sh -c "echo ------ Compiling {} && time {{typst}} compile --root . {}" \;
 
 test:
-    find tests/**/*.typ -type f | xargs -I{} {{typst}} compile --root . {}
+    find tests/**/*.typ -type f | xargs -I {} sh -c "echo ------ Compiling {} && {{typst}} compile --root . {}"
 
 # format typst code
 fmt:
