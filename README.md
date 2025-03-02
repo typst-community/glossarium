@@ -33,6 +33,8 @@ examples showcasing the different features in the `examples` folder.
 
 # I don't like it!
 
+**Issues, PRs, and comments are welcome!** If you are unsure where to post, create an issue and I will triage it.
+
 Take a look at:
 - [`acrostiche`](https://typst.app/universe/package/acrostiche)
 - [`glossy`](https://typst.app/universe/package/glossy)
