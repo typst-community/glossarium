@@ -218,7 +218,7 @@ Force long when empty defaults to plural: #glspl("potato A", long: true)
 
 == #count-refs
 
-#context count-refs((key: "potato D"))
+#context count-refs("potato D")
 
 == #count-all-refs
 
@@ -229,7 +229,7 @@ Only list 4: #context count-all-refs(entry-list: entry-list-4)
 == #there-are-refs
 
 true: #context there-are-refs()
-
+)
 false: #context there-are-refs(groups: (" ",))
 
 #context if there-are-refs(entry-list: ((key: "potato A"),)) [

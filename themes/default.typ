@@ -18,6 +18,15 @@
 // See `__normalize_entry_list`.
 #let __glossary_entries = state("__glossary_entries", (:))
 
+// global state containing the entry counts
+#let __glossary_counts = state("__glossary_counts", (:))
+#let __update_count(key) = {
+  __glossary_counts.update(x => {
+    x.insert(key, x.at(key, default: 0) + 1)
+    return x
+  })
+}
+
 // glossarium version
 #let glossarium_version = "0.5.3"
 
@@ -68,7 +77,7 @@
   return __glossarium_error_prefix + msg
 }
 
-// __query_labels_with_key(loc, key, before: false) -> array<label>
+// __query_labels_with_key_before(loc, key) -> array<label>
 // Query the labels with the key
 //
 // # Arguments
@@ -78,17 +87,11 @@
 //
 // # Returns
 // The labels with the key
-#let __query_labels_with_key(loc, key, before: false) = {
-  if before {
-    return query(
-      selector(label(__glossary_label_prefix + key)).before(
-        loc,
-        inclusive: false,
-      ),
-    )
-  } else {
-    return query(selector(label(__glossary_label_prefix + key)))
-  }
+#let __query_labels_with_key_before(loc, key) = {
+  return query(selector(label(__glossary_label_prefix + key)).before(loc, inclusive: false))
+}
+#let __query_labels_with_key(key) = {
+  return query(selector(label(__glossary_label_prefix + key)))
 }
 
 // __get_entry_with_key(loc, key) -> dictionary
@@ -116,7 +119,78 @@
   }
 }
 
-// __is_first_or_long(loc, key, long: none) -> bool
+// count-refs(key) -> int
+// Count the number of references to the entry in the document
+//
+// # Arguments
+// entry (dictionary): the entry
+//
+// # Returns
+// The number of references to the entry
+//
+// # Usage
+// ```typ
+// #context count-refs("potato")
+// ```
+#let count-refs(key) = {
+  return __glossary_counts.final().at(key, default: 0)
+}
+
+// count-all-refs(entry-list: none, groups: none) -> array<(str, int)>
+// Return the number of references for each entry in the document
+
+// # Arguments
+// entry-list (array<dictionary>): the list of entries. Defaults to all entries
+// groups (array<str>): the list of groups to be considered. `""` is the default group.
+//
+// # Returns
+// The number of references for each entry across the document
+//
+// # Usage
+// ```typ
+// #context count-all-refs()
+// ```
+#let count-all-refs(entry-list: none, groups: none) = {
+  let el = if entry-list == none {
+    __glossary_entries.get().values()
+  } else {
+    entry-list
+  }
+  let g = if groups == none {
+    el.map(x => x.at("group", default: "")).dedup()
+  } else if type(groups) == array {
+    groups
+  } else {
+    panic("groups must be an array of strings, e.g., (\"\",)")
+  }
+  el = el.filter(x => x.at("group", default: "") in g)
+  let counts = el.map(x => (x.key, count-refs(x.key)))
+  return counts
+}
+
+// there-are-refs(entry-list: none, groups: none) -> bool
+// Check if there are references to the entries in the document
+//
+// # Arguments
+// entry-list (array<dictionary>): the list of entries. Defaults to all entries
+// groups (array<str>): the list of groups to be considered. `""` is the default group.
+//
+// # Returns
+// True if there are references to the entries in the document
+//
+// # Usage
+// ```typ
+// #context if there-are-refs() {
+//   [= Glossary]
+// }
+// ```
+#let there-are-refs(entry-list: none, groups: none) = {
+  let counts = count-all-refs(entry-list: entry-list, groups: groups)
+  return counts.to-dict().values().any(x => x > 0)
+}
+
+
+// is-first-or-long(ey, long: none) -> bool
 // Check if the key is the first reference to the term or long form is requested
 //
 // # Arguments
@@ -126,8 +200,8 @@
 //
 // # Returns
 // True if the key is the first reference to the term or long form is requested
-#let __is_first_or_long(loc, key, long: none) = {
-  let gloss = __query_labels_with_key(loc, key, before: true)
+#let is-first-or-long(key, long: none) = {
+  let gloss = __query_labels_with_key_before(here(), key)
   return gloss == () or long == true
 }
 
@@ -144,7 +218,7 @@
 #let has-description(entry) = __has_attribute(entry, "description")
 #let has-group(entry) = __has_attribute(entry, "group")
 
-// __link_and_label(key, text, prefix: none, suffix: none) -> content
+// __link_and_label(key, text, prefix: none, suffix: none, update: true) -> content
 // Build a link and a label
 //
 // # Arguments
@@ -155,12 +229,13 @@
 //
 // # Returns
 // The link and the entry label
-#let __link_and_label(key, text, prefix: none, suffix: none) = {
-  return [#prefix#link(
-      label(key),
-      text,
-    )#suffix#label(__glossary_label_prefix + key)]
-}
+#let __link_and_label(key, text, prefix: none, suffix: none, update: true) = [
+  #if update { __update_count(key) }
+  #prefix
+  #link(label(key), text)
+  #suffix
+  #label(__glossary_label_prefix + key)
+]
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term
@@ -173,7 +248,7 @@
 //
 // # Returns
 // The link and the entry label
-#let gls(key, suffix: none, long: none, display: none) = context {
+#let gls(key, suffix: none, long: none, display: none, update: true) = context {
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
@@ -181,7 +256,7 @@
   let ent-short = entry.at("short", default: "")
 
   // Conditions
-  let is-first-or-long = __is_first_or_long(here(), key, long: long)
+  let is-first-or-long = is-first-or-long(key, long: long)
   let has-long = has-long(entry)
   let has-short = has-short(entry)
 
@@ -213,7 +288,7 @@
     link-text += [#ent-short#suffix]
   }
 
-  return __link_and_label(entry.key, link-text)
+  return __link_and_label(entry.key, link-text, update: update)
 }
 
 // agls(key, suffix: none, long: none) -> contextual content
@@ -226,7 +301,7 @@
 //
 // # Returns
 // The link and the entry label
-#let agls(key, suffix: none, long: none) = context {
+#let agls(key, suffix: none, long: none, update: true) = context {
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
@@ -236,7 +311,7 @@
   let ent-artshort = entry.at("artshort", default: "a")
 
   // Conditions
-  let is-first-or-long = __is_first_or_long(here(), key, long: long)
+  let is-first-or-long = is-first-or-long(key, long: long)
   let has-long = has-long(entry)
   let has-short = has-short(entry)
 
@@ -260,7 +335,7 @@
   }
 
   // Return
-  return __link_and_label(entry.key, link-text, prefix: [#article ])
+  return __link_and_label(entry.key, link-text, prefix: [#article ], update: update)
 }
 
 
@@ -273,7 +348,7 @@
 //
 // # Returns
 // The link and the entry label
-#let glspl(key, long: none) = context {
+#let glspl(key, long: none, update: true) = context {
   let default-plural-suffix = "s"
   let entry = __get_entry_with_key(here(), key)
 
@@ -284,7 +359,7 @@
   let ent-longplural = entry.at("longplural", default: "")
 
   // Conditions
-  let is-first-or-long = __is_first_or_long(here(), key, long: long)
+  let is-first-or-long = is-first-or-long(key, long: long)
   let has-short = has-short(entry)
   let has-plural = has-plural(entry)
   let has-long = has-long(entry)
@@ -322,7 +397,7 @@
     [#longplural]
   }
 
-  return __link_and_label(entry.key, link-text)
+  return __link_and_label(entry.key, link-text, update: update)
 }
 
 // __gls_attribute(key, attr) -> contextual content
@@ -334,11 +409,11 @@
 //
 // # Returns
 // The attribute of the term
-#let __gls_attribute(key, attr, link: false) = context {
+#let __gls_attribute(key, attr, link: false, update: false) = context {
   let entry = __get_entry_with_key(here(), key)
   if link {
-    return __link_and_label(entry.key, entry.at(attr))
-  } else if attr in entry {
+    return __link_and_label(entry.key, entry.at(attr), update: update)
+  } else if attr in entry and entry.at(attr) != none {
     return entry.at(attr)
   } else {
     panic(__error_message(key, __attribute_is_empty, attr: attr))
@@ -457,6 +532,27 @@
 // The group of the term
 #let gls-group(key, link: false) = __gls_attribute(key, "group", link: link)
 
+// Select all figure refs and filter by __glossarium_figure
+//
+// Transform the ref to the glossary term
+#let refrule(r, update: true) = {
+  if (
+    r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
+  ) {
+    // call to the general citing function
+    let key = str(r.target)
+    if key.ends-with(":pl") {
+      // Plural ref
+      glspl(str(key).slice(0, -3), update: update)
+    } else {
+      // Default ref
+      gls(str(key), suffix: r.citation.supplement, update: update)
+    }
+  } else {
+    r
+  }
+}
+
 // make-glossary(body) -> content
 // Show rule for glossary
 //
@@ -478,25 +574,7 @@
       it.body
     }
   }
-  // Select all figure refs and filter by __glossarium_figure
-  // Transform the ref to the glossary term
-  show ref: r => {
-    if (
-      r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
-    ) {
-      // call to the general citing function
-      let key = str(r.target)
-      if key.ends-with(":pl") {
-        // Plural ref
-        glspl(str(key).slice(0, -3))
-      } else {
-        // Default ref
-        gls(str(key), suffix: r.citation.supplement)
-      }
-    } else {
-      r
-    }
-  }
+  show ref: refrule
   body
 }
 
@@ -550,7 +628,7 @@
 // # Returns
 // The back references as an array of links
 #let get-entry-back-references(entry) = {
-  let term-references = __query_labels_with_key(here(), entry.key, before: true)
+  let term-references = __query_labels_with_key(entry.key)
   return term-references
     .map(x => x.location())
     .sorted(key: x => x.page())
@@ -577,78 +655,6 @@
       return link(x)[#numbering(page-numbering, ..counter(page).at(x))]
     })
 }
-
-// count-refs(entry) -> int
-// Count the number of references to the entry in the document
-//
-// # Arguments
-// entry (dictionary): the entry
-//
-// # Returns
-// The number of references to the entry
-//
-// # Usage
-// ```typ
-// #context count-refs((key: "potato"))
-// ```
-#let count-refs(entry) = {
-  let refs = __query_labels_with_key(here(), entry.key, before: true)
-  return refs.len()
-}
-
-// count-all-refs(entry-list: none, groups: none) -> array<(str, int)>
-// Return the number of references for each entry in the document
-
-// # Arguments
-// entry-list (array<dictionary>): the list of entries. Defaults to all entries
-// groups (array<str>): the list of groups to be considered. `""` is the default group.
-//
-// # Returns
-// The number of references for each entry across the document
-//
-// # Usage
-// ```typ
-// #context count-all-refs()
-// ```
-#let count-all-refs(entry-list: none, groups: none) = {
-  let el = if entry-list == none {
-    __glossary_entries.get().values()
-  } else {
-    entry-list
-  }
-  let g = if groups == none {
-    el.map(x => x.at("group", default: "")).dedup()
-  } else if type(groups) == array {
-    groups
-  } else {
-    panic("groups must be an array of strings, e.g., (\"\",)")
-  }
-  el = el.filter(x => x.at("group", default: "") in g)
-  let counts = el.map(x => (x.key, count-refs(x)))
-  return counts
-}
-
-// there-are-refs(entry-list: none, groups: none) -> bool
-// Check if there are references to the entries in the document
-//
-// # Arguments
-// entry-list (array<dictionary>): the list of entries. Defaults to all entries
-// groups (array<str>): the list of groups to be considered. `""` is the default group.
-//
-// # Returns
-// True if there are references to the entries in the document
-//
-// # Usage
-// ```typ
-// #context if there-are-refs() {
-//   [= Glossary]
-// }
-// ```
-#let there-are-refs(entry-list: none, groups: none) = {
-  let counts = count-all-refs(entry-list: entry-list, groups: groups)
-  return counts.to-dict().values().any(x => x > 0)
-}
-
 
 // default-print-back-references(entry) -> content
 // Print the back references of the entry
@@ -729,7 +735,8 @@
     hanging-indent: 1em,
     first-line-indent: 0em,
   )
-  if show-all == true or count-refs(entry) >= minimum-refs {
+  // ? references-in-description layout divergence
+  if show-all == true or count-refs(entry.key) >= minimum-refs {
     // Title
     user-print-title(entry)
 
@@ -861,19 +868,17 @@
       group-heading-level = 1
     }
   }
+
   for group in groups.sorted() {
     let group-entries = entries.filter(x => x.at("group") == group)
-    let group-ref-counts = group-entries.map(count-refs)
-
+    let group-ref-counts = group-entries.map(x => count-refs(x.key))
     let print-group = (
-      group != ""
-        and (
-          show-all == true or group-ref-counts.any(x => x >= minimum-refs)
-        )
+      // ? group-heading-pagebreak Layout divergence if location is conditional on print-group
+      group != "" and (show-all == true or group-ref-counts.any(x => x >= minimum-refs))
     )
     // Only print group name if any entries are referenced
     if print-group {
-      heading(group, level: group-heading-level)
+      heading(group, level: group-heading-level, outlined: false)
     }
     for entry in group-entries.sorted(key: x => x.key) {
       user-print-reference(
@@ -1007,6 +1012,8 @@
   // Glossary
   let body = []
   body += {
+    show ref: refrule.with(update: false)
+
     // Entries
     let el = if sys.version <= version(0, 11, 1) {
       entries
