@@ -22,5 +22,4 @@
 @h
 
 = Glossary
-
 #print-glossary(glossary-terms)
