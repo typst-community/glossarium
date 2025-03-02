@@ -1,7 +1,7 @@
 
 // @typstyle off
 #import "../../glossarium.typ": make-glossary, register-glossary, print-glossary, gls, glspl, agls, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group
-// #import "@preview/glossarium:0.5.3": make-glossary, register-glossary, print-glossary, gls, glspl, agls, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group
+// #import "@preview/glossarium:0.5.4": make-glossary, register-glossary, print-glossary, gls, glspl, agls, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group
 #show: make-glossary
 #let entry-list = (
   (
