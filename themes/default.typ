@@ -229,13 +229,9 @@
 //
 // # Returns
 // The link and the entry label
-#let __link_and_label(key, text, prefix: none, suffix: none, update: true) = [
-  #if update { __update_count(key) }
-  #prefix
-  #link(label(key), text)
-  #suffix
-  #label(__glossary_label_prefix + key)
-]
+#let __link_and_label(key, text, prefix: none, suffix: none, update: true) = [#if update {
+    __update_count(key)
+  }#prefix#link(label(key), text)#suffix#label(__glossary_label_prefix + key)]
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term
