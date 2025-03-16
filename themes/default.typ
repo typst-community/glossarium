@@ -77,6 +77,11 @@
   return __glossarium_error_prefix + msg
 }
 
+#let __no_space(txt) = {
+  show [ ].func(): none
+  txt
+}
+
 // __query_labels_with_key_before(loc, key) -> array<label>
 // Query the labels with the key
 //
@@ -280,7 +285,8 @@
     link-text += [#display]
   } else if is-first-or-long and has-long and long != false {
     if has-short {
-      link-text += [#ent-long (#ent-short#suffix)]
+      // include explicit text calls with space as it would be stripped otherwise
+      link-text += [#ent-long #text(" (") #ent-short#suffix #text(")")]
     } else {
       link-text += [#ent-long]
     }
@@ -288,7 +294,7 @@
     link-text += [#ent-short#suffix]
   }
 
-  return __link_and_label(entry.key, link-text, update: update)
+  return __no_space(__link_and_label(entry.key, link-text, update: update))
 }
 
 // agls(key, suffix: none, long: none) -> contextual content
@@ -335,7 +341,7 @@
   }
 
   // Return
-  return __link_and_label(entry.key, link-text, prefix: [#article ], update: update)
+  return __no_space(__link_and_label(entry.key, link-text, prefix: [#article ], update: update))
 }
 
 
@@ -397,7 +403,7 @@
     [#longplural]
   }
 
-  return __link_and_label(entry.key, link-text, update: update)
+  return __no_space(__link_and_label(entry.key, link-text, update: update))
 }
 
 // __gls_attribute(key, attr) -> contextual content
@@ -412,9 +418,9 @@
 #let __gls_attribute(key, attr, link: false, update: false) = context {
   let entry = __get_entry_with_key(here(), key)
   if link {
-    return __link_and_label(entry.key, entry.at(attr), update: update)
+    return __no_space(__link_and_label(entry.key, entry.at(attr), update: update))
   } else if attr in entry and entry.at(attr) != none {
-    return entry.at(attr)
+    return __no_space(entry.at(attr))
   } else {
     panic(__error_message(key, __attribute_is_empty, attr: attr))
   }
