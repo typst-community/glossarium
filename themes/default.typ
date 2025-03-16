@@ -77,6 +77,11 @@
   return __glossarium_error_prefix + msg
 }
 
+#let __capitalize(text: "") = {
+  if text == "" { return text }
+  return upper(text.first()) + text.slice(1)
+}
+
 // __query_labels_with_key_before(loc, key) -> array<label>
 // Query the labels with the key
 //
@@ -245,14 +250,18 @@
 //  suffix (str): the suffix to be added to the short form
 //  long (bool): enable/disable the long form
 //  display (str): override text to be displayed
+//  capitalize (bool): Capitalize first letter of long form
 //
 // # Returns
 // The link and the entry label
-#let gls(key, suffix: none, long: none, display: none, update: true) = context {
+#let gls(key, suffix: none, long: none, display: none, update: true, capitalize: false) = context {
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
   let ent-long = entry.at("long", default: "")
+  if capitalize and ent-long != "" {
+    ent-long = __capitalize(text: ent-long)
+  }
   let ent-short = entry.at("short", default: "")
 
   // Conditions
@@ -290,6 +299,17 @@
 
   return __link_and_label(entry.key, link-text, update: update)
 }
+
+// gls(key, suffix: none, long: none, display: none) -> contextual content
+// Reference to term, capitalized
+#let Gls(key, suffix: none, long: none, display: none, update: true) = gls(
+  key,
+  suffix: suffix,
+  long: long,
+  display: display,
+  update: update,
+  capitalize: true,
+)
 
 // agls(key, suffix: none, long: none) -> contextual content
 // Reference to term with article
@@ -345,10 +365,11 @@
 // # Arguments
 //  key (str): the key of the term
 //  long (bool): enable/disable the long form
+//  capitalize (bool): Capitalize first letter of long form
 //
 // # Returns
 // The link and the entry label
-#let glspl(key, long: none, update: true) = context {
+#let glspl(key, long: none, update: true, capitalize: false) = context {
   let default-plural-suffix = "s"
   let entry = __get_entry_with_key(here(), key)
 
@@ -356,6 +377,9 @@
   let ent-short = entry.at("short", default: "")
   let ent-plural = entry.at("plural", default: "")
   let ent-long = entry.at("long", default: "")
+  if capitalize and ent-long != "" {
+    ent-long = __capitalize(text: ent-long)
+  }
   let ent-longplural = entry.at("longplural", default: "")
 
   // Conditions
@@ -399,6 +423,10 @@
 
   return __link_and_label(entry.key, link-text, update: update)
 }
+
+// glspl(key, long: none) -> content
+// Reference to term with plural form, capitalized
+#let Glspl(key, long: none, update: true) = glspl(key, long: long, update: update, capitalize: true)
 
 // __gls_attribute(key, attr) -> contextual content
 // Get the specified attribute from entry
