@@ -259,10 +259,14 @@
 
   // Attributes
   let ent-long = entry.at("long", default: "")
-  if capitalize and ent-long != "" {
-    ent-long = __capitalize(text: ent-long)
-  }
   let ent-short = entry.at("short", default: "")
+
+  if capitalize and ent-long != "" {
+    ent-long = __capitalize(ent-long)
+  }
+  if capitalize and ent-short != "" {
+    ent-short = __capitalize(ent-short)
+  }
 
   // Conditions
   let is-first-or-long = is-first-or-long(key, long: long)
@@ -377,9 +381,14 @@
   let ent-short = entry.at("short", default: "")
   let ent-plural = entry.at("plural", default: "")
   let ent-long = entry.at("long", default: "")
+
   if capitalize and ent-long != "" {
-    ent-long = __capitalize(text: ent-long)
+    ent-long = __capitalize(ent-long)
   }
+  if capitalize and ent-short != "" {
+    ent-short = __capitalize(ent-short)
+  }
+
   let ent-longplural = entry.at("longplural", default: "")
 
   // Conditions
