@@ -2,9 +2,8 @@
 
 #show: make-glossary
 #let glossary = (
-  (key: "NN", short: "NN", long: "Neural Network"),
-  (key: "SG", short: "SG", long: "Singular"),
   (key: "foo", long: "foobar"),
+  (key: "bar", long: "barbaz"),
 )
 #register-glossary(glossary)
 
@@ -12,7 +11,10 @@
 
 = Some content
 
-#Gls("foo") is a reference at the beginning of a sentence. Use `#Gls("foo")`: `@foo` (@foo) doesn't uppercase.
+- #Gls("foo") is the first reference at the beginning of a sentence using `#Gls`.
+- #Gls("foo") is the second reference.
+- #Glspl("bar") is the first reference at the beginning of a sentence using `#Glspl`.
+- #Glspl("bar") is the second reference.
 
 = Glossary
 
