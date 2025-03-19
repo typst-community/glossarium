@@ -74,7 +74,7 @@ After importing the package and before making any calls to `gls`, ` print-glossa
 > [!NOTE]
 > <h3 align="center">*WHY DO WE NEED THAT?*</h3>
 >
-> In order to be able to create references to the terms in your glossary using typst [reference  syntax](https://typst.app/docs/reference/model/ref/) `@key` glossarium needs to setup some [show rules](https://typst.app/docs/tutorial/advanced-styling/) before any references exist.
+> In order to be able to create references to the terms in your glossary using typst [reference syntax](https://typst.app/docs/reference/model/ref/) `@key` glossarium needs to setup some [show rules](https://typst.app/docs/tutorial/advanced-styling/) before any references exist.
 
 > [!CAUTION]
 > <h3 align="center">*SHOW RULES CONFLICTS*</h3>
@@ -194,7 +194,32 @@ The `plural` key will be used when `short` should be pluralized and `longplural`
 #glspl("potato")
 ```
 
+Alternatively, you can reference the automatically generated label:
+
+```typ
+@potato:pl
+```
+
 Please look at the examples regarding plurals.
+
+## Handling capitalization
+
+If you use a term at the beginning of a sentence, you might want to capitalize it.
+You can use the `capitalize` argument of `#gls` and `#glspl` to do so,
+or, shorter, call `#Gls` and `#Glspl`.
+
+```typ
+#Gls("ref")
+```
+
+You can also reference the automatically generated labels:
+
+```typ
+@Ref
+@Ref:pl
+```
+
+Please note that these are only generated if the `key` does not start with an uppercase letter.
 
 ## Overriding the text shown
 
