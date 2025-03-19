@@ -41,6 +41,7 @@
 #let __glossary_is_empty = "glossary_is_empty"
 #let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
 #let __make_glossary_not_called = "make_glossary_not_called"
+#let __capitalize_called_with_content_type = "__capitalize_called_with_content_type"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -67,6 +68,10 @@
     msg = "entry '" + key + "' has neither short nor long form"
   } else if kind == __glossary_is_empty {
     msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
+  } else if kind == __capitalize_called_with_content_type {
+    msg = (
+      "Capitalization was requested for " + key + ", but short or long is of type content. Use a string instead."
+    )
   } else if kind == __make_glossary_not_called {
     msg = "make-glossary not called. Add `#show: make-glossary` at the beginning of the document."
   } else {
@@ -77,8 +82,11 @@
   return __glossarium_error_prefix + msg
 }
 
-#let __capitalize(text: "") = {
+#let __capitalize(text) = {
   if text == "" { return text }
+  if type(text) == content {
+    panic(__error_message(key, __capitalize_called_with_content_type))
+  }
   return upper(text.first()) + text.slice(1)
 }
 
