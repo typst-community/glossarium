@@ -41,7 +41,7 @@
 #let __glossary_is_empty = "glossary_is_empty"
 #let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
 #let __make_glossary_not_called = "make_glossary_not_called"
-#let __capitalize_called_with_content_type = "__capitalize_called_with_content_type"
+#let __capitalize_called_with_content_type = "capitalize_called_with_content_type"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -115,7 +115,10 @@
 //  key (str): the key of the term
 //
 // # Returns
-// The entry of the term or `none`
+// The entry of the term
+//
+// # Panics
+// If the key is not found, it will raise a `key_not_found` error
 #let __get_entry_with_key(loc, key) = {
   let entries = if sys.version <= version(0, 11, 1) {
     __glossary_entries.final()
@@ -125,7 +128,7 @@
   if key in entries {
     return entries.at(key)
   } else {
-    return none
+    panic(__error_message(key, __key_not_found))
   }
 }
 
@@ -261,9 +264,6 @@
 // The link and the entry label
 #let gls(key, suffix: none, long: none, display: none, update: true, capitalize: false) = context {
   let entry = __get_entry_with_key(here(), key)
-  if entry == none {
-    panic(__error_message(key, __key_not_found))
-  }
 
   // Attributes
   let ent-long = entry.at("long", default: "")
@@ -335,9 +335,6 @@
 // The link and the entry label
 #let agls(key, suffix: none, long: none, update: true) = context {
   let entry = __get_entry_with_key(here(), key)
-  if entry == none {
-    panic(__error_message(key, __key_not_found))
-  }
 
   // Attributes
   let ent-long = entry.at("long", default: "")
@@ -387,9 +384,6 @@
 #let glspl(key, long: none, update: true, capitalize: false) = context {
   let default-plural-suffix = "s"
   let entry = __get_entry_with_key(here(), key)
-  if entry == none {
-    panic(__error_message(key, __key_not_found))
-  }
 
   // Attributes
   let ent-short = entry.at("short", default: "")
@@ -462,10 +456,6 @@
 // The attribute of the term
 #let __gls_attribute(key, attr, link: false, update: false) = context {
   let entry = __get_entry_with_key(here(), key)
-  if entry == none {
-    panic(__error_message(key, __key_not_found))
-  }
-
   if link {
     return __link_and_label(entry.key, entry.at(attr), update: update)
   } else if attr in entry and entry.at(attr) != none {
@@ -599,27 +589,21 @@
     let key = str(r.target)
     if key.ends-with(":pl") {
       // Plural ref
-      let singular_key = str(key).slice(0, -3)
-      if __get_entry_with_key(position, singular_key) != none {
-        return glspl(singular_key, update: update)
-      }
-      let lower_case_key = lower(singular_key.first()) + singular_key.slice(1)
-      if __get_entry_with_key(position, lower_case_key) != none {
-        return glspl(lower_case_key, update: update, capitalize: true)
+      if is-upper(key.slice(0, -3)) {
+        // Capitalized ref
+        return Glspl(lower(key).slice(0, -3), update: update)
+      } else {
+        return glspl(key.slice(0, -3), update: update)
       }
     } else {
       // Default ref
-      let _key = str(key)
-      if __get_entry_with_key(position, _key) != none {
-        return gls(_key, suffix: r.citation.supplement, update: update)
-      }
-      let lower_case_key = lower(_key.first()) + _key.slice(1)
-      if __get_entry_with_key(position, lower_case_key) != none {
-        return gls(lower_case_key, suffix: r.citation.supplement, update: update, capitalize: true)
+      if is-upper(key) {
+        // Capitalized ref
+        return Gls(lower(key), update: update)
+      } else {
+        return gls(key, update: update)
       }
     }
-
-    panic(__error_message(key, __key_not_found))
   } else {
     return r
   }
@@ -880,7 +864,7 @@
     supplement: "",
   )[]#label(entry.key + ":pl")
   // Same as above, but for capitalized form, e.g., "@Term"
-  #if upper(entry.key.first()) != entry.key.first() {
+  #if not is-upper(entry.key) {
     [
       #figure(
         kind: __glossarium_figure,
