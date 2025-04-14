@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.5.5
+
+> [!WARNING]
+> The previous version `0.5.4` introduced a regression which was fixed in this version.
+> Glossarium no longer adds whitespace around a reference.
+
+> [!TIP]
+> Thanks to @killercup, glossarium now has support for capitalization.
+> You can directly call `@Ref` or `@Ref:pl`, or use the `capitalize` parameter in
+> `gls` and `glspl`.
+> Capitalization is limited to strings, but raises a panic if used on content.
+
+## 0.5.4
+
+> [!TIP]
+> Entries can take a new attribute `sort` and `print-glossary` has two new parameters `entry-sortkey` and `group-sortkey` to customize sorting.
+> Default behaviour is to sort by `key`.
+> They allow you to sort the glossary entries and groups respectively according to one or more attributes of the entries, e.g., `entry-sortkey: e => e.key`, `entry-sortkey: e => e.short`, or `entry-sortkey: e => (e.sort, e.key)`.
+
+> [!IMPORTANT]
+> You can now use `print-glossary` at the start of a document.
+
+> [!TIP]
+> `count-refs` now takes in a key instead of an entry, e.g., `count-refs("potato")`.
+
+> [!TIP]
+> `print-glossary` should no longer print entries recursively when a reference is in the description or produce a layout divergence.
+
+> [!WARNING]
+> Group heading level are no longer outlined by default.
+
+> [!NOTE]
+> Glossarium now tracks references with an internal state for `print-glossary` instead of querying.
+
 ## 0.5.3
 
 > [!IMPORTANT]
