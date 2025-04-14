@@ -577,6 +577,8 @@
 // The group of the term
 #let gls-group(key, link: false) = __gls_attribute(key, "group", link: link)
 
+#let is-upper(key) = upper(key.at(0)) == key.at(0)
+
 // Select all figure refs and filter by __glossarium_figure
 //
 // Transform the ref to the glossary term
