@@ -90,19 +90,15 @@
   return upper(text.first()) + text.slice(1)
 }
 
-// __query_labels_with_key_before(loc, key) -> array<label>
+// __query_labels_with_key(loc, key) -> array<label>
 // Query the labels with the key
 //
 // # Arguments
 //  loc (location): the location of the reference
 //  key (str): the key of the term
-//  before (bool): if true, it will query the labels before the location
 //
 // # Returns
 // The labels with the key
-#let __query_labels_with_key_before(loc, key) = {
-  return query(selector(label(__glossary_label_prefix + key)).before(loc, inclusive: false))
-}
 #let __query_labels_with_key(key) = {
   return query(selector(label(__glossary_label_prefix + key)))
 }
@@ -214,8 +210,7 @@
 // # Returns
 // True if the key is the first reference to the term or long form is requested
 #let is-first-or-long(key, long: none) = {
-  let gloss = __query_labels_with_key_before(here(), key)
-  return gloss == () or long == true
+  return __glossary_counts.get().at(key, default: 0) == 0 or long == true
 }
 
 #let __has_attribute(entry, key) = {
