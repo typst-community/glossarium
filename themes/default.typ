@@ -766,6 +766,7 @@
 //  show-all: false,
 //  disable-back-references: false,
 //  minimum-refs: 1,
+//  description-separator: ": ",
 //  user-print-title: default-print-title,
 //  user-print-description: default-print-description,
 //  user-print-back-references: default-print-back-references,
@@ -786,6 +787,7 @@
   show-all: false,
   disable-back-references: false,
   minimum-refs: 1,
+  description-separator: ": ",
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
@@ -802,7 +804,7 @@
     // Description
     if has-description(entry) {
       // Title - Description separator
-      ": "
+      description-separator
       user-print-description(entry)
     }
 
@@ -820,6 +822,7 @@
 //  show-all: false,
 //  disable-back-references: false,
 //  minimum-refs: 1,
+//  description-separator: ": ",
 //  user-print-gloss: default-print-gloss,
 //  user-print-title: default-print-title,
 //  user-print-description: default-print-description,
@@ -841,6 +844,7 @@
   show-all: false,
   disable-back-references: false,
   minimum-refs: 1,
+  description-separator: ": ",
   user-print-gloss: default-print-gloss,
   user-print-title: default-print-title,
   user-print-description: default-print-description,
@@ -855,6 +859,7 @@
       show-all: show-all,
       disable-back-references: disable-back-references,
       minimum-refs: minimum-refs,
+      description-separator: description-separator,
       user-print-title: user-print-title,
       user-print-description: user-print-description,
       user-print-back-references: user-print-back-references,
@@ -893,6 +898,9 @@
 //  disable-back-references: false,
 //  group-heading-level: none,
 //  minimum-refs: 1,
+//  description-separator: ": ",
+//  group-sortkey: g => g,
+//  entry-sortkey: e => e.sort,
 //  user-print-reference: default-print-reference
 //  user-group-break: default-group-break,
 //  user-print-gloss: default-print-gloss,
@@ -925,6 +933,7 @@
   disable-back-references: false,
   group-heading-level: none,
   minimum-refs: 1,
+  description-separator: ": ",
   group-sortkey: g => g,
   entry-sortkey: e => e.sort,
   user-print-reference: default-print-reference,
@@ -960,6 +969,7 @@
         show-all: show-all,
         disable-back-references: disable-back-references,
         minimum-refs: minimum-refs,
+        description-separator: description-separator,
         user-print-gloss: user-print-gloss,
         user-print-title: user-print-title,
         user-print-description: user-print-description,
@@ -1013,6 +1023,9 @@
 //  disable-back-references: false,
 //  group-heading-level: none,
 //  minimum-refs: 1,
+//  description-separator: ": ",
+//  group-sortkey: g => g,
+//  entry-sortkey: e => e.sort,
 //  user-print-glossary: default-print-glossary,
 //  user-print-reference: default-print-reference,
 //  user-group-break: default-group-break,
@@ -1049,6 +1062,7 @@
   disable-back-references: false,
   group-heading-level: none,
   minimum-refs: 1,
+  description-separator: ": ",
   group-sortkey: g => g,
   entry-sortkey: e => e.sort,
   user-print-glossary: default-print-glossary,
@@ -1115,6 +1129,7 @@
       disable-back-references: disable-back-references,
       group-heading-level: group-heading-level,
       minimum-refs: minimum-refs,
+      description-separator: description-separator,
       group-sortkey: group-sortkey,
       entry-sortkey: entry-sortkey,
       user-print-reference: user-print-reference,

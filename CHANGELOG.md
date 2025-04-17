@@ -12,6 +12,10 @@
 > `gls` and `glspl`.
 > Capitalization is limited to strings, but raises a panic if used on content.
 
+> [!TIP]
+> A new parameter `description-separator` allows you to customize the separator
+> between the entry's title and its description.
+
 ## 0.5.4
 
 > [!TIP]
