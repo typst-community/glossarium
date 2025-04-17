@@ -89,6 +89,9 @@
   }
   return upper(text.first()) + text.slice(1)
 }
+#let __uncapitalize(text) = {
+  return lower(text.first()) + text.slice(1)
+}
 
 // __query_labels_with_key(loc, key) -> array<label>
 // Query the labels with the key
@@ -121,8 +124,11 @@
   } else {
     __glossary_entries.at(loc)
   }
+  let lowerkey = __uncapitalize(key)
   if key in entries {
     return entries.at(key)
+  } else if lowerkey in entries {
+    return entries.at(lowerkey)
   } else {
     panic(__error_message(key, __key_not_found))
   }
@@ -585,21 +591,12 @@
     // call to the general citing function
     let key = str(r.target)
     if key.ends-with(":pl") {
+      key = key.slice(0, -3)
       // Plural ref
-      if is-upper(key.slice(0, -3)) {
-        // Capitalized ref
-        return Glspl(lower(key).slice(0, -3), update: update)
-      } else {
-        return glspl(key.slice(0, -3), update: update)
-      }
+      return glspl(key, update: update, capitalize: is-upper(key))
     } else {
       // Default ref
-      if is-upper(key) {
-        // Capitalized ref
-        return Gls(lower(key), update: update)
-      } else {
-        return gls(key, update: update)
-      }
+      return gls(key, update: update, capitalize: is-upper(key))
     }
   } else {
     return r
