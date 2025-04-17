@@ -691,21 +691,6 @@
   return term-references
     .map(x => x.location())
     .sorted(key: x => x.page())
-    .fold(
-      (values: (), pages: ()),
-      ((values, pages), x) => {
-        if pages.contains(x.page()) {
-          // Skip duplicate references
-          return (values: values, pages: pages)
-        } else {
-          // Add the back reference
-          values.push(x)
-          pages.push(x.page())
-          return (values: values, pages: pages)
-        }
-      },
-    )
-    .values
     .map(x => {
       let page-numbering = x.page-numbering()
       if page-numbering == none {
@@ -809,7 +794,8 @@
     }
 
     // Back references
-    if disable-back-references != true {
+    // Separate context window to separate BR's query
+    context if disable-back-references != true {
       " "
       user-print-back-references(entry)
     }
