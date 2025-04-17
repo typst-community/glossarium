@@ -270,10 +270,10 @@
   let ent-long = entry.at("long", default: "")
   let ent-short = entry.at("short", default: "")
 
-  if capitalize and ent-long != "" {
+  if capitalize and ent-long != none {
     ent-long = __capitalize(ent-long)
   }
-  if capitalize and ent-short != "" {
+  if capitalize and ent-short != none {
     ent-short = __capitalize(ent-short)
   }
 
@@ -391,10 +391,10 @@
   let ent-plural = entry.at("plural", default: "")
   let ent-long = entry.at("long", default: "")
 
-  if capitalize and ent-long != "" {
+  if capitalize and ent-long != none {
     ent-long = __capitalize(ent-long)
   }
-  if capitalize and ent-short != "" {
+  if capitalize and ent-short != none {
     ent-short = __capitalize(ent-short)
   }
 
