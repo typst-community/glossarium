@@ -298,11 +298,23 @@ false: #context there-are-refs(groups: (" ",))
 
   #agls("potato I")
 
+  #Gls("potato I")
+
+  #Glspl("potato I")
+
+  #Agls("potato I")
+
   #gls("potato H")
+
+  #glspl("potato H")
 
   #agls("potato H")
 
-  #glspl("potato H")
+  #Gls("potato H")
+
+  #Glspl("potato H")
+
+  #Agls("potato H")
 
   == Test neither short nor long error
 
@@ -321,4 +333,17 @@ false: #context there-are-refs(groups: (" ",))
   #print-glossary(entry-list-6)
   @potato-use-key-as-short
 
+  == capitalization
+
+  #let entry-list-6 = ((key: "LASER"), (key: "laser"))
+  #register-glossary(entry-list-6)
+  #print-glossary(entry-list-6)
+
+  @LASER
+
+  @LASER:pl
+
+  @laser
+
+  @Laser
 ]

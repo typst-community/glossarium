@@ -1,4 +1,3 @@
-
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -42,6 +41,9 @@
 #let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
 #let __make_glossary_not_called = "make_glossary_not_called"
 #let __capitalize_called_with_content_type = "capitalize_called_with_content_type"
+#let __entry_has_unknown_keys = "entry_has_unknown_keys"
+#let __entry_list_is_not_array = "entry_list_is_not_array"
+#let __longplural_but_not_long = "longplural_but_not_long"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -64,16 +66,23 @@
   } else if kind == __attribute_is_empty {
     let attr = kwargs.at("attr")
     msg = "requested attribute " + attr + " is empty for key '" + key + "'"
-  } else if kind == __entry_has_neither_short_nor_long {
-    msg = "entry '" + key + "' has neither short nor long form"
   } else if kind == __glossary_is_empty {
     msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
+  } else if kind == __entry_has_neither_short_nor_long {
+    msg = "entry '" + key + "' has neither short nor long form"
+  } else if kind == __make_glossary_not_called {
+    msg = "make-glossary not called. Add `#show: make-glossary` at the beginning of the document."
   } else if kind == __capitalize_called_with_content_type {
     msg = (
       "Capitalization was requested for " + key + ", but short or long is of type content. Use a string instead."
     )
-  } else if kind == __make_glossary_not_called {
-    msg = "make-glossary not called. Add `#show: make-glossary` at the beginning of the document."
+  } else if kind == __entry_has_unknown_keys {
+    let keys = kwargs.at("keys")
+    msg = "entry '" + key + "' has unknown keys: " + keys
+  } else if kind == __entry_list_is_not_array {
+    msg = "entry-list is not an array."
+  } else if kind == __longplural_but_not_long {
+    msg = key + " has a longplural attribute but no long attribute. Longplural will not be shown."
   } else {
     msg = "unknown error"
   }
@@ -668,9 +677,6 @@
 #let __normalize_entry_list(entry-list, use-key-as-short: true) = {
   let new-list = ()
   for entry in entry-list {
-    if not use-key-as-short and not has-short(entry) and not has-long(entry) {
-      panic(__error_message(entry.key, __entry_has_neither_short_nor_long))
-    }
     let unknown_keys = entry
       .keys()
       .filter(x => (
@@ -689,9 +695,9 @@
           )
       ))
     if unknown_keys.len() > 0 {
-      panic("entry `" + entry.key + "` has unknown keys: " + unknown_keys.join(", "))
+      panic(__error_message(entry.key, __entry_has_unknown_keys, keys: unknown_keys.join(",")))
     }
-    new-list.push((
+    let newentry = (
       key: entry.key,
       short: entry.at(
         "short",
@@ -705,7 +711,14 @@
       description: entry.at("description", default: none),
       group: entry.at("group", default: ""),
       sort: entry.at("sort", default: entry.key),
-    ))
+    )
+    if not use-key-as-short and not has-short(newentry) and not has-long(newentry) {
+      panic(__error_message(newentry.key, __entry_has_neither_short_nor_long))
+    }
+    if has-longplural(newentry) and not has-long(newentry) {
+      panic(__error_message(newentry.key, __longplural_but_not_long))
+    }
+    new-list.push(newentry)
   }
   return new-list
 }
@@ -1025,6 +1038,9 @@
 #let register-glossary(entry-list, use-key-as-short: true) = {
   if sys.version <= version(0, 11, 1) {
     return
+  }
+  if type(entry-list) != array {
+    panic(__error_message(none, __entry_list_is_not_array))
   }
   // Normalize entry-list
   let entries = __normalize_entry_list(
