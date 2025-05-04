@@ -90,7 +90,7 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/).
 | Key           | Type              | Required/Optional | Description                                                                                  |
 | :------------ | :---------------- | :---------------- | :------------------------------------------------------------------------------------------- |
 | `key`         | string            | required          | Case-sensitive, unique identifier used to reference the term.                                |
-| `short`       | string            | semi-optional     | The short form of the term replacing the term citation.                                      |
+| `short`       | string or content | semi-optional     | The short form of the term replacing the term citation.                                      |
 | `long`        | string or content | semi-optional     | The long form of the term, displayed in the glossary and on the first citation of the term.  |
 | `description` | string or content | optional          | The description of the term.                                                                 |
 | `plural`      | string or content | optional          | The pluralized short form of the term.                                                       |
