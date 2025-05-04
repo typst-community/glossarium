@@ -1,0 +1,9 @@
+[ver:1,total:2170]
+tests/debug/debug.typ:871,1746345600:80,1746349200:240,1746352800:551,m
+themes/default.typ:845,1746352800:845,m
+.gtm/terminal.app:157,1746352800:157,r
+tests/unknown-keys/unknown-keys.typ:96,1746352800:96,m
+tests/longplural-but-not-long/longplural-but-not-long.typ:91,1746352800:91,m
+tests/errors/error-messages.typ:60,1746352800:60,d
+tests/error-messages.typ:30,1746352800:30,d
+tests/entry-has-neither-short-nor-long/entry-has-neither-short-nor-long.typ:20,1746352800:20,m
