@@ -230,11 +230,11 @@
 //
 // # Returns
 // The link and the entry label
-#let __link_and_label(key, text, prefix: none, suffix: none, update: true) = {
-  return [#if update { __update_count(key) }#prefix#link(
-      label(key),
-      text,
-    )#suffix#label(__glossary_label_prefix + key)]
+#let __link_and_label(key, text, prefix: none, suffix: none, href: true, update: true) = {
+  if update { __update_count(key) }
+  prefix
+  if href { link(label(key), text) } else { text }
+  [#suffix#label(__glossary_label_prefix + key)]
 }
 
 #let __get_attribute(entry, attrname) = entry.at(attrname)
@@ -424,7 +424,7 @@
 //
 // # Returns
 // The link and the entry label
-#let gls(key, suffix: none, long: none, display: none, update: true, capitalize: false) = context {
+#let gls(key, suffix: none, long: none, display: none, link: true, update: true, capitalize: false) = context {
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
@@ -455,29 +455,30 @@
   //  3. If attribute `long` is empty, `gls(key)` will return `short+suffix`
   //  4. The first `gls(key)` will return `long (short+suffix)`
   //  5. `gls(key, long: true)` will return `long (short+suffix)`
-  let link-text = []
+  let text = []
   if display != none {
-    link-text += [#display]
+    text += [#display]
   } else if is-first-or-long and has-long and long != false {
     if has-short {
-      link-text += [#ent-long (#ent-short#suffix)]
+      text += [#ent-long (#ent-short#suffix)]
     } else {
-      link-text += [#ent-long]
+      text += [#ent-long]
     }
   } else {
-    link-text += [#ent-short#suffix]
+    text += [#ent-short#suffix]
   }
 
-  return __link_and_label(entry.key, link-text, update: update)
+  return __link_and_label(entry.key, text, href: link, update: update)
 }
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term, capitalized
-#let Gls(key, suffix: none, long: none, display: none, update: true) = gls(
+#let Gls(key, suffix: none, long: none, display: none, link: true, update: true) = gls(
   key,
   suffix: suffix,
   long: long,
   display: display,
+  link: link,
   update: update,
   capitalize: true,
 )
@@ -492,43 +493,41 @@
 //
 // # Returns
 // The link and the entry label
-#let agls(key, suffix: none, long: none, update: true) = context {
+#let agls(key, suffix: none, long: none, display: none, link: true, update: true, capitalize: false) = context {
   let entry = __get_entry_with_key(here(), key)
-
-  // Attributes
-  let ent-long = entry.at("long", default: "")
-  let ent-short = entry.at("short", default: "")
-  let ent-artlong = entry.at("artlong", default: "a")
-  let ent-artshort = entry.at("artshort", default: "a")
-
-  // Conditions
-  let is-first-or-long = is-first-or-long(key, long: long)
+  let artlong = __get_artlong(entry)
+  let artshort = __get_artshort(entry)
+  let is_first_or_long = is-first-or-long(key, long: long)
   let has-long = has-long(entry)
-  let has-short = has-short(entry)
-
-  // Link text
-  let link-text = none
-  let article = none
-  if is-first-or-long and has-long and long != false {
-    if has-short {
-      link-text += [#ent-long (#ent-short#suffix)]
-    } else {
-      link-text += [#ent-long]
-    }
-    article = ent-artlong
-  } else if has-short {
-    // Default to short
-    link-text = [#ent-short#suffix]
-    article = ent-artshort
-  } else {
-    link-text += [#ent-long#suffix]
-    article = ent-artlong
+  if capitalize {
+    artlong = __capitalize(artlong)
+    artshort = __capitalize(artshort)
   }
-
-  // Return
-  return __link_and_label(entry.key, link-text, prefix: [#article ], update: update)
+  let article = if is_first_or_long and has-long and long != false {
+    artlong
+  } else {
+    artshort
+  }
+  // Compose with gls
+  let text = [#article #gls(
+      key,
+      suffix: suffix,
+      long: long,
+      display: display,
+      link: false,
+      update: false,
+    )]
+  return __link_and_label(entry.key, text, href: link, update: update)
 }
-
+#let Agls(key, suffix: none, long: none, display: none, link: true, update: true) = agls(
+  key,
+  suffix: suffix,
+  long: long,
+  display: display,
+  link: link,
+  update: update,
+  capitalize: true,
+)
 
 // glspl(key, long: none) -> content
 // Reference to term with plural form
@@ -540,7 +539,7 @@
 //
 // # Returns
 // The link and the entry label
-#let glspl(key, long: none, update: true, capitalize: false) = context {
+#let glspl(key, long: none, link: true, update: true, capitalize: false) = context {
   let default-plural-suffix = "s"
   let entry = __get_entry_with_key(here(), key)
 
@@ -583,7 +582,7 @@
   }
 
   // Link text
-  let link-text = if is-first-or-long and has-long and long != false {
+  let text = if is-first-or-long and has-long and long != false {
     if has-short {
       [#longplural (#shortplural)]
     } else {
@@ -596,12 +595,18 @@
     [#longplural]
   }
 
-  return __link_and_label(entry.key, link-text, update: update)
+  return __link_and_label(entry.key, text, href: link, update: update)
 }
 
 // glspl(key, long: none) -> content
 // Reference to term with plural form, capitalized
-#let Glspl(key, long: none, update: true) = glspl(key, long: long, update: update, capitalize: true)
+#let Glspl(key, long: none, link: true, update: true) = glspl(
+  key,
+  long: long,
+  link: link,
+  update: update,
+  capitalize: true,
+)
 
 // Select all figure refs and filter by __glossarium_figure
 //
@@ -692,10 +697,10 @@
         "short",
         default: if use-key-as-short { entry.key } else { none },
       ),
-      artshort: entry.at("artshort", default: none),
+      artshort: entry.at("artshort", default: "a"),
       plural: entry.at("plural", default: none),
       long: entry.at("long", default: none),
-      artlong: entry.at("artlong", default: none),
+      artlong: entry.at("artlong", default: "a"),
       longplural: entry.at("longplural", default: none),
       description: entry.at("description", default: none),
       group: entry.at("group", default: ""),
