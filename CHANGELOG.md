@@ -6,15 +6,30 @@
 > The previous version `0.5.4` introduced a regression which was fixed in this version.
 > Glossarium no longer adds whitespace around a reference.
 
+> [!IMPORTANT]
+> Backreferences are no longer merged if they appear on the same page.
+
 > [!TIP]
 > Thanks to @killercup, glossarium now has support for capitalization.
 > You can directly call `@Ref` or `@Ref:pl`, or use the `capitalize` parameter in
 > `gls` and `glspl`.
 > Capitalization is limited to strings, but raises a panic if used on content.
+> You can also use new functions `Gls`, `Glspl`, and `Agls`.
 
 > [!TIP]
 > A new parameter `description-separator` allows you to customize the separator
 > between the entry's title and its description.
+
+> [!TIP]
+> A new option in `make-glossary` allows you to always ask for long versions,
+> or disable links. By default, it is called with the options below
+> ```typ
+> #show: make-glossary.with(always-long: false, link: false)
+> ```
+
+> [!NOTE]
+> `longplural` is no longer allowed without its `long` counterpart.
+
 
 ## 0.5.4
 
