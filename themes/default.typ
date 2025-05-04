@@ -214,7 +214,7 @@
 }
 
 
-// is-first-or-long(ey, long: none) -> bool
+// is-first-or-long(ey, long: false) -> bool
 // Check if the key is the first reference to the term or long form is requested
 //
 // # Arguments
@@ -224,7 +224,7 @@
 //
 // # Returns
 // True if the key is the first reference to the term or long form is requested
-#let is-first-or-long(key, long: none) = {
+#let is-first-or-long(key, long: false) = {
   return __glossary_counts.get().at(key, default: 0) == 0 or long == true
 }
 
@@ -419,7 +419,7 @@
 // Check capitalization of user input (@ref, or @Ref) against real key
 #let is-upper(key) = key.at(0) != __get_key(__get_entry_with_key(here(), key)).at(0)
 
-// gls(key, suffix: none, long: none, display: none) -> contextual content
+// gls(key, suffix: none, long: false, display: none) -> contextual content
 // Reference to term
 //
 // # Arguments
@@ -431,7 +431,7 @@
 //
 // # Returns
 // The link and the entry label
-#let gls(key, suffix: none, long: none, display: none, link: true, update: true, capitalize: false) = context {
+#let gls(key, suffix: none, long: false, display: none, link: true, update: true, capitalize: false) = context {
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
@@ -465,7 +465,7 @@
   let text = []
   if display != none {
     text += [#display]
-  } else if is-first-or-long and has-long and long != false {
+  } else if is-first-or-long and has-long or long == true{
     if has-short {
       text += [#ent-long (#ent-short#suffix)]
     } else {
@@ -478,9 +478,9 @@
   return __link_and_label(entry.key, text, href: link, update: update)
 }
 
-// gls(key, suffix: none, long: none, display: none) -> contextual content
+// gls(key, suffix: none, long: false, display: none) -> contextual content
 // Reference to term, capitalized
-#let Gls(key, suffix: none, long: none, display: none, link: true, update: true) = gls(
+#let Gls(key, suffix: none, long: false, display: none, link: true, update: true) = gls(
   key,
   suffix: suffix,
   long: long,
@@ -490,7 +490,7 @@
   capitalize: true,
 )
 
-// agls(key, suffix: none, long: none) -> contextual content
+// agls(key, suffix: none, long: false) -> contextual content
 // Reference to term with article
 //
 // # Arguments
@@ -500,7 +500,7 @@
 //
 // # Returns
 // The link and the entry label
-#let agls(key, suffix: none, long: none, display: none, link: true, update: true, capitalize: false) = context {
+#let agls(key, suffix: none, long: false, display: none, link: true, update: true, capitalize: false) = context {
   let entry = __get_entry_with_key(here(), key)
   let artlong = __get_artlong(entry)
   let artshort = __get_artshort(entry)
@@ -510,7 +510,7 @@
     artlong = __capitalize(artlong)
     artshort = __capitalize(artshort)
   }
-  let article = if is_first_or_long and has-long and long != false {
+  let article = if is_first_or_long and has-long or long == true {
     artlong
   } else {
     artshort
@@ -526,7 +526,7 @@
     )]
   return __link_and_label(entry.key, text, href: link, update: update)
 }
-#let Agls(key, suffix: none, long: none, display: none, link: true, update: true) = agls(
+#let Agls(key, suffix: none, long: false, display: none, link: true, update: true) = agls(
   key,
   suffix: suffix,
   long: long,
@@ -536,7 +536,7 @@
   capitalize: true,
 )
 
-// glspl(key, long: none) -> content
+// glspl(key, long: false) -> content
 // Reference to term with plural form
 //
 // # Arguments
@@ -546,7 +546,7 @@
 //
 // # Returns
 // The link and the entry label
-#let glspl(key, long: none, link: true, update: true, capitalize: false) = context {
+#let glspl(key, long: false, link: true, update: true, capitalize: false) = context {
   let default-plural-suffix = "s"
   let entry = __get_entry_with_key(here(), key)
 
@@ -589,7 +589,7 @@
   }
 
   // Link text
-  let text = if is-first-or-long and has-long and long != false {
+  let text = if is-first-or-long and has-long or long == true {
     if has-short {
       [#longplural (#shortplural)]
     } else {
@@ -605,9 +605,9 @@
   return __link_and_label(entry.key, text, href: link, update: update)
 }
 
-// glspl(key, long: none) -> content
+// glspl(key, long: false) -> content
 // Reference to term with plural form, capitalized
-#let Glspl(key, long: none, link: true, update: true) = glspl(
+#let Glspl(key, long: false, link: true, update: true) = glspl(
   key,
   long: long,
   link: link,
@@ -618,7 +618,7 @@
 // Select all figure refs and filter by __glossarium_figure
 //
 // Transform the ref to the glossary term
-#let refrule(r, update: true) = {
+#let refrule(r, update: true, long: false, link: true) = {
   if (
     r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
   ) {
@@ -628,10 +628,10 @@
     if key.ends-with(":pl") {
       key = key.slice(0, -3)
       // Plural ref
-      return glspl(key, update: update, capitalize: is-upper(key))
+      return glspl(key, update: update, link: link, long: long, capitalize: is-upper(key))
     } else {
       // Default ref
-      return gls(key, update: update, capitalize: is-upper(key))
+      return gls(key, update: update, link: link, long: long, capitalize: is-upper(key))
     }
   } else {
     return r
@@ -649,7 +649,7 @@
 // ```typ
 // #show: make-glossary
 // ```
-#let make-glossary(body) = {
+#let make-glossary(body, link: true, always-long: false) = {
   [#metadata("glossarium:make-glossary")<glossarium:make-glossary>]
   // Set figure body alignement
   show figure.where(kind: __glossarium_figure): it => {
@@ -659,7 +659,7 @@
       it.body
     }
   }
-  show ref: refrule
+  show ref: refrule.with(link: link, long: always-long)
   body
 }
 
