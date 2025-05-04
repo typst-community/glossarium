@@ -6,19 +6,30 @@
   (key: "bar", long: "barbaz"),
   (key: "ref", long: "reference"),
   (key: "test", long: "Test"),
+  (key: "plural", long: "longplural", longplural: "longplurali"),
+  (key: "POTATO", long: "potato"),
 )
 #register-glossary(glossary)
 
 #set heading(numbering: "1.")
 
+= Glossary
+
+#glossary
+
 = Some content
 
-- #Gls("foo") is the first reference at the beginning of a sentence using `#Gls`.
-- #Gls("foo") is the second reference.
-- #Glspl("bar") is the first reference at the beginning of a sentence using `#Glspl`.
-- #Glspl("bar") is the second reference.
-- @Ref is the first reference at the beginning of a sentence using `@Ref`. @Ref is the second.
-- @Test:pl is the first reference at the beginning of a sentence using `@Test:pl`. @Test is the second.
+#set raw(lang: "typ")
+#table(
+  columns: 3,
+  [Code], [1st], [2nd],
+  [`#Gls("foo")`], Gls("foo"), Gls("foo"),
+  [`#Glspl("bar")`], Glspl("bar"), Glspl("bar"),
+  [`@Ref`], [@Ref], [@Ref], // Ref vs ref
+  [`@Test:pl`], [@Test:pl], [@Test:pl],
+  [`@POTATO`], [@POTATO], [@POTATO], // POTATO vs POTATO
+  [`@Plural:pl`], [@Plural:pl], [@Plural:pl],
+)
 
 = Glossary
 
