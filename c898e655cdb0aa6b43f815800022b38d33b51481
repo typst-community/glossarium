@@ -1,0 +1,8 @@
+[ver:1,total:780]
+CHANGELOG.md:391,1746356400:341,1746360000:50,m
+.gtm/terminal.app:210,1746356400:110,1746360000:100,r
+themes/default.typ:100,1746356400:10,1746360000:90,r
+tests/show-link/show-link.typ:36,1746356400:36,r
+tests/styling/styling.typ:30,1746356400:30,r
+tests/group-heading-pagebreak/group-heading-pagebreak.typ:8,1746356400:8,r
+tests/0.13.0-figures-linebreak/0.13.0-figures-linebreak.typ:5,1746356400:5,r
