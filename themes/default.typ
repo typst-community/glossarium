@@ -83,9 +83,9 @@
 }
 
 #let __capitalize(text) = {
-  if text == "" { return text }
+  if text == none { return text }
   if type(text) == content {
-    panic(__error_message(key, __capitalize_called_with_content_type))
+    panic(__error_message(text, __capitalize_called_with_content_type))
   }
   return upper(text.first()) + text.slice(1)
 }
@@ -219,19 +219,6 @@
   return __glossary_counts.get().at(key, default: 0) == 0 or long == true
 }
 
-#let __has_attribute(entry, key) = {
-  let attr = entry.at(key, default: none)
-  return attr != none and attr != "" and attr != []
-}
-#let has-short(entry) = __has_attribute(entry, "short")
-#let has-long(entry) = __has_attribute(entry, "long")
-#let has-artshort(entry) = __has_attribute(entry, "artshort")
-#let has-artlong(entry) = __has_attribute(entry, "artlong")
-#let has-plural(entry) = __has_attribute(entry, "plural")
-#let has-longplural(entry) = __has_attribute(entry, "longplural")
-#let has-description(entry) = __has_attribute(entry, "description")
-#let has-group(entry) = __has_attribute(entry, "group")
-
 // __link_and_label(key, text, prefix: none, suffix: none, update: true) -> content
 // Build a link and a label
 //
@@ -250,6 +237,180 @@
     )#suffix#label(__glossary_label_prefix + key)]
 }
 
+#let __get_attribute(entry, attrname) = entry.at(attrname)
+#let __get_key(entry) = __get_attribute(entry, "key")
+#let __get_short(entry) = __get_attribute(entry, "short")
+#let __get_long(entry) = __get_attribute(entry, "long")
+
+#let __get_artshort(entry) = __get_attribute(entry, "artshort")
+#let __get_artlong(entry) = __get_attribute(entry, "artlong")
+#let __get_plural(entry) = __get_attribute(entry, "plural")
+#let __get_longplural(entry) = __get_attribute(entry, "longplural")
+#let __get_description(entry) = __get_attribute(entry, "description")
+#let __get_group(entry) = __get_attribute(entry, "group")
+#let __get_sort(entry) = __get_attribute(entry, "sort")
+
+#let __has_attribute(entry, attrname) = {
+  let attr = __get_attribute(entry, attrname)
+  return attr != none and attr != "" and attr != []
+}
+#let has-short(entry) = __has_attribute(entry, "short")
+#let has-long(entry) = __has_attribute(entry, "long")
+#let has-artshort(entry) = __has_attribute(entry, "artshort")
+#let has-artlong(entry) = __has_attribute(entry, "artlong")
+#let has-plural(entry) = __has_attribute(entry, "plural")
+#let has-longplural(entry) = __has_attribute(entry, "longplural")
+#let has-description(entry) = __has_attribute(entry, "description")
+#let has-group(entry) = __has_attribute(entry, "group")
+#let has-sort(entry) = __has_attribute(entry, "sort")
+
+// get-attribute(key, attr) -> contextual content
+// Get the specified attribute from entry
+//
+// # Arguments
+// key (str): the key of the term
+// attr (str): the attribute to be retrieved
+//
+// # Returns
+// The attribute of the term
+#let get-attribute(key, attrname, link: false, update: false) = context {
+  let entry = __get_entry_with_key(here(), key)
+  let attr = entry.at(attrname)
+  if link {
+    return __link_and_label(entry.key, entry.at(attrname), update: update)
+  } else if attrname in entry and entry.at(attrname) != none {
+    return attr
+  } else {
+    panic(__error_message(key, __attribute_is_empty, attr: attrname))
+  }
+}
+
+
+// gls-key(key, link: false) -> contextual content
+// Get the key of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The key of the term
+#let gls-key(key, link: false) = get-attribute(key, "key", link: link)
+
+// gls-short(key, link: false) -> contextual content
+// Get the short form of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The short form of the term
+#let gls-short(key, link: false) = get-attribute(key, "short", link: link)
+
+// gls-artshort(key, link: false) -> contextual content
+// Get the article of the short form
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The article of the short form
+#let gls-artshort(key, link: false) = get-attribute(
+  key,
+  "artshort",
+  link: link,
+)
+
+// gls-plural(key, link: false) -> contextual content
+// Get the plural form of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The plural form of the term
+#let gls-plural(key, link: false) = get-attribute(key, "plural", link: link)
+
+// gls-long(key, link: false) -> contextual content
+// Get the long form of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The long form of the term
+#let gls-long(key, link: false) = get-attribute(key, "long", link: link)
+
+// gls-artlong(key, link: false) -> contextual content
+// Get the article of the long form
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The article of the long form
+#let gls-artlong(key, link: false) = get-attribute(key, "artlong", link: link)
+
+// gls-longplural(key, link: false) -> contextual content
+// Get the long plural form of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The long plural form of the term
+#let gls-longplural(key, link: false) = get-attribute(
+  key,
+  "longplural",
+  link: link,
+)
+
+// gls-description(key, link: false) -> contextual content
+// Get the description of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The description of the term
+#let gls-description(key, link: false) = get-attribute(
+  key,
+  "description",
+  link: link,
+)
+
+// gls-group(key, link: false) -> contextual content
+// Get the group of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The group of the term
+#let gls-group(key, link: false) = get-attribute(key, "group", link: link)
+
+//
+// gls-sort(key, link: false) -> contextual content
+// Get the sort of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary
+//
+// # Returns
+// The sort attribute of the term
+#let gls-sort(key, link: false) = get-attribute(key, "sort", link: link)
+
+// Check capitalization of user input (@ref, or @Ref) against real key
+#let is-upper(key) = key.at(0) != __get_key(__get_entry_with_key(here(), key)).at(0)
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term
@@ -267,14 +428,11 @@
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
-  let ent-long = entry.at("long", default: "")
-  let ent-short = entry.at("short", default: "")
-
-  if capitalize and ent-long != none {
-    ent-long = __capitalize(ent-long)
-  }
-  if capitalize and ent-short != none {
+  let ent-long = __get_long(entry)
+  let ent-short = __get_short(entry)
+  if capitalize {
     ent-short = __capitalize(ent-short)
+    ent-long = __capitalize(ent-long)
   }
 
   // Conditions
@@ -387,18 +545,17 @@
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
-  let ent-short = entry.at("short", default: "")
-  let ent-plural = entry.at("plural", default: "")
-  let ent-long = entry.at("long", default: "")
+  let ent-short = __get_short(entry)
+  let ent-plural = __get_plural(entry)
+  let ent-long = __get_long(entry)
+  let ent-longplural = __get_longplural(entry)
 
-  if capitalize and ent-long != none {
-    ent-long = __capitalize(ent-long)
-  }
-  if capitalize and ent-short != none {
+  if capitalize {
     ent-short = __capitalize(ent-short)
+    ent-long = __capitalize(ent-long)
+    ent-plural = __capitalize(ent-plural)
+    ent-longplural = __capitalize(ent-longplural)
   }
-
-  let ent-longplural = entry.at("longplural", default: "")
 
   // Conditions
   let is-first-or-long = is-first-or-long(key, long: long)
@@ -445,140 +602,6 @@
 // glspl(key, long: none) -> content
 // Reference to term with plural form, capitalized
 #let Glspl(key, long: none, update: true) = glspl(key, long: long, update: update, capitalize: true)
-
-// __gls_attribute(key, attr) -> contextual content
-// Get the specified attribute from entry
-//
-// # Arguments
-// key (str): the key of the term
-// attr (str): the attribute to be retrieved
-//
-// # Returns
-// The attribute of the term
-#let __gls_attribute(key, attr, link: false, update: false) = context {
-  let entry = __get_entry_with_key(here(), key)
-  if link {
-    return __link_and_label(entry.key, entry.at(attr), update: update)
-  } else if attr in entry and entry.at(attr) != none {
-    return entry.at(attr)
-  } else {
-    panic(__error_message(key, __attribute_is_empty, attr: attr))
-  }
-}
-
-
-// gls-key(key, link: false) -> contextual content
-// Get the key of the term
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The key of the term
-#let gls-key(key, link: false) = __gls_attribute(key, "key", link: link)
-
-// gls-short(key, link: false) -> contextual content
-// Get the short form of the term
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The short form of the term
-#let gls-short(key, link: false) = __gls_attribute(key, "short", link: link)
-
-// gls-artshort(key, link: false) -> contextual content
-// Get the article of the short form
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The article of the short form
-#let gls-artshort(key, link: false) = __gls_attribute(
-  key,
-  "artshort",
-  link: link,
-)
-
-// gls-plural(key, link: false) -> contextual content
-// Get the plural form of the term
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The plural form of the term
-#let gls-plural(key, link: false) = __gls_attribute(key, "plural", link: link)
-
-// gls-long(key, link: false) -> contextual content
-// Get the long form of the term
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The long form of the term
-#let gls-long(key, link: false) = __gls_attribute(key, "long", link: link)
-
-// gls-artlong(key, link: false) -> contextual content
-// Get the article of the long form
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The article of the long form
-#let gls-artlong(key, link: false) = __gls_attribute(key, "artlong", link: link)
-
-// gls-longplural(key, link: false) -> contextual content
-// Get the long plural form of the term
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The long plural form of the term
-#let gls-longplural(key, link: false) = __gls_attribute(
-  key,
-  "longplural",
-  link: link,
-)
-
-// gls-description(key, link: false) -> contextual content
-// Get the description of the term
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The description of the term
-#let gls-description(key, link: false) = __gls_attribute(
-  key,
-  "description",
-  link: link,
-)
-
-// gls-group(key, link: false) -> contextual content
-// Get the group of the term
-//
-// # Arguments
-//  key (str): the key of the term
-//  link (bool): enable link to glossary
-//
-// # Returns
-// The group of the term
-#let gls-group(key, link: false) = __gls_attribute(key, "group", link: link)
-
-#let is-upper(key) = upper(key.at(0)) == key.at(0)
 
 // Select all figure refs and filter by __glossarium_figure
 //
@@ -646,7 +669,19 @@
     let unknown_keys = entry
       .keys()
       .filter(x => (
-        x not in ("key", "short", "artshort", "plural", "long", "artlong", "longplural", "description", "group", "sort")
+        x
+          not in (
+            "key",
+            "short",
+            "artshort",
+            "plural",
+            "long",
+            "artlong",
+            "longplural",
+            "description",
+            "group",
+            "sort",
+          )
       ))
     if unknown_keys.len() > 0 {
       panic("entry `" + entry.key + "` has unknown keys: " + unknown_keys.join(", "))
@@ -849,7 +884,8 @@
     supplement: "",
   )[]#label(entry.key + ":pl")
   // Same as above, but for capitalized form, e.g., "@Term"
-  #if not is-upper(entry.key) {
+  // Skip if key is already capitalized
+  #if upper(entry.key.at(0)) != entry.key.at(0) {
     [
       #figure(
         kind: __glossarium_figure,
