@@ -14,10 +14,11 @@ cd packages
 git sparse-checkout init
 git sparse-checkout set packages/preview/glossarium
 git checkout main
-mkdir packages/previw/glossarium/$version
+mkdir packages/preview/glossarium/$version
 tar -xvf ~/glossarium-$version.tar.gz -C packages/preview/glossarium/$version
 git add packages
 git commit
 gh repo fork
 gh repo set-default typst/packages
+git push --force origin
 gh pr create --fill
