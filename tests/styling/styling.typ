@@ -1,5 +1,5 @@
 #import "../../themes/default.typ": *
-#import "@preview/codly:1.2.0": *
+#import "@preview/codly:1.3.0": *
 #show: codly-init.with()
 #set page(height: auto, margin: 10pt)
 
