@@ -27,7 +27,7 @@
 }
 
 // glossarium version
-#let glossarium_version = "0.5.5"
+#let glossarium_version = "0.5.6"
 
 // error prefix
 #let __glossarium_error_prefix = (
