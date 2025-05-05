@@ -240,8 +240,9 @@
 // # Returns
 // The link and the entry label
 #let __link_and_label(key, text, prefix: none, suffix: none, href: true, update: true) = {
-  return [#if update { __update_count(key) }#prefix#if href { link(label(key), text) } else { text }
-    #suffix#label(__glossary_label_prefix + key)]
+  return [#if update { __update_count(key) }#prefix#if href { link(label(key), text) } else { text }#suffix#label(
+      __glossary_label_prefix + key,
+    )]
 }
 
 #let __get_attribute(entry, attrname) = entry.at(attrname)
@@ -465,7 +466,7 @@
   let text = []
   if display != none {
     text += [#display]
-  } else if is-first-or-long and has-long or long == true{
+  } else if is-first-or-long and has-long or long == true {
     if has-short {
       text += [#ent-long (#ent-short#suffix)]
     } else {
