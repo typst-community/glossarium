@@ -479,7 +479,7 @@
   return __link_and_label(entry.key, text, href: link, update: update)
 }
 
-// gls(key, suffix: none, long: false, display: none) -> contextual content
+// Gls(key, suffix: none, long: false, display: none) -> contextual content
 // Reference to term, capitalized
 #let Gls(key, suffix: none, long: false, display: none, link: true, update: true) = gls(
   key,
@@ -606,7 +606,7 @@
   return __link_and_label(entry.key, text, href: link, update: update)
 }
 
-// glspl(key, long: false) -> content
+// Glspl(key, long: false) -> content
 // Reference to term with plural form, capitalized
 #let Glspl(key, long: false, link: true, update: true) = glspl(
   key,
