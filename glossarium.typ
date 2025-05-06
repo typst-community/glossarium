@@ -8,4 +8,4 @@
 // SOFTWARE.
 
 // @typstyle off
-#import "themes/default.typ": gls, agls, glspl, make-glossary, register-glossary, print-glossary, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group, get-entry-back-references, count-refs, count-all-refs, there-are-refs
+#import "themes/default.typ": gls, agls, glspl, make-glossary, register-glossary, print-glossary, gls-key, gls-short, gls-artshort, gls-plural, gls-long, gls-artlong, gls-longplural, gls-description, gls-group, get-entry-back-references, count-refs, count-all-refs, there-are-refs, Gls, Glspl
