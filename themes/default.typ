@@ -711,18 +711,34 @@
 //
 // # Returns
 // The back references as an array of links
-#let get-entry-back-references(entry) = {
+#let get-entry-back-references(entry, deduplicate: false) = {
   let term-references = __query_labels_with_key(entry.key)
-  return term-references
-    .map(x => x.location())
-    .sorted(key: x => x.page())
-    .map(x => {
-      let page-numbering = x.page-numbering()
-      if page-numbering == none {
-        page-numbering = "1"
-      }
-      return link(x)[#numbering(page-numbering, ..counter(page).at(x))]
-    })
+  let back-references = term-references.map(x => x.location()).sorted(key: x => x.page())
+  if deduplicate {
+    back-references = back-references
+      .fold(
+        (values: (), pages: ()),
+        ((values, pages), x) => {
+          if pages.contains(x.page()) {
+            // Skip duplicate references
+            return (values: values, pages: pages)
+          } else {
+            // Add the back reference
+            values.push(x)
+            pages.push(x.page())
+            return (values: values, pages: pages)
+          }
+        },
+      )
+      .values
+  }
+  return back-references.map(x => {
+    let page-numbering = x.page-numbering()
+    if page-numbering == none {
+      page-numbering = "1"
+    }
+    return link(x)[#numbering(page-numbering, ..counter(page).at(x))]
+  })
 }
 
 // default-print-back-references(entry) -> content
@@ -733,8 +749,8 @@
 //
 // # Returns
 // Joined back references
-#let default-print-back-references(entry) = {
-  return get-entry-back-references(entry).join(", ")
+#let default-print-back-references(entry, deduplicate: false) = {
+  return get-entry-back-references(entry, deduplicate: deduplicate).join(", ")
 }
 
 // default-print-description(entry) -> content
@@ -775,6 +791,7 @@
 //  entry,
 //  show-all: false,
 //  disable-back-references: false,
+//  deduplicate-back-references: false,
 //  minimum-refs: 1,
 //  description-separator: ": ",
 //  user-print-title: default-print-title,
@@ -796,6 +813,7 @@
   entry,
   show-all: false,
   disable-back-references: false,
+  deduplicate-back-references: false,
   minimum-refs: 1,
   description-separator: ": ",
   user-print-title: default-print-title,
@@ -822,7 +840,7 @@
     // Separate context window to separate BR's query
     context if disable-back-references != true {
       " "
-      user-print-back-references(entry)
+      user-print-back-references(entry, deduplicate: deduplicate-back-references)
     }
   }
 }
@@ -832,6 +850,7 @@
 //  entry,
 //  show-all: false,
 //  disable-back-references: false,
+//  deduplicate-back-references: false,
 //  minimum-refs: 1,
 //  description-separator: ": ",
 //  user-print-gloss: default-print-gloss,
@@ -854,6 +873,7 @@
   entry,
   show-all: false,
   disable-back-references: false,
+  deduplicate-back-references: false,
   minimum-refs: 1,
   description-separator: ": ",
   user-print-gloss: default-print-gloss,
@@ -869,6 +889,7 @@
       entry,
       show-all: show-all,
       disable-back-references: disable-back-references,
+      deduplicate-back-references: deduplicate-back-references,
       minimum-refs: minimum-refs,
       description-separator: description-separator,
       user-print-title: user-print-title,
@@ -927,6 +948,7 @@
 //  groups (array<str>): the list of groups
 //  show-all (bool): show all entries
 //  disable-back-references (bool): disable back references
+//  deduplicate-back-references (bool): deduplicate back references
 //  group-heading-level (int): force the level of the group heading
 //  minimum-refs (int): minimum number of references to show the entry
 //  ...
@@ -943,6 +965,7 @@
   groups,
   show-all: false,
   disable-back-references: false,
+  deduplicate-back-references: false,
   group-heading-level: none,
   minimum-refs: 1,
   description-separator: ": ",
@@ -980,6 +1003,7 @@
         entry,
         show-all: show-all,
         disable-back-references: disable-back-references,
+        deduplicate-back-references: deduplicate-back-references,
         minimum-refs: minimum-refs,
         description-separator: description-separator,
         user-print-gloss: user-print-gloss,
@@ -1036,6 +1060,7 @@
 //  groups: (),
 //  show-all: false,
 //  disable-back-references: false,
+//  deduplicate-back-references: false,
 //  group-heading-level: none,
 //  minimum-refs: 1,
 //  description-separator: ": ",
@@ -1075,6 +1100,7 @@
   groups: (),
   show-all: false,
   disable-back-references: false,
+  deduplicate-back-references: false,
   group-heading-level: none,
   minimum-refs: 1,
   description-separator: ": ",
@@ -1142,6 +1168,7 @@
       g,
       show-all: show-all,
       disable-back-references: disable-back-references,
+      deduplicate-back-references: deduplicate-back-references,
       group-heading-level: group-heading-level,
       minimum-refs: minimum-refs,
       description-separator: description-separator,

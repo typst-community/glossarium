@@ -27,4 +27,4 @@
 
 #lorem(200)
 
-#print-glossary(items)
+#print-glossary(items, deduplicate-back-references: true)
