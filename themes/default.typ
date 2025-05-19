@@ -214,18 +214,17 @@
 }
 
 
-// is-first-or-long(ey, long: false) -> bool
-// Check if the key is the first reference to the term or long form is requested
+// is-first(key) -> bool
+// Check if the key is the first reference to the term
 //
 // # Arguments
 //  loc (location): the location of the reference
 //  key (str): the key of the term
-//  long (bool): if true, it will return true if the long form is requested
 //
 // # Returns
 // True if the key is the first reference to the term or long form is requested
-#let is-first-or-long(key, long: false) = {
-  return __glossary_counts.get().at(key, default: 0) == 0 or long == true
+#let is-first(key) = {
+  return __glossary_counts.get().at(key, default: 0) == 0
 }
 
 // __link_and_label(key, text, prefix: none, suffix: none, update: true) -> content
@@ -420,7 +419,7 @@
 // Check capitalization of user input (@ref, or @Ref) against real key
 #let is-upper(key) = key.at(0) != __get_key(__get_entry_with_key(here(), key)).at(0)
 
-// gls(key, suffix: none, long: false, display: none) -> contextual content
+// gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term
 //
 // # Arguments
@@ -432,56 +431,98 @@
 //
 // # Returns
 // The link and the entry label
-#let gls(key, suffix: none, long: false, display: none, link: true, update: true, capitalize: false) = context {
+#let gls(
+  key,
+  suffix: none,
+  long: none,
+  display: none,
+  link: true,
+  update: true,
+  capitalize: false,
+  plural: false,
+  article: false,
+) = context {
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
-  let ent-long = __get_long(entry)
   let ent-short = __get_short(entry)
+  let ent-long = __get_long(entry)
+  let ent-plural = __get_plural(entry)
+  let ent-longplural = __get_longplural(entry)
+  let artlong = __get_artlong(entry)
+  let artshort = __get_artshort(entry)
   if capitalize {
     ent-short = __capitalize(ent-short)
     ent-long = __capitalize(ent-long)
+    ent-plural = __capitalize(ent-plural)
+    ent-longplural = __capitalize(ent-longplural)
+    artlong = __capitalize(artlong)
+    artshort = __capitalize(artshort)
   }
 
   // Conditions
-  let is-first-or-long = is-first-or-long(key, long: long)
-  let has-long = has-long(entry)
+  let is-first = is-first(key)
   let has-short = has-short(entry)
+  let has-long = has-long(entry)
+  let has-plural = has-plural(entry)
+  let has-longplural = has-longplural(entry)
+  let eshort = ent-short
+  let elong = ent-long
+  if plural {
+    let plural-sfx = "s" // default plural
+    eshort = if has-plural {
+      ent-plural
+    } else {
+      ent-short + plural-sfx
+    }
+    elong = if has-longplural {
+      ent-longplural
+    } else if has-long {
+      ent-long + plural-sfx
+    }
+  }
+  eshort += suffix
 
-  // Link text
-  // 1. If `display` attribute is provided, use it
-  // 2. Else, if
-  //  a. The entry is referenced for the first time OR long form is explicitly requested
-  //      AND
-  //  b. The entry has a nonempty `long` attribute
-  //      AND
-  //  c. long form is not disabled
-  // 3. Else, return the `short` attribute + suffix
   // Priority order:
   //  1. `gls(key, display: "text")` will return `text`
   //  2. `gls(key, long: false)` will return `short+suffix`
-  //  3. If attribute `long` is empty, `gls(key)` will return `short+suffix`
-  //  4. The first `gls(key)` will return `long (short+suffix)`
-  //  5. `gls(key, long: true)` will return `long (short+suffix)`
-  let text = []
-  if display != none {
-    text += [#display]
-  } else if is-first-or-long and has-long or long == true {
+  //  3. The first ref will return `long (short+suffix)` if has-long
+  //  4. `gls(key, long: true)` will return `long (short+suffix)` or `long` if has-long
+  //  5. `gls(key)` will return `short+suffix`
+  let text = if display != none {
+    // 1. display
+    [#display]
+  } else if long == false {
+    // 2. Always use short+suffix if long: false, even on first appearance
+    [#eshort]
+  } else if (is-first or long == true) and has-long {
+    // 3 & 4. long (short+suffix) (first or long requested, and has long form)
     if has-short {
-      text += [#ent-long (#ent-short#suffix)]
+      [#elong (#eshort)]
     } else {
-      text += [#ent-long]
+      [#elong]
     }
   } else {
-    text += [#ent-short#suffix]
+    // 5. fallback to short+suffix
+    [#eshort]
+  }
+  let art = if long == false {
+    artshort
+  } else if (is-first or long == true) and has-long {
+    artlong
+  } else {
+    artshort
   }
 
+  if article {
+    text = [#art #text]
+  }
   return __link_and_label(entry.key, text, href: link, update: update)
 }
 
-// Gls(key, suffix: none, long: false, display: none) -> contextual content
+// gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term, capitalized
-#let Gls(key, suffix: none, long: false, display: none, link: true, update: true) = gls(
+#let Gls(key, suffix: none, long: none, display: none, link: true, update: true) = gls(
   key,
   suffix: suffix,
   long: long,
@@ -491,7 +532,7 @@
   capitalize: true,
 )
 
-// agls(key, suffix: none, long: false) -> contextual content
+// agls(key, suffix: none, long: none) -> contextual content
 // Reference to term with article
 //
 // # Arguments
@@ -501,33 +542,17 @@
 //
 // # Returns
 // The link and the entry label
-#let agls(key, suffix: none, long: false, display: none, link: true, update: true, capitalize: false) = context {
-  let entry = __get_entry_with_key(here(), key)
-  let artlong = __get_artlong(entry)
-  let artshort = __get_artshort(entry)
-  let is_first_or_long = is-first-or-long(key, long: long)
-  let has-long = has-long(entry)
-  if capitalize {
-    artlong = __capitalize(artlong)
-    artshort = __capitalize(artshort)
-  }
-  let article = if is_first_or_long and has-long or long == true {
-    artlong
-  } else {
-    artshort
-  }
-  // Compose with gls
-  let text = [#article #gls(
-      key,
-      suffix: suffix,
-      long: long,
-      display: display,
-      link: false,
-      update: false,
-    )]
-  return __link_and_label(entry.key, text, href: link, update: update)
-}
-#let Agls(key, suffix: none, long: false, display: none, link: true, update: true) = agls(
+#let agls(key, suffix: none, long: none, display: none, link: true, update: true, capitalize: false) = gls(
+  key,
+  suffix: suffix,
+  long: long,
+  display: display,
+  link: link,
+  update: update,
+  capitalize: capitalize,
+  article: true,
+)
+#let Agls(key, suffix: none, long: none, display: none, link: true, update: true) = gls(
   key,
   suffix: suffix,
   long: long,
@@ -535,6 +560,7 @@
   link: link,
   update: update,
   capitalize: true,
+  article: true,
 )
 
 // glspl(key, long: false) -> content
@@ -547,79 +573,34 @@
 //
 // # Returns
 // The link and the entry label
-#let glspl(key, long: false, link: true, update: true, capitalize: false) = context {
-  let default-plural-suffix = "s"
-  let entry = __get_entry_with_key(here(), key)
-
-  // Attributes
-  let ent-short = __get_short(entry)
-  let ent-plural = __get_plural(entry)
-  let ent-long = __get_long(entry)
-  let ent-longplural = __get_longplural(entry)
-
-  if capitalize {
-    ent-short = __capitalize(ent-short)
-    ent-long = __capitalize(ent-long)
-    ent-plural = __capitalize(ent-plural)
-    ent-longplural = __capitalize(ent-longplural)
-  }
-
-  // Conditions
-  let is-first-or-long = is-first-or-long(key, long: long)
-  let has-short = has-short(entry)
-  let has-plural = has-plural(entry)
-  let has-long = has-long(entry)
-  let has-longplural = has-longplural(entry)
-
-  let longplural = if not has-longplural and has-long {
-    // Default longplural
-    // if the entry long plural is not provided, then fallback to adding default
-    // default-plural-suffix
-    [#ent-long#default-plural-suffix]
-  } else {
-    [#ent-longplural]
-  }
-
-  let shortplural = if not has-plural {
-    // Default short plural
-    // if the entry plural is not provided, then fallback to adding default
-    // default-plural-suffix
-    [#ent-short#default-plural-suffix]
-  } else {
-    [#ent-plural]
-  }
-
-  // Link text
-  let text = if is-first-or-long and has-long or long == true {
-    if has-short {
-      [#longplural (#shortplural)]
-    } else {
-      [#longplural]
-    }
-  } else if has-short {
-    // Default to short
-    [#shortplural]
-  } else {
-    [#longplural]
-  }
-
-  return __link_and_label(entry.key, text, href: link, update: update)
-}
-
-// Glspl(key, long: false) -> content
-// Reference to term with plural form, capitalized
-#let Glspl(key, long: false, link: true, update: true) = glspl(
+#let glspl(key, suffix: none, long: none, display: none, link: true, update: true, capitalize: false) = gls(
   key,
   long: long,
+  suffix: suffix,
+  display: display,
+  link: link,
+  update: update,
+  capitalize: capitalize,
+  plural: true,
+)
+
+// glspl(key, long: none) -> content
+// Reference to term with plural form, capitalized
+#let Glspl(key, suffix: none, long: none, display: none, link: true, update: true) = gls(
+  key,
+  long: long,
+  suffix: suffix,
+  display: display,
   link: link,
   update: update,
   capitalize: true,
+  plural: true,
 )
 
 // Select all figure refs and filter by __glossarium_figure
 //
 // Transform the ref to the glossary term
-#let refrule(r, update: true, long: false, link: true) = {
+#let refrule(r, update: true, long: none, link: true) = {
   if (
     r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
   ) {
