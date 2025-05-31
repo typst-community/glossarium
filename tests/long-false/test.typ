@@ -58,6 +58,4 @@
 
 / suffix: #glspl("utc", suffix: "ah")
 
-#pagebreak()
-
 #print-glossary(entry-list)

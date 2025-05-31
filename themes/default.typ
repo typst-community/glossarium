@@ -82,7 +82,7 @@
   } else if kind == __entry_list_is_not_array {
     msg = "entry-list is not an array."
   } else if kind == __longplural_but_not_long {
-    msg = key + " has a longplural attribute but no long attribute. Longplural will not be shown."
+    msg = "'" + key + "' has a longplural attribute but no long attribute. Longplural will not be shown."
   } else {
     msg = "unknown error"
   }
