@@ -36,6 +36,7 @@
 
 // Errors types
 #let __key_not_found = "key_not_found"
+#let __key_already_exists = "key_already_exists"
 #let __attribute_is_empty = "attribute_is_empty"
 #let __glossary_is_empty = "glossary_is_empty"
 #let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
@@ -63,6 +64,8 @@
   // Generate the error message
   if kind == __key_not_found {
     msg = "key '" + key + "' not found"
+  } else if kind == __key_already_exists {
+    msg = "key '" + key + "' already exists in the glossary"
   } else if kind == __attribute_is_empty {
     let attr = kwargs.at("attr")
     msg = "requested attribute " + attr + " is empty for key '" + key + "'"
@@ -1024,8 +1027,8 @@
 #let __update_glossary(entries) = {
   __glossary_entries.update(x => {
     for entry in entries {
-      if entry.key in entries {
-        panic("Duplicate key: " + entry.key)
+      if entry.key in x {
+        panic(__error_message(entry.key, __key_already_exists))
       }
       x.insert(entry.key, entry)
     }
