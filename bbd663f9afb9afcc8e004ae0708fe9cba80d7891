@@ -1,0 +1,7 @@
+[ver:1,total:660]
+themes/default.typ:244,1749153600:244,m
+tests/register/test.typ:175,1749153600:175,m
+.gtm/terminal.app:130,1749153600:130,r
+tests/duplicate-key/test.typ:75,1749153600:75,r
+tests/longplural-but-not-long/test.typ:30,1749153600:30,r
+tests/entry-has-neither-short-nor-long/test.typ:6,1749153600:6,r
