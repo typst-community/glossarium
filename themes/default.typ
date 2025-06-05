@@ -44,6 +44,7 @@
 #let __entry_has_unknown_keys = "entry_has_unknown_keys"
 #let __entry_list_is_not_array = "entry_list_is_not_array"
 #let __longplural_but_not_long = "longplural_but_not_long"
+#let __key_capitalizaion_not_unambiguous = "key_capitalizaion_not_unambiguous" 
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -83,6 +84,8 @@
     msg = "entry-list is not an array."
   } else if kind == __longplural_but_not_long {
     msg = "'" + key + "' has a longplural attribute but no long attribute. Longplural will not be shown."
+  } else if kind == __key_capitalizaion_not_unambiguous {
+    msg = "'" + key + "' already exists but with different capitalization. Keys have to be unique independently of capitalization."
   } else {
     msg = "unknown error"
   }
@@ -1051,6 +1054,15 @@
     entry-list,
     use-key-as-short: use-key-as-short,
   )
+
+  // Test for unique capitalization
+  let keys_smallcaps = ()
+  for entry in entries {
+    if lower(entry.key) in keys_smallcaps {
+      panic(__error_message(entry.key, __key_capitalizaion_not_unambiguous))
+    }
+    keys_smallcaps.push(lower(entry.key))
+  }
 
   __update_glossary(entries)
 }
