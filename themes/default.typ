@@ -39,6 +39,7 @@
 #let __key_already_exists = "key_already_exists"
 #let __attribute_is_empty = "attribute_is_empty"
 #let __glossary_is_empty = "glossary_is_empty"
+#let __key_not_registered = "key_not_registered"
 #let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
 #let __make_glossary_not_called = "make_glossary_not_called"
 #let __capitalize_called_with_content_type = "capitalize_called_with_content_type"
@@ -71,6 +72,8 @@
     msg = "requested attribute " + attr + " is empty for key '" + key + "'"
   } else if kind == __glossary_is_empty {
     msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
+  } else if kind == __key_not_registered {
+    msg = "key '" + key + "' is not registered in the glossary. Use `register-glossary(entry-list)`."
   } else if kind == __entry_has_neither_short_nor_long {
     msg = "entry '" + key + "' has neither short nor long form"
   } else if kind == __make_glossary_not_called {
@@ -1136,9 +1139,14 @@
     // Update state
     __update_glossary(entries)
   } else {
-    {
-      if __glossary_entries.get().len() == 0 {
-        panic(__error_message(none, __glossary_is_empty))
+    let _entries = __glossary_entries.get()
+    if _entries.len() == 0 {
+      panic(__error_message(none, __glossary_is_empty))
+    } else {
+      for e in entry-list {
+        if e.key not in _entries {
+          panic(__error_message(e.key, __key_not_registered))
+        }
       }
     }
   }
