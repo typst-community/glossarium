@@ -1,0 +1,9 @@
+[ver:1,total:960]
+.gtm/terminal.app:432,1748707200:300,1749150000:132,r
+tests/duplicate-key/test.typ:258,1749150000:258,r
+themes/default.typ:164,1749150000:164,m
+tests/styling/test.typ:45,1749150000:45,r
+examples/import-terms-from-yaml-file/main.typ:28,1749150000:28,r
+tests/entry-has-neither-short-nor-long/test.typ:19,1749150000:19,r
+tests/debug/test.typ:10,1749150000:10,r
+advanced-docs/main.typ:4,1749150000:4,r
