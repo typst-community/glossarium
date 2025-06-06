@@ -1,4 +1,4 @@
-// Test for __key_capitalization_not_unambiguous error message
+// Test for __key_capitalization_ambiguous error message
 #import "../../themes/default.typ": *
 
 #let test_glossary = (
@@ -6,7 +6,7 @@
   (key: "Test", long: "Test")
 )
 
-// This should panic with the key_capitalization_not_unambiguous error
+// This should panic with the key_capitalization_ambiguous error
 #assert.eq(
   catch(() => register-glossary(test_glossary)),
   "panicked with: \"glossarium@"
