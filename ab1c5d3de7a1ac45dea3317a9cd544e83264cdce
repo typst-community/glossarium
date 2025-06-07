@@ -1,0 +1,16 @@
+[ver:1,total:4320]
+themes/default.typ:2881,1749279600:2305,1749283200:576,m
+tests/style-entries/test.typ:533,1749279600:533,m
+.gtm/terminal.app:358,1749279600:313,1749283200:45,r
+tests/groups/test.typ:127,1749283200:127,m
+tests/style-is-not-a-function/test.typ:120,1749279600:120,m
+.github/workflows/CI.yml:60,1749276000:60,r
+glossarium.typ:59,1749279600:59,m
+tests/template.typ:54,1749279600:42,1749283200:12,m
+README.md:44,1749279600:30,1749283200:14,r
+tests/style-unsupported-attribute/test.typ:40,1749279600:40,m
+examples/import-terms-from-yaml-file/glossary.yml:12,1749279600:12,r
+tests/style-unknown-attribute/test.typ:10,1749279600:10,m
+tests/duplicate-key/test.typ:8,1749279600:8,r
+tests/style_unsupported_attribute/test.typ:8,1749279600:8,d
+examples/groups/groups.typ:6,1749283200:6,r
