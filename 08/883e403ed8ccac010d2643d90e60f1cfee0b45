@@ -1,2 +1,7 @@
 [ver:1,total:60]
 .gtm/terminal.app:60,1749276000:60,r
+
+[ver:1,total:180]
+.github/workflows/CI.yml:120,1749276000:120,m
+.gtm/terminal.app:45,1749276000:45,r
+justfile:15,1749276000:15,r
