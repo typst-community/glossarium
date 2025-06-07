@@ -34,6 +34,31 @@
   "glossarium@" + glossarium_version + " error : "
 )
 
+// Attributes
+#let KEY = "key"
+#let SHORT = "short"
+#let LONG = "long"
+#let ART_SHORT = "artshort"
+#let ART_LONG = "artlong"
+#let PLURAL = "plural"
+#let LONG_PLURAL = "longplural"
+#let DESCRIPTION = "description"
+#let GROUP = "group"
+#let SORT = "sort"
+#let ATTRIBUTES = (
+  KEY,
+  SHORT,
+  LONG,
+  ART_SHORT,
+  ART_LONG,
+  PLURAL,
+  LONG_PLURAL,
+  DESCRIPTION,
+  GROUP,
+  SORT,
+)
+
+
 // Errors types
 #let __key_not_found = "key_not_found"
 #let __key_already_exists = "key_already_exists"
@@ -46,6 +71,9 @@
 #let __entry_has_unknown_keys = "entry_has_unknown_keys"
 #let __entry_list_is_not_array = "entry_list_is_not_array"
 #let __longplural_but_not_long = "longplural_but_not_long"
+#let __style_is_not_a_function = "style_is_not_a_function"
+#let __style_unsupported_attributes = "style_unsupported_attributes"
+#let __style_unknown_attribute = "style_unknown_attribute"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -89,6 +117,17 @@
     msg = "entry-list is not an array."
   } else if kind == __longplural_but_not_long {
     msg = "'" + key + "' has a longplural attribute but no long attribute. Longplural will not be shown."
+  } else if kind == __style_is_not_a_function {
+    msg = "style-entries: style is not a function. Use a function to style the entries."
+  } else if kind == __style_unsupported_attributes {
+    let attr = kwargs.at("attr")
+    msg = "style-entries: attribute '" + attr + "' is not supported for styling."
+    if attr == GROUP {
+      msg += " Use `user-print-group-heading` in `print-glossary` to style groups."
+    }
+  } else if kind == __style_unknown_attribute {
+    let attr = kwargs.at("attr")
+    msg = "style-entries: unknown attribute '" + attr + "' for styling."
   } else {
     msg = "unknown error"
   }
@@ -187,14 +226,14 @@
     entry-list
   }
   let g = if groups == none {
-    el.map(x => x.at("group", default: "")).dedup()
+    el.map(x => x.at(GROUP, default: "")).dedup()
   } else if type(groups) == array {
     groups
   } else {
     panic("groups must be an array of strings, e.g., (\"\",)")
   }
-  el = el.filter(x => x.at("group", default: "") in g)
-  let counts = el.map(x => (x.key, count-refs(x.key)))
+  el = el.filter(x => x.at(GROUP, default: "") in g)
+  let counts = el.map(x => (x.at(KEY), count-refs(x.at(KEY))))
   return counts
 }
 
@@ -251,31 +290,30 @@
 }
 
 #let __get_attribute(entry, attrname) = entry.at(attrname)
-#let __get_key(entry) = __get_attribute(entry, "key")
-#let __get_short(entry) = __get_attribute(entry, "short")
-#let __get_long(entry) = __get_attribute(entry, "long")
-
-#let __get_artshort(entry) = __get_attribute(entry, "artshort")
-#let __get_artlong(entry) = __get_attribute(entry, "artlong")
-#let __get_plural(entry) = __get_attribute(entry, "plural")
-#let __get_longplural(entry) = __get_attribute(entry, "longplural")
-#let __get_description(entry) = __get_attribute(entry, "description")
-#let __get_group(entry) = __get_attribute(entry, "group")
-#let __get_sort(entry) = __get_attribute(entry, "sort")
+#let __get_key(entry) = __get_attribute(entry, KEY)
+#let __get_short(entry) = __get_attribute(entry, SHORT)
+#let __get_long(entry) = __get_attribute(entry, LONG)
+#let __get_artshort(entry) = __get_attribute(entry, ART_SHORT)
+#let __get_artlong(entry) = __get_attribute(entry, ART_LONG)
+#let __get_plural(entry) = __get_attribute(entry, PLURAL)
+#let __get_longplural(entry) = __get_attribute(entry, LONG_PLURAL)
+#let __get_description(entry) = __get_attribute(entry, DESCRIPTION)
+#let __get_group(entry) = __get_attribute(entry, GROUP)
+#let __get_sort(entry) = __get_attribute(entry, SORT)
 
 #let __has_attribute(entry, attrname) = {
   let attr = __get_attribute(entry, attrname)
   return attr != none and attr != "" and attr != []
 }
-#let has-short(entry) = __has_attribute(entry, "short")
-#let has-long(entry) = __has_attribute(entry, "long")
-#let has-artshort(entry) = __has_attribute(entry, "artshort")
-#let has-artlong(entry) = __has_attribute(entry, "artlong")
-#let has-plural(entry) = __has_attribute(entry, "plural")
-#let has-longplural(entry) = __has_attribute(entry, "longplural")
-#let has-description(entry) = __has_attribute(entry, "description")
-#let has-group(entry) = __has_attribute(entry, "group")
-#let has-sort(entry) = __has_attribute(entry, "sort")
+#let has-short(entry) = __has_attribute(entry, SHORT)
+#let has-long(entry) = __has_attribute(entry, LONG)
+#let has-artshort(entry) = __has_attribute(entry, ART_SHORT)
+#let has-artlong(entry) = __has_attribute(entry, ART_LONG)
+#let has-plural(entry) = __has_attribute(entry, PLURAL)
+#let has-longplural(entry) = __has_attribute(entry, LONG_PLURAL)
+#let has-description(entry) = __has_attribute(entry, DESCRIPTION)
+#let has-group(entry) = __has_attribute(entry, GROUP)
+#let has-sort(entry) = __has_attribute(entry, SORT)
 
 // get-attribute(key, attr) -> contextual content
 // Get the specified attribute from entry
@@ -290,7 +328,7 @@
   let entry = __get_entry_with_key(here(), key)
   let attr = entry.at(attrname)
   if link {
-    return __link_and_label(entry.key, entry.at(attrname), update: update)
+    return __link_and_label(entry.at(KEY), entry.at(attrname), update: update)
   } else if attrname in entry and entry.at(attrname) != none {
     return attr
   } else {
@@ -308,7 +346,7 @@
 //
 // # Returns
 // The key of the term
-#let gls-key(key, link: false) = get-attribute(key, "key", link: link)
+#let gls-key(key, link: false) = get-attribute(key, KEY, link: link)
 
 // gls-short(key, link: false) -> contextual content
 // Get the short form of the term
@@ -319,7 +357,7 @@
 //
 // # Returns
 // The short form of the term
-#let gls-short(key, link: false) = get-attribute(key, "short", link: link)
+#let gls-short(key, link: false) = get-attribute(key, SHORT, link: link)
 
 // gls-artshort(key, link: false) -> contextual content
 // Get the article of the short form
@@ -332,7 +370,7 @@
 // The article of the short form
 #let gls-artshort(key, link: false) = get-attribute(
   key,
-  "artshort",
+  ART_SHORT,
   link: link,
 )
 
@@ -345,7 +383,7 @@
 //
 // # Returns
 // The plural form of the term
-#let gls-plural(key, link: false) = get-attribute(key, "plural", link: link)
+#let gls-plural(key, link: false) = get-attribute(key, PLURAL, link: link)
 
 // gls-long(key, link: false) -> contextual content
 // Get the long form of the term
@@ -356,7 +394,7 @@
 //
 // # Returns
 // The long form of the term
-#let gls-long(key, link: false) = get-attribute(key, "long", link: link)
+#let gls-long(key, link: false) = get-attribute(key, LONG, link: link)
 
 // gls-artlong(key, link: false) -> contextual content
 // Get the article of the long form
@@ -367,7 +405,7 @@
 //
 // # Returns
 // The article of the long form
-#let gls-artlong(key, link: false) = get-attribute(key, "artlong", link: link)
+#let gls-artlong(key, link: false) = get-attribute(key, ART_LONG, link: link)
 
 // gls-longplural(key, link: false) -> contextual content
 // Get the long plural form of the term
@@ -380,7 +418,7 @@
 // The long plural form of the term
 #let gls-longplural(key, link: false) = get-attribute(
   key,
-  "longplural",
+  LONG_PLURAL,
   link: link,
 )
 
@@ -395,7 +433,7 @@
 // The description of the term
 #let gls-description(key, link: false) = get-attribute(
   key,
-  "description",
+  DESCRIPTION,
   link: link,
 )
 
@@ -408,7 +446,7 @@
 //
 // # Returns
 // The group of the term
-#let gls-group(key, link: false) = get-attribute(key, "group", link: link)
+#let gls-group(key, link: false) = get-attribute(key, GROUP, link: link)
 
 //
 // gls-sort(key, link: false) -> contextual content
@@ -420,10 +458,30 @@
 //
 // # Returns
 // The sort attribute of the term
-#let gls-sort(key, link: false) = get-attribute(key, "sort", link: link)
+#let gls-sort(key, link: false) = get-attribute(key, SORT, link: link)
 
 // Check capitalization of user input (@ref, or @Ref) against real key
 #let is-upper(key) = key.at(0) != __get_key(__get_entry_with_key(here(), key)).at(0)
+
+// style-entries(entry-list, attr, style) -> array<dictionary>
+#let style-entries(attr, style) = context {
+  if type(style) != function {
+    panic(__error_message(none, __style_is_not_a_function))
+  }
+  if attr in (KEY, SORT, GROUP) {
+    panic(__error_message(none, __style_unsupported_attributes, attr: attr))
+  }
+  if attr not in ATTRIBUTES {
+    panic(__error_message(none, __style_unknown_attribute, attr: attr))
+  }
+  __glossary_entries.update(x => {
+    for (k, v) in x.pairs() {
+      v.insert(attr, style(v.at(attr, default: none)))
+      x.insert(k, v)
+    }
+    return x
+  })
+}
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term
@@ -523,7 +581,7 @@
   if article {
     text = [#art #text]
   }
-  return __link_and_label(entry.key, text, href: link, update: update)
+  return __link_and_label(entry.at(KEY), text, href: link, update: update)
 }
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
@@ -663,46 +721,30 @@
 #let __normalize_entry_list(entry-list, use-key-as-short: true) = {
   let new-list = ()
   for entry in entry-list {
-    let unknown_keys = entry
-      .keys()
-      .filter(x => (
-        x
-          not in (
-            "key",
-            "short",
-            "artshort",
-            "plural",
-            "long",
-            "artlong",
-            "longplural",
-            "description",
-            "group",
-            "sort",
-          )
-      ))
+    let unknown_keys = entry.keys().filter(x => (x not in ATTRIBUTES))
     if unknown_keys.len() > 0 {
-      panic(__error_message(entry.key, __entry_has_unknown_keys, keys: unknown_keys.join(",")))
+      panic(__error_message(entry.at(KEY), __entry_has_unknown_keys, keys: unknown_keys.join(",")))
     }
     let newentry = (
-      key: entry.key,
+      key: entry.at(KEY),
       short: entry.at(
-        "short",
-        default: if use-key-as-short { entry.key } else { none },
+        SHORT,
+        default: if use-key-as-short { entry.at(KEY) } else { none },
       ),
-      artshort: entry.at("artshort", default: "a"),
-      plural: entry.at("plural", default: none),
-      long: entry.at("long", default: none),
-      artlong: entry.at("artlong", default: "a"),
-      longplural: entry.at("longplural", default: none),
-      description: entry.at("description", default: none),
-      group: entry.at("group", default: ""),
-      sort: entry.at("sort", default: entry.key),
+      artshort: entry.at(ART_SHORT, default: "a"),
+      plural: entry.at(PLURAL, default: none),
+      long: entry.at(LONG, default: none),
+      artlong: entry.at(ART_LONG, default: "a"),
+      longplural: entry.at(LONG_PLURAL, default: none),
+      description: entry.at(DESCRIPTION, default: none),
+      group: entry.at(GROUP, default: ""),
+      sort: entry.at(SORT, default: entry.at(KEY)),
     )
     if not use-key-as-short and not has-short(newentry) and not has-long(newentry) {
-      panic(__error_message(newentry.key, __entry_has_neither_short_nor_long))
+      panic(__error_message(newentry.at(KEY), __entry_has_neither_short_nor_long))
     }
     if has-longplural(newentry) and not has-long(newentry) {
-      panic(__error_message(newentry.key, __longplural_but_not_long))
+      panic(__error_message(newentry.at(KEY), __longplural_but_not_long))
     }
     new-list.push(newentry)
   }
@@ -718,7 +760,7 @@
 // # Returns
 // The back references as an array of links
 #let get-entry-back-references(entry, deduplicate: false) = {
-  let term-references = __query_labels_with_key(entry.key)
+  let term-references = __query_labels_with_key(entry.at(KEY))
   let back-references = term-references.map(x => x.location()).sorted(key: x => x.page())
   if deduplicate {
     back-references = back-references
@@ -767,9 +809,7 @@
 //
 // # Returns
 // The description of the entry
-#let default-print-description(entry) = {
-  return entry.at("description")
-}
+#let default-print-description(entry) = entry.at(DESCRIPTION)
 
 // default-print-title(entry) -> content
 // Print the title of the entry
@@ -784,11 +824,11 @@
   let txt = strong.with(delta: 200)
 
   if has-long(entry) and has-short(entry) {
-    caption += txt(emph(entry.short) + [ -- ] + entry.long)
+    caption += txt(emph(entry.at(SHORT)) + [ -- ] + entry.at(LONG))
   } else if has-long(entry) {
-    caption += txt(entry.long)
+    caption += txt(entry.at(LONG))
   } else {
-    caption += txt(emph(entry.short))
+    caption += txt(emph(entry.at(SHORT)))
   }
   return caption
 }
@@ -831,7 +871,7 @@
     first-line-indent: 0em,
   )
   // ? references-in-description layout divergence
-  if show-all == true or count-refs(entry.key) >= minimum-refs {
+  if show-all == true or count-refs(entry.at(KEY)) >= minimum-refs {
     // Title
     user-print-title(entry)
 
@@ -902,24 +942,24 @@
       user-print-description: user-print-description,
       user-print-back-references: user-print-back-references,
     ),
-  )#label(entry.key)
+  )#label(entry.at(KEY))
   // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
   #figure(
     kind: __glossarium_figure,
     supplement: "",
-  )[]#label(entry.key + ":pl")
+  )[]#label(entry.at(KEY) + ":pl")
   // Same as above, but for capitalized form, e.g., "@Term"
   // Skip if key is already capitalized
-  #if upper(entry.key.at(0)) != entry.key.at(0) {
+  #if upper(entry.at(KEY).at(0)) != entry.at(KEY).at(0) {
     [
       #figure(
         kind: __glossarium_figure,
         supplement: "",
-      )[]#label(__capitalize(entry.key))
+      )[]#label(__capitalize(entry.at(KEY)))
       #figure(
         kind: __glossarium_figure,
         supplement: "",
-      )[]#label(__capitalize(entry.key) + ":pl")
+      )[]#label(__capitalize(entry.at(KEY)) + ":pl")
     ]
   }
 ]
@@ -928,6 +968,18 @@
 // Default group break
 #let default-group-break() = {
   return []
+}
+
+#let default-print-group-heading(group, level: none) = {
+  if level == none {
+    let previous-headings = query(selector(heading).before(here()))
+    if previous-headings.len() != 0 {
+      level = previous-headings.last().level + 1
+    } else {
+      level = 1
+    }
+  }
+  heading(group, level: level, outlined: false)
 }
 
 // default-print-glossary(
@@ -939,7 +991,7 @@
 //  minimum-refs: 1,
 //  description-separator: ": ",
 //  group-sortkey: g => g,
-//  entry-sortkey: e => e.sort,
+//  entry-sortkey: e => e.at(SORT),
 //  user-print-reference: default-print-reference
 //  user-group-break: default-group-break,
 //  user-print-gloss: default-print-gloss,
@@ -976,7 +1028,8 @@
   minimum-refs: 1,
   description-separator: ": ",
   group-sortkey: g => g,
-  entry-sortkey: e => e.sort,
+  entry-sortkey: e => e.at(SORT),
+  user-print-group-heading: default-print-group-heading,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
   user-print-gloss: default-print-gloss,
@@ -984,25 +1037,16 @@
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
 ) = {
-  if group-heading-level == none {
-    let previous-headings = query(selector(heading).before(here()))
-    if previous-headings.len() != 0 {
-      group-heading-level = previous-headings.last().level + 1
-    } else {
-      group-heading-level = 1
-    }
-  }
-
   for group in groups.sorted(key: group-sortkey) {
-    let group-entries = entries.filter(x => x.at("group") == group)
-    let group-ref-counts = group-entries.map(x => count-refs(x.key))
+    let group-entries = entries.filter(x => x.at(GROUP) == group)
+    let group-ref-counts = group-entries.map(x => count-refs(x.at(KEY)))
     let print-group = (
       // ? group-heading-pagebreak Layout divergence if location is conditional on print-group
       group != "" and (show-all == true or group-ref-counts.any(x => x >= minimum-refs))
     )
     // Only print group name if any entries are referenced
     if print-group {
-      heading(group, level: group-heading-level, outlined: false)
+      user-print-group-heading(group, level: group-heading-level)
     }
     for entry in group-entries.sorted(key: entry-sortkey) {
       user-print-reference(
@@ -1018,7 +1062,9 @@
         user-print-back-references: user-print-back-references,
       )
     }
-    user-group-break()
+    if print-group {
+      user-group-break()
+    }
   }
 }
 
@@ -1030,10 +1076,10 @@
 #let __update_glossary(entries) = {
   __glossary_entries.update(x => {
     for entry in entries {
-      if entry.key in x {
-        panic(__error_message(entry.key, __key_already_exists))
+      if entry.at(KEY) in x {
+        panic(__error_message(entry.at(KEY), __key_already_exists))
       }
-      x.insert(entry.key, entry)
+      x.insert(entry.at(KEY), entry)
     }
     return x
   })
@@ -1071,8 +1117,9 @@
 //  minimum-refs: 1,
 //  description-separator: ": ",
 //  group-sortkey: g => g,
-//  entry-sortkey: e => e.sort,
+//  entry-sortkey: e => e.at(SORT),
 //  user-print-glossary: default-print-glossary,
+//  user-print-group-heading: default-print-group-heading,
 //  user-print-reference: default-print-reference,
 //  user-group-break: default-group-break,
 //  user-print-gloss: default-print-gloss,
@@ -1111,8 +1158,9 @@
   minimum-refs: 1,
   description-separator: ": ",
   group-sortkey: g => g,
-  entry-sortkey: e => e.sort,
+  entry-sortkey: e => e.at(SORT),
   user-print-glossary: default-print-glossary,
+  user-print-group-heading: default-print-group-heading,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
   user-print-gloss: default-print-gloss,
@@ -1144,8 +1192,8 @@
       panic(__error_message(none, __glossary_is_empty))
     } else {
       for e in entry-list {
-        if e.key not in _entries {
-          panic(__error_message(e.key, __key_not_registered))
+        if e.at(KEY) not in _entries {
+          panic(__error_message(e.at(KEY), __key_not_registered))
         }
       }
     }
@@ -1164,13 +1212,13 @@
         .get()
         .values()
         .filter(x => (
-          x.key in entry-list.map(x => x.key)
+          x.at(KEY) in entry-list.map(x => x.at(KEY))
         ))
     }
 
     // Groups
     let g = if groups == () {
-      el.map(x => x.at("group")).dedup()
+      el.map(x => x.at(GROUP)).dedup()
     } else {
       groups
     }
@@ -1186,6 +1234,7 @@
       group-sortkey: group-sortkey,
       entry-sortkey: entry-sortkey,
       user-print-reference: user-print-reference,
+      user-print-group-heading: user-print-group-heading,
       user-group-break: user-group-break,
       user-print-gloss: user-print-gloss,
       user-print-title: user-print-title,
