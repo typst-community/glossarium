@@ -1,55 +1,26 @@
-name: Build example
-
-
+name: CI
 on:
   push:
-    branches: 
+    branches:
       - master
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - '**'
 
 jobs:
-  build-example:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup typst  
-        uses: yusancky/setup-typst@v2
-        id: setup-typst
-        with:
-          version: 'latest'
-      - name: Setup Just
-        uses: extractions/setup-just@v2
-      - name: Set up Git repository
-        uses: actions/checkout@v3
-      - name: typst version
-        run: typst --version
-      - name: Compile
-        run: just build-examples
-      - name: Upload example PDF 
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.sha }}_PDF_EXAMPLES
-          path: examples/*
-          if-no-files-found: error
   tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup typst  
-        uses: yusancky/setup-typst@v2
-        id: setup-typst
+      - uses: actions/checkout@v3
+      - name: Install tytanic
+        uses: baptiste0928/cargo-install@v3
         with:
-          version: 'latest'
-      - name: Setup Just
-        uses: extractions/setup-just@v2
-      - name: Set up Git repository
-        uses: actions/checkout@v3
-      - name: typst version
-        run: typst --version
-      - name: Compile
-        run: just test
-      - name: Upload example PDF 
-        uses: actions/upload-artifact@v3
+          crate: tytanic
+          git: https://github.com/tingerrr/tytanic.git
+      - uses: typst-community/setup-typst@v3
         with:
-          name: ${{ github.sha }}_PDF_TESTS
-          path: tests/*
-          if-no-files-found: error
+          typst-version: '0.13.1'
+      - run: |
+          typst --version
+          tt --version
+          tt run
