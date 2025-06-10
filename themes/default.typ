@@ -44,7 +44,10 @@
 #let __entry_has_unknown_keys = "entry_has_unknown_keys"
 #let __entry_list_is_not_array = "entry_list_is_not_array"
 #let __longplural_but_not_long = "longplural_but_not_long"
-#let __key_capitalization_ambiguous = "key_capitalization_ambiguous" 
+#let __existing_key_ambiguous = "existing_key_ambiguous"
+#let __existing_key_capitalization_ambiguous = "existing_key_capitalization_ambiguous" 
+#let __new_key_ambiguous = "new_key_ambiguous"
+#let __new_key_capitalization_ambiguous = "new_key_capitalization_ambiguous" 
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -84,7 +87,13 @@
     msg = "entry-list is not an array."
   } else if kind == __longplural_but_not_long {
     msg = "'" + key + "' has a longplural attribute but no long attribute. Longplural will not be shown."
-  } else if kind == __key_capitalization_ambiguous {
+  } else if kind == __existing_key_ambiguous {
+    msg = "'" + key + "' already exists in one of the previous registered glossaries. Keys have to be unique among all glossaries."
+  } else if kind == __existing_key_capitalization_ambiguous {
+    msg = "'" + key + "' already exists but with different capitalization in one of the previous registered glossaries. Keys have to be unique independently of capitalization among all glossaries."
+  }else if kind == __new_key_ambiguous {
+    msg = "'" + key + "' already exists. Keys have to be unique."
+  } else if kind == __new_key_capitalization_ambiguous {
     msg = "'" + key + "' already exists but with different capitalization. Keys have to be unique independently of capitalization."
   } else {
     msg = "unknown error"
@@ -1025,16 +1034,46 @@
 // # Arguments
 //  entries (array<dictionary>): the list of entries
 #let __update_glossary(entries) = {
-  __glossary_entries.update(x => {
-    for entry in entries {
-      if entry.key in entries {
-        panic("Duplicate key: " + entry.key)
-      }
-      x.insert(entry.key, entry)
+  // Check for ambiguosity in existing keys from previously registered glossaries
+  context {
+    let existing_keys = ()
+    let existing_keys_smallcaps = ()
+    for key in __glossary_entries.get().keys() {
+      existing_keys.push(key)
+      existing_keys_smallcaps.push(lower(key))
     }
-    return x
-  })
+
+    for entry in entries {
+      if entry.key in existing_keys {
+          panic(__error_message(entry.key, __existing_key_ambiguous))
+        }
+      if lower(entry.key) in existing_keys_smallcaps {
+        panic(__error_message(entry.key, __existing_key_capitalization_ambiguous))
+      }
+    }
+  }
+
+  context { 
+    __glossary_entries.update(x => {
+      let new_keys = ()
+      let new_keys_smallcaps = ()
+
+      for entry in entries {
+        if entry.key in new_keys {
+          panic(__error_message(entry.key, __new_key_ambiguous))
+        }
+        if lower(entry.key) in new_keys_smallcaps {
+          panic(__error_message(entry.key, __new_key_capitalization_ambiguous))
+        }
+        new_keys.push(entry.key)
+        new_keys_smallcaps.push(lower(entry.key))
+        x.insert(entry.key, entry)
+      }
+      return x
+    })
+  }
 }
+
 
 // register-glossary(entry-list, use-key-as-short: true) -> none
 // Register the glossary entries
@@ -1056,13 +1095,13 @@
   )
 
   // Test for unique capitalization
-  let keys_smallcaps = ()
-  for entry in entries {
-    if lower(entry.key) in keys_smallcaps {
-      panic(__error_message(entry.key, __key_capitalization_ambiguous))
-    }
-    keys_smallcaps.push(lower(entry.key))
-  }
+  // let keys_smallcaps = ()
+  // for entry in entries {
+  //   if lower(entry.key) in keys_smallcaps {
+  //     panic(__error_message(entry.key, __key_capitalization_ambiguous))
+  //   }
+  //   keys_smallcaps.push(lower(entry.key))
+  // }
 
   __update_glossary(entries)
 }
