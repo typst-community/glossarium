@@ -1,0 +1,15 @@
+[ver:1,total:3180]
+.gtm/terminal.app:1626,1746439200:330,1746442800:240,1746446400:180,1746630000:455,1746640800:180,1750190400:158,1750194000:83,r
+themes/default.typ:505,1746630000:97,1748336400:80,1750190400:310,1750194000:18,m
+examples/full-example/main.typ:367,1748336400:320,1750190400:47,r
+tests/register/test.typ:251,1750190400:59,1750194000:192,m
+tests/duplicate-key/test.typ:121,1750190400:10,1750194000:111,m
+tests/back-references-divergence/back-references-divergence.typ:88,1746630000:68,1748336400:20,d
+package.sh:80,1746439200:60,1746630000:20,r
+typst.toml:50,1746439200:30,1746630000:20,r
+glossarium.typ:33,1750190400:30,1750194000:3,r
+advanced-docs/main.typ:23,1750190400:23,r
+tests/entry-has-neither-short-nor-long/test.typ:15,1750190400:8,1750194000:7,r
+tests/entry-has-neither-short-nor-long/entry-has-neither-short-nor-long.typ:15,1750190400:15,d
+tests/styling/test.typ:3,1750194000:3,r
+tests/debug/test.typ:3,1750194000:3,r
