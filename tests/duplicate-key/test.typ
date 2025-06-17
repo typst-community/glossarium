@@ -9,5 +9,9 @@
 )
 #register-glossary(entry-list)
 #show: make-glossary
-// #print-glossary(entry-list)
-// cannot catch panic :(
+
+// https://forum.typst.app/t/why-does-tytanic-not-catch-panic-in-some-cases/4529/3
+#context assert.eq(
+  catch(() => _print-glossary(entry-list)),
+  "panicked with: \"glossarium@" + glossarium_version + " error : key 'test' already exists in the glossary\"",
+)

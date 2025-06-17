@@ -315,16 +315,7 @@
 #let has-group(entry) = __has_attribute(entry, GROUP)
 #let has-sort(entry) = __has_attribute(entry, SORT)
 
-// get-attribute(key, attr) -> contextual content
-// Get the specified attribute from entry
-//
-// # Arguments
-// key (str): the key of the term
-// attr (str): the attribute to be retrieved
-//
-// # Returns
-// The attribute of the term
-#let get-attribute(key, attrname, link: false, update: false) = context {
+#let _get-attribute(key, attrname, link: false, update: false) = {
   let entry = __get_entry_with_key(here(), key)
   let attr = entry.at(attrname)
   if link {
@@ -335,7 +326,21 @@
     panic(__error_message(key, __attribute_is_empty, attr: attrname))
   }
 }
-
+// get-attribute(key, attr) -> contextual content
+// Get the specified attribute from entry
+//
+// # Arguments
+// key (str): the key of the term
+// attr (str): the attribute to be retrieved
+//
+// # Returns
+// The attribute of the term
+#let get-attribute(key, attrname, link: false, update: false) = context _get-attribute(
+  key,
+  attrname,
+  link: link,
+  update: update,
+)
 
 // gls-key(key, link: false) -> contextual content
 // Get the key of the term
@@ -463,8 +468,7 @@
 // Check capitalization of user input (@ref, or @Ref) against real key
 #let is-upper(key) = key.at(0) != __get_key(__get_entry_with_key(here(), key)).at(0)
 
-// style-entries(entry-list, attr, style) -> array<dictionary>
-#let style-entries(attr, style) = context {
+#let _style-entries(attr, style) = {
   if type(style) != function {
     panic(__error_message(none, __style_is_not_a_function))
   }
@@ -483,19 +487,10 @@
   })
 }
 
-// gls(key, suffix: none, long: none, display: none) -> contextual content
-// Reference to term
-//
-// # Arguments
-//  key (str): the key of the term
-//  suffix (str): the suffix to be added to the short form
-//  long (bool): enable/disable the long form
-//  display (str): override text to be displayed
-//  capitalize (bool): Capitalize first letter of long form
-//
-// # Returns
-// The link and the entry label
-#let gls(
+// style-entries(entry-list, attr, style) -> array<dictionary>
+#let style-entries(attr, style) = context _style-entries(attr, style)
+
+#let _gls(
   key,
   suffix: none,
   long: none,
@@ -505,7 +500,7 @@
   capitalize: false,
   plural: false,
   article: false,
-) = context {
+) = {
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
@@ -583,6 +578,39 @@
   }
   return __link_and_label(entry.at(KEY), text, href: link, update: update)
 }
+// gls(key, suffix: none, long: none, display: none) -> contextual content
+// Reference to term
+//
+// # Arguments
+//  key (str): the key of the term
+//  suffix (str): the suffix to be added to the short form
+//  long (bool): enable/disable the long form
+//  display (str): override text to be displayed
+//  capitalize (bool): Capitalize first letter of long form
+//
+// # Returns
+// The link and the entry label
+#let gls(
+  key,
+  suffix: none,
+  long: none,
+  display: none,
+  link: true,
+  update: true,
+  capitalize: false,
+  plural: false,
+  article: false,
+) = context _gls(
+  key,
+  suffix: suffix,
+  long: long,
+  display: display,
+  link: link,
+  update: update,
+  capitalize: capitalize,
+  plural: plural,
+  article: article,
+)
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
 // Reference to term, capitalized
@@ -1107,48 +1135,7 @@
   __update_glossary(entries)
 }
 
-// print-glossary(
-//  entry-list,
-//  groups: (),
-//  show-all: false,
-//  disable-back-references: false,
-//  deduplicate-back-references: false,
-//  group-heading-level: none,
-//  minimum-refs: 1,
-//  description-separator: ": ",
-//  group-sortkey: g => g,
-//  entry-sortkey: e => e.at(SORT),
-//  user-print-glossary: default-print-glossary,
-//  user-print-group-heading: default-print-group-heading,
-//  user-print-reference: default-print-reference,
-//  user-group-break: default-group-break,
-//  user-print-gloss: default-print-gloss,
-//  user-print-title: default-print-title,
-//  user-print-description: default-print-description,
-//  user-print-back-references: default-print-back-references,
-// ) -> content
-// Print the glossary
-//
-// # Arguments
-//  entry-list (array<dictionary>): the list of entries
-//  groups (array<str>): the list of groups to be displayed. `""` is the default group.
-//  show-all (bool): show all entries
-//  disable-back-references (bool): disable back references
-//  group-heading-level (int): force the level of the group heading
-//  minimum-refs (int): minimum number of references to show the entry
-//  ...
-//
-// # Warnings
-// A strong warning is given not to override `user-print-reference` without
-// careful consideration of `default-print-reference`'s original implementation.
-// The package's behaviour may break in unexpected ways if not handled correctly.
-//
-// # Usage
-// Print the glossary
-// ```typ
-// print-glossary(entry-list)
-// ```
-#let print-glossary(
+#let _print-glossary(
   entry-list,
   groups: (),
   show-all: false,
@@ -1167,7 +1154,7 @@
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
-) = context {
+) = {
   {
     if query(<glossarium:make-glossary>).len() == 0 {
       panic(__error_message(none, __make_glossary_not_called))
@@ -1246,3 +1233,83 @@
   // Content
   body
 }
+// print-glossary(
+//  entry-list,
+//  groups: (),
+//  show-all: false,
+//  disable-back-references: false,
+//  deduplicate-back-references: false,
+//  group-heading-level: none,
+//  minimum-refs: 1,
+//  description-separator: ": ",
+//  group-sortkey: g => g,
+//  entry-sortkey: e => e.at(SORT),
+//  user-print-glossary: default-print-glossary,
+//  user-print-group-heading: default-print-group-heading,
+//  user-print-reference: default-print-reference,
+//  user-group-break: default-group-break,
+//  user-print-gloss: default-print-gloss,
+//  user-print-title: default-print-title,
+//  user-print-description: default-print-description,
+//  user-print-back-references: default-print-back-references,
+// ) -> content
+// Print the glossary
+//
+// # Arguments
+//  entry-list (array<dictionary>): the list of entries
+//  groups (array<str>): the list of groups to be displayed. `""` is the default group.
+//  show-all (bool): show all entries
+//  disable-back-references (bool): disable back references
+//  group-heading-level (int): force the level of the group heading
+//  minimum-refs (int): minimum number of references to show the entry
+//  ...
+//
+// # Warnings
+// A strong warning is given not to override `user-print-reference` without
+// careful consideration of `default-print-reference`'s original implementation.
+// The package's behaviour may break in unexpected ways if not handled correctly.
+//
+// # Usage
+// Print the glossary
+// ```typ
+// print-glossary(entry-list)
+// ```
+#let print-glossary(
+  entry-list,
+  groups: (),
+  show-all: false,
+  disable-back-references: false,
+  deduplicate-back-references: false,
+  group-heading-level: none,
+  minimum-refs: 1,
+  description-separator: ": ",
+  group-sortkey: g => g,
+  entry-sortkey: e => e.at(SORT),
+  user-print-glossary: default-print-glossary,
+  user-print-group-heading: default-print-group-heading,
+  user-print-reference: default-print-reference,
+  user-group-break: default-group-break,
+  user-print-gloss: default-print-gloss,
+  user-print-title: default-print-title,
+  user-print-description: default-print-description,
+  user-print-back-references: default-print-back-references,
+) = context _print-glossary(
+  entry-list,
+  groups: groups,
+  show-all: show-all,
+  disable-back-references: disable-back-references,
+  deduplicate-back-references: deduplicate-back-references,
+  group-heading-level: group-heading-level,
+  minimum-refs: minimum-refs,
+  description-separator: description-separator,
+  group-sortkey: group-sortkey,
+  entry-sortkey: entry-sortkey,
+  user-print-glossary: user-print-glossary,
+  user-print-group-heading: user-print-group-heading,
+  user-print-reference: user-print-reference,
+  user-group-break: user-group-break,
+  user-print-gloss: user-print-gloss,
+  user-print-title: user-print-title,
+  user-print-description: user-print-description,
+  user-print-back-references: user-print-back-references,
+)
