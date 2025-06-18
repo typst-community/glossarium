@@ -45,6 +45,7 @@
 #let DESCRIPTION = "description"
 #let GROUP = "group"
 #let SORT = "sort"
+#let CUSTOM = "custom"
 #let ATTRIBUTES = (
   KEY,
   SHORT,
@@ -56,6 +57,7 @@
   DESCRIPTION,
   GROUP,
   SORT,
+  CUSTOM,
 )
 
 
@@ -813,6 +815,7 @@
       description: entry.at(DESCRIPTION, default: none),
       group: entry.at(GROUP, default: ""),
       sort: entry.at(SORT, default: entry.at(KEY)),
+      custom: entry.at(CUSTOM, default: none),
     )
     if not use-key-as-short and not has-short(newentry) and not has-long(newentry) {
       panic(__error_message(newentry.at(KEY), __entry_has_neither_short_nor_long))

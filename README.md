@@ -87,15 +87,16 @@ After importing the package and before making any calls to `gls`, ` print-glossa
 
 A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/).
 
-| Key           | Type              | Required/Optional | Description                                                                                  |
-| :------------ | :---------------- | :---------------- | :------------------------------------------------------------------------------------------- |
-| `key`         | string            | required          | Case-sensitive, unique identifier used to reference the term.                                |
-| `short`       | string or content | semi-optional     | The short form of the term replacing the term citation.                                      |
-| `long`        | string or content | semi-optional     | The long form of the term, displayed in the glossary and on the first citation of the term.  |
-| `description` | string or content | optional          | The description of the term.                                                                 |
-| `plural`      | string or content | optional          | The pluralized short form of the term.                                                       |
-| `longplural`  | string or content | optional          | The pluralized long form of the term.                                                        |
-| `group`       | string            | optional          | Case-sensitive group the term belongs to. The terms are displayed by groups in the glossary. |
+| Key           | Type              | Required/Optional | Description                                                                                                             |
+| :------------ | :---------------- | :---------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `key`         | string            | required          | Case-sensitive, unique identifier used to reference the term.                                                           |
+| `short`       | string or content | semi-optional     | The short form of the term replacing the term citation.                                                                 |
+| `long`        | string or content | semi-optional     | The long form of the term, displayed in the glossary and on the first citation of the term.                             |
+| `description` | string or content | optional          | The description of the term.                                                                                            |
+| `plural`      | string or content | optional          | The pluralized short form of the term.                                                                                  |
+| `longplural`  | string or content | optional          | The pluralized long form of the term.                                                                                   |
+| `group`       | string            | optional          | Case-sensitive group the term belongs to. The terms are displayed by groups in the glossary.                            |
+| `custom`      | any               | optional          | Custom content for usage in "user functions", e.g. `user-print-glossary` (see [advanced docs](./advanced-docs/main.pdf))|
 
 
 ```typ
@@ -151,6 +152,14 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/).
     short: "KU Leuven",
     // The terms are displayed by groups in the glossary
     group: "Universities",
+  ),
+  // Add a CUSTOM entry
+  (
+    key: "c",
+    short: $c$,
+    description: "Speed of light in vacuum",
+    // The custom key will be ignored by the default print-glossary function
+    custom: (unit: $op("m s")^(-1)$),
   ),
 )
 ```
