@@ -61,7 +61,6 @@
 
 // Errors types
 #let __key_not_found = "key_not_found"
-#let __key_already_exists = "key_already_exists"
 #let __attribute_is_empty = "attribute_is_empty"
 #let __glossary_is_empty = "glossary_is_empty"
 #let __key_not_registered = "key_not_registered"
@@ -71,6 +70,10 @@
 #let __entry_has_unknown_keys = "entry_has_unknown_keys"
 #let __entry_list_is_not_array = "entry_list_is_not_array"
 #let __longplural_but_not_long = "longplural_but_not_long"
+#let __existing_key_ambiguous = "existing_key_ambiguous"
+#let __existing_key_capitalization_ambiguous = "existing_key_capitalization_ambiguous"
+#let __new_key_ambiguous = "new_key_ambiguous"
+#let __new_key_capitalization_ambiguous = "new_key_capitalization_ambiguous"
 #let __style_is_not_a_function = "style_is_not_a_function"
 #let __style_unsupported_attributes = "style_unsupported_attributes"
 #let __style_unknown_attribute = "style_unknown_attribute"
@@ -93,8 +96,6 @@
   // Generate the error message
   if kind == __key_not_found {
     msg = "key '" + key + "' not found"
-  } else if kind == __key_already_exists {
-    msg = "key '" + key + "' already exists in the glossary"
   } else if kind == __attribute_is_empty {
     let attr = kwargs.at("attr")
     msg = "requested attribute " + attr + " is empty for key '" + key + "'"
@@ -117,6 +118,26 @@
     msg = "entry-list is not an array."
   } else if kind == __longplural_but_not_long {
     msg = "'" + key + "' has a longplural attribute but no long attribute. Longplural will not be shown."
+  } else if kind == __existing_key_ambiguous {
+    msg = (
+      "key '"
+        + key
+        + "' already exists in one of the previous registered glossaries. Keys have to be unique among all glossaries."
+    )
+  } else if kind == __existing_key_capitalization_ambiguous {
+    msg = (
+      "key '"
+        + key
+        + "' already exists but with different capitalization in one of the previous registered glossaries. Keys have to be unique independently of capitalization among all glossaries."
+    )
+  } else if kind == __new_key_ambiguous {
+    msg = "key '" + key + "' already exists in the glossary that is currently being registered. Keys have to be unique."
+  } else if kind == __new_key_capitalization_ambiguous {
+    msg = (
+      "key '"
+        + key
+        + "' already exists in the glossary that is currently being registered but with different capitalization. Keys have to be unique independently of capitalization."
+    )
   } else if kind == __style_is_not_a_function {
     msg = "style-entries: style is not a function. Use a function to style the entries."
   } else if kind == __style_unsupported_attributes {
@@ -1096,17 +1117,52 @@
   }
 }
 
+// __check-key-validity(entry-list) -> none
+// Check for ambiguosity of the keys in the entry list and in existing keys from previously registered glossaries
+#let __check-key-validity(entry-list) = {
+  let existing_keys = ()
+  let existing_keys_smallcaps = ()
+
+  for key in __glossary_entries.get().keys() {
+    existing_keys.push(key)
+    existing_keys_smallcaps.push(lower(key))
+  }
+
+  let new_keys = ()
+  let new_keys_smallcaps = ()
+
+  for _entry in entry-list {
+    if _entry.key in existing_keys {
+      panic(__error_message(_entry.key, __existing_key_ambiguous))
+      __glossaries_correctly_registered.update(false)
+    }
+    if lower(_entry.key) in existing_keys_smallcaps {
+      panic(__error_message(_entry.key, __existing_key_capitalization_ambiguous))
+      __glossaries_correctly_registered.update(false)
+    }
+    if _entry.key in new_keys {
+      panic(__error_message(_entry.key, __new_key_ambiguous))
+      __glossaries_correctly_registered.update(false)
+    }
+    if lower(_entry.key) in new_keys_smallcaps {
+      panic(__error_message(_entry.key, __new_key_capitalization_ambiguous))
+      __glossaries_correctly_registered.update(false)
+    }
+    new_keys.push(_entry.key)
+    new_keys_smallcaps.push(lower(_entry.key))
+  }
+}
+
 //  __update_glossary(entries) -> none
 // Update the global state glossary
 //
 // # Arguments
 //  entries (array<dictionary>): the list of entries
 #let __update_glossary(entries) = {
+  __check-key-validity(entries)
+
   __glossary_entries.update(x => {
     for entry in entries {
-      if entry.at(KEY) in x {
-        panic(__error_message(entry.at(KEY), __key_already_exists))
-      }
       x.insert(entry.at(KEY), entry)
     }
     return x
@@ -1170,6 +1226,7 @@
   if type(groups) != array {
     panic("groups must be an array")
   }
+
   let entries = ()
   if sys.version <= version(0, 11, 1) {
     // Normalize entry-list
