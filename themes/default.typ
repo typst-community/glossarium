@@ -1113,13 +1113,7 @@
   })
 }
 
-// register-glossary(entry-list, use-key-as-short: true) -> none
-// Register the glossary entries
-//
-// # Arguments
-//  entries (array<dictionary>): the list of entries
-//  use-key-as-short (bool): flag to use the key as the short form
-#let register-glossary(entry-list, use-key-as-short: true) = {
+#let _register-glossary(entry-list, use-key-as-short: true) = {
   if sys.version <= version(0, 11, 1) {
     return
   }
@@ -1134,6 +1128,16 @@
 
   __update_glossary(entries)
 }
+// register-glossary(entry-list, use-key-as-short: true) -> none
+// Register the glossary entries
+//
+// # Arguments
+//  entries (array<dictionary>): the list of entries
+//  use-key-as-short (bool): flag to use the key as the short form
+#let register-glossary(entry-list, use-key-as-short: true) = context _register-glossary(
+  entry-list,
+  use-key-as-short: use-key-as-short,
+)
 
 #let _print-glossary(
   entry-list,

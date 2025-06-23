@@ -9,7 +9,7 @@
 
 // This should panic with the unknown keys error
 // Uncomment the line below to run the test:
-#assert.eq(
-  catch(() => register-glossary((test_entry,))),
+#context assert.eq(
+  catch(() => _register-glossary((test_entry,))),
   "panicked with: \"glossarium@" + glossarium_version + " error : entry 'testkey' has unknown keys: unknown\"",
 )

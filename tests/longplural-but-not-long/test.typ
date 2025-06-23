@@ -11,8 +11,8 @@
 // This should panic with the longplural-but-not-long error
 // Uncomment the line below to run the test:
 
-#assert.eq(
-  catch(() => register-glossary((test_entry,))),
+#context assert.eq(
+  catch(() => _register-glossary((test_entry,))),
   "panicked with: \"glossarium@"
     + glossarium_version
     + " error : 'testkey' has a longplural attribute but no long attribute. Longplural will not be shown.\"",
