@@ -6,5 +6,7 @@
   (key: "qux"),
 )
 #register-glossary(entry-list)
-// #style-entries("short", none)
-// panic
+#context assert.eq(
+  catch(() => _style-entries("ah", () => nothing)),
+  "panicked with: \"glossarium@" + glossarium_version + " error : style-entries: unknown attribute 'ah' for styling.\"",
+)

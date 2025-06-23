@@ -335,12 +335,19 @@
 //
 // # Returns
 // The attribute of the term
-#let get-attribute(key, attrname, link: false, update: false) = context _get-attribute(
-  key,
-  attrname,
-  link: link,
-  update: update,
-)
+#let get-attribute(key, attrname, link: false, update: false, ctx: true) = {
+  let call = () => _get-attribute(
+    key,
+    attrname,
+    link: link,
+    update: update,
+  )
+  if ctx {
+    return context call()
+  } else {
+    return call()
+  }
+}
 
 // gls-key(key, link: false) -> contextual content
 // Get the key of the term
@@ -351,7 +358,7 @@
 //
 // # Returns
 // The key of the term
-#let gls-key(key, link: false) = get-attribute(key, KEY, link: link)
+#let gls-key(key, link: false, update: false, ctx: true) = get-attribute(key, KEY, link: link, update: update, ctx: ctx)
 
 // gls-short(key, link: false) -> contextual content
 // Get the short form of the term
@@ -362,7 +369,13 @@
 //
 // # Returns
 // The short form of the term
-#let gls-short(key, link: false) = get-attribute(key, SHORT, link: link)
+#let gls-short(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  SHORT,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
 
 // gls-artshort(key, link: false) -> contextual content
 // Get the article of the short form
@@ -373,10 +386,12 @@
 //
 // # Returns
 // The article of the short form
-#let gls-artshort(key, link: false) = get-attribute(
+#let gls-artshort(key, link: false, update: false, ctx: true) = get-attribute(
   key,
   ART_SHORT,
   link: link,
+  update: update,
+  ctx: ctx,
 )
 
 // gls-plural(key, link: false) -> contextual content
@@ -388,7 +403,13 @@
 //
 // # Returns
 // The plural form of the term
-#let gls-plural(key, link: false) = get-attribute(key, PLURAL, link: link)
+#let gls-plural(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  PLURAL,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
 
 // gls-long(key, link: false) -> contextual content
 // Get the long form of the term
@@ -399,7 +420,13 @@
 //
 // # Returns
 // The long form of the term
-#let gls-long(key, link: false) = get-attribute(key, LONG, link: link)
+#let gls-long(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  LONG,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
 
 // gls-artlong(key, link: false) -> contextual content
 // Get the article of the long form
@@ -410,7 +437,13 @@
 //
 // # Returns
 // The article of the long form
-#let gls-artlong(key, link: false) = get-attribute(key, ART_LONG, link: link)
+#let gls-artlong(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  ART_LONG,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
 
 // gls-longplural(key, link: false) -> contextual content
 // Get the long plural form of the term
@@ -421,10 +454,12 @@
 //
 // # Returns
 // The long plural form of the term
-#let gls-longplural(key, link: false) = get-attribute(
+#let gls-longplural(key, link: false, update: false, ctx: true) = get-attribute(
   key,
   LONG_PLURAL,
   link: link,
+  update: update,
+  ctx: ctx,
 )
 
 // gls-description(key, link: false) -> contextual content
@@ -436,10 +471,12 @@
 //
 // # Returns
 // The description of the term
-#let gls-description(key, link: false) = get-attribute(
+#let gls-description(key, link: false, update: false, ctx: true) = get-attribute(
   key,
   DESCRIPTION,
   link: link,
+  update: update,
+  ctx: ctx,
 )
 
 // gls-group(key, link: false) -> contextual content
@@ -451,7 +488,13 @@
 //
 // # Returns
 // The group of the term
-#let gls-group(key, link: false) = get-attribute(key, GROUP, link: link)
+#let gls-group(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  GROUP,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
 
 //
 // gls-sort(key, link: false) -> contextual content
@@ -463,7 +506,13 @@
 //
 // # Returns
 // The sort attribute of the term
-#let gls-sort(key, link: false) = get-attribute(key, SORT, link: link)
+#let gls-sort(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  SORT,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
 
 // Check capitalization of user input (@ref, or @Ref) against real key
 #let is-upper(key) = key.at(0) != __get_key(__get_entry_with_key(here(), key)).at(0)
@@ -755,10 +804,7 @@
     }
     let newentry = (
       key: entry.at(KEY),
-      short: entry.at(
-        SHORT,
-        default: if use-key-as-short { entry.at(KEY) } else { none },
-      ),
+      short: entry.at(SHORT, default: if use-key-as-short { entry.at(KEY) } else { none }),
       artshort: entry.at(ART_SHORT, default: "a"),
       plural: entry.at(PLURAL, default: none),
       long: entry.at(LONG, default: none),
@@ -792,20 +838,17 @@
   let back-references = term-references.map(x => x.location()).sorted(key: x => x.page())
   if deduplicate {
     back-references = back-references
-      .fold(
-        (values: (), pages: ()),
-        ((values, pages), x) => {
-          if pages.contains(x.page()) {
-            // Skip duplicate references
-            return (values: values, pages: pages)
-          } else {
-            // Add the back reference
-            values.push(x)
-            pages.push(x.page())
-            return (values: values, pages: pages)
-          }
-        },
-      )
+      .fold((values: (), pages: ()), ((values, pages), x) => {
+        if pages.contains(x.page()) {
+          // Skip duplicate references
+          return (values: values, pages: pages)
+        } else {
+          // Add the back reference
+          values.push(x)
+          pages.push(x.page())
+          return (values: values, pages: pages)
+        }
+      })
       .values
   }
   return back-references.map(x => {
@@ -955,22 +998,17 @@
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
 ) = [
-  #figure(
-    supplement: "",
-    kind: __glossarium_figure,
-    numbering: none,
-    user-print-gloss(
-      entry,
-      show-all: show-all,
-      disable-back-references: disable-back-references,
-      deduplicate-back-references: deduplicate-back-references,
-      minimum-refs: minimum-refs,
-      description-separator: description-separator,
-      user-print-title: user-print-title,
-      user-print-description: user-print-description,
-      user-print-back-references: user-print-back-references,
-    ),
-  )#label(entry.at(KEY))
+  #figure(supplement: "", kind: __glossarium_figure, numbering: none, user-print-gloss(
+    entry,
+    show-all: show-all,
+    disable-back-references: disable-back-references,
+    deduplicate-back-references: deduplicate-back-references,
+    minimum-refs: minimum-refs,
+    description-separator: description-separator,
+    user-print-title: user-print-title,
+    user-print-description: user-print-description,
+    user-print-back-references: user-print-back-references,
+  ))#label(entry.at(KEY))
   // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
   #figure(
     kind: __glossarium_figure,

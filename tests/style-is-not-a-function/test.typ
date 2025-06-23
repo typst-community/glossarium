@@ -6,5 +6,10 @@
   (key: "qux"),
 )
 #register-glossary(entry-list)
-// #style-entries("short", none)
-// panic
+#context assert.eq(
+  catch(() => _style-entries("short", none)),
+  "panicked with: \"glossarium@"
+    + glossarium_version
+    + " error : style-entries: style is not a function. Use a function to style the entries.\"",
+)
+
