@@ -302,6 +302,7 @@
 #let __get_description(entry) = __get_attribute(entry, DESCRIPTION)
 #let __get_group(entry) = __get_attribute(entry, GROUP)
 #let __get_sort(entry) = __get_attribute(entry, SORT)
+#let __get_custom(entry) = __get_attribute(entry, CUSTOM)
 
 #let __has_attribute(entry, attrname) = {
   let attr = __get_attribute(entry, attrname)
@@ -316,6 +317,7 @@
 #let has-description(entry) = __has_attribute(entry, DESCRIPTION)
 #let has-group(entry) = __has_attribute(entry, GROUP)
 #let has-sort(entry) = __has_attribute(entry, SORT)
+#let has-custom(entry) = __has_attribute(entry, CUSTOM)
 
 #let _get-attribute(key, attrname, link: false, update: false) = {
   let entry = __get_entry_with_key(here(), key)
@@ -511,6 +513,31 @@
 #let gls-sort(key, link: false, update: false, ctx: true) = get-attribute(
   key,
   SORT,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
+
+// gls-custom(key, link: false, update: false, ctx: true) -> user-defined content
+// Get the custom attribute of the term
+//
+// # Arguments
+//  key (str): the key of the term
+//  link (bool): enable link to glossary. Only works with content types for custom
+//  update (bool): update the entry count
+//  ctx (bool): whether to use a context inside this function when accessing the entry.
+//              If true, this function can be called as is but returns a content type.
+//              To access members of e.g. a dictionary stored in the custom attribute, the user
+//              needs to use their own context. Usage (custom is a dictionary with member 'unit'):
+//              ```typst
+//              #context gls-custom("c").unit
+//              ```
+//
+// # Returns
+// The custom attribute of the term
+#let gls-custom(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  CUSTOM,
   link: link,
   update: update,
   ctx: ctx,

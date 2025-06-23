@@ -23,6 +23,7 @@
   gls-longplural,
   gls-description,
   gls-group,
+  gls-custom,
   get-entry-back-references,
   count-refs,
   count-all-refs,
