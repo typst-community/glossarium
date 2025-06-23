@@ -1,0 +1,9 @@
+[ver:1,total:3720]
+themes/default.typ:2378,1750514400:1256,1750676400:1122,m
+.gtm/terminal.app:729,1750194000:180,1750514400:460,1750676400:89,r
+tests/debug/test.typ:274,1750514400:274,r
+tests/style-entries/test.typ:200,1750514400:70,1750676400:130,r
+tests/entry-has-neither-short-nor-long/test.typ:97,1750514400:70,1750676400:27,m
+glossarium.typ:15,1750514400:15,r
+tests/register/test.typ:15,1750514400:15,r
+tests/longplural-but-not-long/test.typ:12,1750676400:12,m
