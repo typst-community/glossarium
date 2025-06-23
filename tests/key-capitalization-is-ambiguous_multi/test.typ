@@ -1,22 +1,23 @@
-// Test for __existing_key_ambiguous error message
+// Test for __key_capitalization_is_ambiguous error message in case of multiple glossaries
 #import "../../themes/default.typ": *
+
+#show: make-glossary
 
 #let test_glossary = (
   (key: "test", long: "Test"),
   (key: "Mouse", long: "Test"),
 )
-
 #let test_glossary_2 = (
-  (key: "test", long: "Test"),
+  (key: "Test", long: "Test"),
   (key: "Elephant", long: "Test"),
 )
 
 #register-glossary(test_glossary)
 
-// This should panic with the existing_key_ambiguous error
+// https://forum.typst.app/t/why-does-tytanic-not-catch-panic-in-some-cases/4529/3
 #context assert.eq(
   catch(() => _register-glossary(test_glossary_2)),
   "panicked with: \"glossarium@"
     + glossarium_version
-    + " error : key 'test' already exists in one of the previous registered glossaries. Keys have to be unique among all glossaries.\"",
+    + " error : key 'Test' already exists in the glossary with different capitalization\"",
 )
