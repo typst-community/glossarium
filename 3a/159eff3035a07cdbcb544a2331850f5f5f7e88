@@ -1,0 +1,7 @@
+[ver:1,total:3480]
+themes/default.typ:1118,1750698000:150,1750860000:444,1750863600:524,m
+tests/user-capitalization/test.typ:848,1750863600:848,m
+.gtm/terminal.app:628,1750698000:210,1750860000:256,1750863600:162,r
+tests/user-plural/test.typ:506,1750863600:506,m
+tests/key-already-exists_single/test.typ:230,1750860000:230,d
+tests/key-already-exists_multi/test.typ:150,1750860000:150,d
