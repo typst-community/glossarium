@@ -1,0 +1,10 @@
+[ver:1,total:900]
+.gtm/terminal.app:300,1750863600:300,r
+tests/custom-attribute/test.typ:270,1750863600:270,r
+themes/default.typ:111,1750863600:111,r
+tests/capitalize/test.typ:72,1750863600:72,r
+tests/debug/test.typ:54,1750863600:54,m
+tests/no-reference-links/test.typ:45,1750863600:45,m
+tests/user-plural/test.typ:24,1750863600:24,r
+tests/always-long/test.typ:12,1750863600:12,m
+CHANGELOG.md:12,1750863600:12,r
