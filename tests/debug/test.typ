@@ -335,7 +335,7 @@ false: #context there-are-refs(groups: (" ",))
 
   == capitalization
 
-  #let entry-list-7 = ((key: "LASER"), (key: "laser"))
+  #let entry-list-7 = ((key: "LASER"), (key: "apple"))
   #register-glossary(entry-list-7)
   #print-glossary(entry-list-7)
 
@@ -343,8 +343,7 @@ false: #context there-are-refs(groups: (" ",))
 
   @LASER:pl
 
-  @laser
+  @apple
 
-  @Laser
+  @Apple
 ]
-

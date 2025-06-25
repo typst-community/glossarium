@@ -64,6 +64,7 @@
 // Errors types
 #let __key_not_found = "key_not_found"
 #let __key_already_exists = "key_already_exists"
+#let __key_capitalization_is_ambiguous = "key_capitalization_is_ambiguous"
 #let __attribute_is_empty = "attribute_is_empty"
 #let __glossary_is_empty = "glossary_is_empty"
 #let __key_not_registered = "key_not_registered"
@@ -97,6 +98,8 @@
     msg = "key '" + key + "' not found"
   } else if kind == __key_already_exists {
     msg = "key '" + key + "' already exists in the glossary"
+  } else if kind == __key_capitalization_is_ambiguous {
+    msg = "key '" + key + "' already exists in the glossary with different capitalization"
   } else if kind == __attribute_is_empty {
     let attr = kwargs.at("attr")
     msg = "requested attribute " + attr + " is empty for key '" + key + "'"
@@ -1259,6 +1262,25 @@
   }
 }
 
+// __check_keys(entry-list) -> none
+// Check for ambiguosity of the keys and in existing keys from previously registered glossaries
+#let __check_keys(entries) = {
+  let keys = __glossary_entries.get().keys()
+  let new_keys = entries.map(x => x.at(KEY))
+  let lowered_keys = __glossary_entries.get().keys().map(lower)
+  let lowered_new_keys = entries.map(x => lower(x.at(KEY)))
+
+  for (i, key) in new_keys.enumerate() {
+    if (key in keys) or (key in new_keys.slice(0, i)) {
+      panic(__error_message(key, __key_already_exists))
+    }
+    let l = lower(key)
+    if l in lowered_keys or l in lowered_new_keys.slice(0, i) {
+      panic(__error_message(key, __key_capitalization_is_ambiguous))
+    }
+  }
+}
+
 //  __update_glossary(entries) -> none
 // Update the global state glossary
 //
@@ -1267,9 +1289,6 @@
 #let __update_glossary(entries) = {
   __glossary_entries.update(x => {
     for entry in entries {
-      if entry.at(KEY) in x {
-        panic(__error_message(entry.at(KEY), __key_already_exists))
-      }
       x.insert(entry.at(KEY), entry)
     }
     return x
@@ -1288,6 +1307,8 @@
     entry-list,
     use-key-as-short: use-key-as-short,
   )
+
+  __check_keys(entries)
 
   __update_glossary(entries)
 }
@@ -1333,6 +1354,7 @@
   if type(groups) != array {
     panic("groups must be an array")
   }
+
   let entries = ()
   if sys.version <= version(0, 11, 1) {
     // Normalize entry-list
