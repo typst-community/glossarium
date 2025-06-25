@@ -346,30 +346,4 @@ false: #context there-are-refs(groups: (" ",))
   @apple
 
   @Apple
-
-  == always-long
-
-  #show: make-glossary.with(always-long: true)
-  #let entry-list-8 = (
-    (
-      key: "short",
-      long: "long",
-    ),
-  )
-  #register-glossary(entry-list-8)
-
-  1st: @short
-
-  2nd: @short
-
-  #print-glossary(entry-list-8)
-
-  == no reference link
-
-  #show: make-glossary.with(link: false)
-  #let entry-list-9 = ((key: "no-link"),)
-  #register-glossary(entry-list-9)
-  @no-link
-  #print-glossary(entry-list-9)
-
 ]
