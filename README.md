@@ -282,3 +282,17 @@ Note that when using the `show ref` rule approach together with a **global** `sh
   }
 }
 ```
+
+## Customization
+
+Further customization is possible. Here is a short list of alternative functions you can pass to `print-glossary` to modify the layout.
+
+- `user-print-glossary`: print the entire glossary
+- `user-print-group-heading`: print the group heading 
+- `user-group-break`: display a break between groups
+- `user-print-gloss`: print one entry
+- `user-print-title`: print the entry's title
+- `user-print-description`: print the entry's description
+- `user-print-back-references`: print the entry's backreferences.
+
+Read more about customizing glossarium in the [advanced documentation](advanced-docs/main.pdf).
