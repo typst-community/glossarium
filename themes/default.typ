@@ -178,11 +178,7 @@
 // # Panics
 // If the key is not found, it will raise a `key_not_found` error
 #let __get_entry_with_key(loc, key) = {
-  let entries = if sys.version <= version(0, 11, 1) {
-    __glossary_entries.final()
-  } else {
-    __glossary_entries.at(loc)
-  }
+  let entries = __glossary_entries.at(loc)
   let lowerkey = __uncapitalize(key)
   if key in entries {
     return entries.at(key)
@@ -903,11 +899,7 @@
   [#metadata("glossarium:make-glossary")<glossarium:make-glossary>]
   // Set figure body alignement
   show figure.where(kind: __glossarium_figure): it => {
-    if sys.version >= version(0, 12, 0) {
-      align(start, it.body)
-    } else {
-      it.body
-    }
+    align(start, it.body)
   }
   show ref: refrule.with(link: link, long: always-long, user-capitalize: user-capitalize, user-plural: user-plural)
   body
@@ -1296,9 +1288,6 @@
 }
 
 #let _register-glossary(entry-list, use-key-as-short: true) = {
-  if sys.version <= version(0, 11, 1) {
-    return
-  }
   if type(entry-list) != array {
     panic(__error_message(none, __entry_list_is_not_array))
   }
@@ -1355,22 +1344,13 @@
     panic("groups must be an array")
   }
 
-  let entries = ()
-  if sys.version <= version(0, 11, 1) {
-    // Normalize entry-list
-    entries = __normalize_entry_list(entry-list)
-
-    // Update state
-    __update_glossary(entries)
+  let entries = __glossary_entries.get()
+  if entries.len() == 0 {
+    panic(__error_message(none, __glossary_is_empty))
   } else {
-    let _entries = __glossary_entries.get()
-    if _entries.len() == 0 {
-      panic(__error_message(none, __glossary_is_empty))
-    } else {
-      for e in entry-list {
-        if e.at(KEY) not in _entries {
-          panic(__error_message(e.at(KEY), __key_not_registered))
-        }
+    for e in entry-list {
+      if e.at(KEY) not in entries {
+        panic(__error_message(e.at(KEY), __key_not_registered))
       }
     }
   }
@@ -1381,16 +1361,12 @@
     show ref: refrule.with(update: false)
 
     // Entries
-    let el = if sys.version <= version(0, 11, 1) {
-      entries
-    } else if entry-list != none {
-      __glossary_entries
-        .get()
-        .values()
-        .filter(x => (
-          x.at(KEY) in entry-list.map(x => x.at(KEY))
-        ))
-    }
+    let el = __glossary_entries
+      .get()
+      .values()
+      .filter(x => (
+        x.at(KEY) in entry-list.map(x => x.at(KEY))
+      ))
 
     // Groups
     let g = if groups == () {
