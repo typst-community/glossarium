@@ -1,5 +1,83 @@
 # Changelog
 
+## 0.5.7
+
+> [!IMPORTANT]
+> Glossarium entries now accept a `custom` attribute by @ToppDev in #137.
+> This attribute can be used to store any data you want.
+> In order to use it, you need to specify custom functions in `print-glossary`.
+> Some documentation can be found [here](advanced-docs/main.pdf).
+> For contextual content, you can use `#context gls-custom("lorem", ctx: false)` to display
+> your custom data.
+> ```typ
+> #let entry-list = (
+>   (
+>     key: "c",
+>     short: $c$,
+>     description: "Speed of light in vacuum",
+>     custom: (unit: "m s^-1", other: 1),
+>   ),
+> )
+> #register-glossary(entry-list)
+> #show: make-glossary
+>
+> - gls-custom: #context gls-custom("c", ctx: false)
+> - member access: #context gls-custom("c", ctx: false).unit
+> ```
+
+> [!IMPORTANT]
+> Glossarium will now detect ambiguous capitalization and raise an error in your
+> registered entries by @q-wertz in #140.
+
+> [!TIP]
+> You can now override the default `capitalize` and `plural` functions in `make-glossary` and individual
+> `gls` calls.
+> ```typ
+> #show: make-glossary.with(
+>   user-capitalize: txt => {
+>     if type(txt) == content and txt.func() == math.equation {
+>       txt.body.children.filter(x => x != [ ]).join("-")
+>     } else if type(txt) == str {
+>       upper(txt.at(0)) + txt.slice(1)
+>     } else if type(txt) == none {
+>       txt
+>     }
+>   },
+> )
+> ```
+>
+> ```typ
+> #show: make-glossary.with(
+>   user-plural: txt => txt + "z",
+> )
+> ```
+
+> [!TIP]
+> You can now enable `deduplicate-back-references` in `print-glossary`.
+
+> [!TIP]
+> You can now customize group headings with `user-print-group-heading` in `print-glossary`.
+
+> [!NOTE]
+> Documentation for customizing `print-glossary` has been added to the README.
+
+> [!NOTE]
+> `Gls` and `Glspl` are now exported by @q-wertz in #133.
+
+> [!NOTE]
+> CI/CD has been re-enabled after adding support for Tytanic tests.
+
+> [!NOTE]
+> You can style attributes with a new utility `style-entries`.
+
+## 0.5.6
+
+> [!TIP]
+> The `short` attribute is now correctly marked as either string or content in the README.md (@otytlandsvik in #131)
+
+> [!NOTE]
+> An example for styling attributes was added [here](examples/styling-attributes/).
+
 ## 0.5.5
 
 > [!WARNING]
