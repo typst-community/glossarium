@@ -1,0 +1,8 @@
+[ver:1,total:2123]
+CHANGELOG.md:1263,1751644800:227,1751648400:1036,m
+.gtm/terminal.app:640,1751648400:640,r
+themes/default.typ:60,1751648400:60,r
+tests/custom-attribute/test.typ:54,1751648400:54,r
+tests/user-plural/test.typ:44,1751648400:44,r
+tests/user-capitalization/test.typ:42,1751648400:42,r
+tests/capitalize/test.typ:20,1751648400:20,r
