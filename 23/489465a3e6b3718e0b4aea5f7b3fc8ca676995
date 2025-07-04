@@ -1,3 +1,9 @@
 [ver:1,total:240]
 .gtm/terminal.app:130,1751648400:130,r
 themes/default.typ:110,1751648400:110,m
+
+[ver:1,total:757]
+.gtm/terminal.app:457,1751644800:425,1751648400:32,r
+themes/default.typ:280,1751648400:280,m
+typst.toml:12,1751648400:12,r
+examples/styling-attributes/styling-attributes.typ:8,1751644800:8,r
