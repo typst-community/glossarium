@@ -29,5 +29,6 @@ exclude = [
     ".git",
     ".gitignore",
     ".mailmap",
+    ".envrc",
     "**/*.pdf",
 ]
