@@ -2,7 +2,7 @@
 
 > [!TIP]
 > Glossarium is based in great part of the work of [Sébastien d'Herbais de Thun](https://github.com/Dherse) from his master thesis available at: <https://github.com/Dherse/masterproef>.
-> His glossary is available under the MIT license [here](https://github.com/Dherse/masterproef/blob/main/elems/acronyms.typ).
+> His glossary is available under the MIT license [here](https://github.com/Dherse/masterproef/blob/23d41711030ce1e4f49dfed0d7d6f53fee581942/elems/acronyms.typ).
 
 Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX
 glossaries package](https://www.ctan.org/pkg/glossaries) . You can see various
