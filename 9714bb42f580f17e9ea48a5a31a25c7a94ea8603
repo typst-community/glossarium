@@ -1,0 +1,15 @@
+[ver:1,total:1740]
+.gtm/terminal.app:691,1752667200:691,r
+themes/default.typ:480,1752667200:480,m
+tests/capitalize/test.typ:114,1752667200:114,m
+typst.toml:84,1752667200:84,r
+tests/whitespace/test.typ:64,1752667200:64,r
+tests/show-ref/test.typ:60,1752667200:60,r
+tests/whitespace/whitespace.typ:50,1752667200:50,d
+tests/long-false/test.typ:45,1752667200:45,r
+tests/back-references-divergence/test.typ:42,1752667200:42,r
+tests/style-entries/test.typ:30,1752667200:30,r
+tests/debug/test.typ:30,1752667200:30,r
+tests/glossary-start-document/test.typ:20,1752667200:20,r
+tests/show-link/test.typ:15,1752667200:15,r
+tests/references-in-description/test.typ:15,1752667200:15,r
