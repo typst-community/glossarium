@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.8
+
+> [!CAUTION]
+> The previous release `0.5.7` introduced a regression that prevented
+> `@ref` to entries from working correctly.
+> `@ref` would never trigger the "first form".
+> This is now fixed in `0.5.8`.
+> Many thanks to @DJDuque who reported the issue (#147).
+
+> [!NOTE]
+> This release also fixes another bug where capitalize references
+> would not correctly be detected as a "first usage" of the entry.
+
 ## 0.5.7
 
 > [!IMPORTANT]
