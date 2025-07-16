@@ -8,10 +8,9 @@ tar_args+=" --exclude-vcs-ignores -czf ../glossarium-$version.tar.gz ."
 tar $tar_args
 tar -tf $HOME/glossarium-$version.tar.gz
 read -p "Press enter to continue"
-cd $HOME
-rm packages
+rm -rf $HOME/packages
 git clone --depth 1 --no-checkout --filter="tree:0" git@github.com:typst/packages
-cd packages
+cd $HOME/packages
 git sparse-checkout init
 git sparse-checkout set packages/preview/glossarium
 git checkout main
