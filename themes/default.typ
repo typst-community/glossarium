@@ -603,7 +603,7 @@
   }
 
   // Conditions
-  let is-first = is-first(key)
+  let is-first = is-first(entry.at(KEY))
   let has-short = has-short(entry)
   let has-long = has-long(entry)
   let has-plural = has-plural(entry)
@@ -892,7 +892,7 @@
 #let make-glossary(
   body,
   link: true,
-  always-long: false,
+  always-long: none,
   user-capitalize: default-capitalize,
   user-plural: default-plural,
 ) = {

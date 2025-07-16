@@ -25,9 +25,11 @@
   [Code], [1st], [2nd],
   [`#Gls("foo")`], Gls("foo"), Gls("foo"),
   [`#Glspl("bar")`], Glspl("bar"), Glspl("bar"),
-  [`@Ref`], [@Ref], [@Ref], // Ref vs ref
+  [`@Ref`], [@Ref], [@Ref],
+  // Ref vs ref
   [`@Test:pl`], [@Test:pl], [@Test:pl],
-  [`@POTATO`], [@POTATO], [@POTATO], // POTATO vs POTATO
+  [`@POTATO`], [@POTATO], [@POTATO],
+  // POTATO vs POTATO
   [`@Plural:pl`], [@Plural:pl], [@Plural:pl],
 )
 
