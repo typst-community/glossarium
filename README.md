@@ -8,7 +8,7 @@ Glossarium is a simple, easily customizable typst glossary inspired by [LaTeX
 glossaries package](https://www.ctan.org/pkg/glossaries) . You can see various
 examples showcasing the different features in the `examples` folder.
 
-![Screenshot of a glossary output using glossarium in Typst. A heading with text "Glossary" is displayed, and below four gloss are printed. Each gloss has its short and long form in bold separated by a dash. The description follows after a colon character. A list of the backreferences is given at the end.](.github/example.png)
+![Screenshot of a glossary output using glossarium in Typst. A heading with text "Glossary" is displayed, and below four gloss are printed. Each gloss has its short and long form in bold separated by a dash. The description follows after a colon character. A list of the backreferences is given at the end.](https://raw.githubusercontent.com/typst-community/glossarium/refs/tags/v0.5.6/.github/example.png)
 
 # Fast start
 
@@ -81,7 +81,7 @@ After importing the package and before making any calls to `gls`, ` print-glossa
 >
 > Prefer to use the [selector](https://typst.app/docs/reference/foundations/function/#definitions-where) `figure.where(kind: "image")` or other kinds to avoid conflicts with `glossarium_entry`.
 > `make-glossary` can conflict with _global_ figure show rules. Write the user figure show rule before `make-glossary` to avoid any conflicts.
-> ![image illustrating a show rule conflict when the user figure show rule is written after make-glossary making the glossary disappear but no effect when it is written before make-glossary.](.github/show_rule_conflict.png)
+> ![image illustrating a show rule conflict when the user figure show rule is written after make-glossary making the glossary disappear but no effect when it is written before make-glossary.](https://raw.githubusercontent.com/typst-community/glossarium/refs/tags/v0.5.6/.github/show_rule_conflict.png)
 
 ## Registering the glossary
 
