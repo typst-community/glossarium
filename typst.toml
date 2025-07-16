@@ -23,7 +23,7 @@ exclude = [
     "tests",
     "advanced-docs",
     "docs",
-    ".github/workflows",
+    ".github",
     ".vscode",
     ".gtm",
     ".git",
