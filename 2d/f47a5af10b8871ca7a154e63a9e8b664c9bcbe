@@ -1,3 +1,8 @@
 [ver:1,total:120]
 package.sh:60,1752919200:60,m
 .gtm/terminal.app:60,1752919200:60,r
+
+[ver:1,total:240]
+.gtm/terminal.app:140,1752667200:140,r
+package.sh:50,1752667200:50,m
+CHANGELOG.md:50,1752667200:50,r
