@@ -1,0 +1,14 @@
+[ver:1,total:4680]
+tests/glossary-table/test.typ:1872,1753351200:1872,m
+themes/default.typ:860,1752919200:12,1752922800:587,1753351200:261,r
+tests/gls-in-description/test.typ:771,1752919200:526,1752922800:225,1753351200:20,r
+.gtm/terminal.app:674,1752919200:395,1752922800:20,1753351200:259,r
+advanced-docs/main.typ:299,1753351200:299,r
+package.sh:70,1752919200:70,r
+tests/references-in-description/test.typ:50,1752919200:42,1752922800:8,r
+tests/figures-linebreak/test.typ:22,1753351200:22,r
+.github/workflows/CI.yml:20,1753351200:20,r
+CHANGELOG.md:20,1752919200:20,r
+typst.toml:10,1752919200:10,r
+README.md:7,1753351200:7,r
+examples/import-terms-from-yaml-file/glossary.yml:5,1752919200:5,r
