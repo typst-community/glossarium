@@ -938,7 +938,7 @@
   user-plural: default-plural,
 ) = {
   [#metadata("glossarium:make-glossary")<glossarium:make-glossary>]
-  // Set figure body alignement
+  // Set figure body alignment
   show figure.where(kind: __glossarium_figure): it => {
     align(start, it.body)
   }
