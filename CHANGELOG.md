@@ -274,7 +274,7 @@
 > [`references-in-description`](https://github.com/typst-community/glossarium/blob/master/tests/non-regression/references-in-description.typ)
 
 > [!NOTE]
-> Fix `figure.caption` alignement for glossary entries.
+> Fix `figure.caption` alignment for glossary entries.
 
 > [!NOTE]
 > Allow terms to have either `short` or `long` or both.
