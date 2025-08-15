@@ -2,7 +2,7 @@
 
 ## 0.5.9
 
-> [!TIP]
+> [!INFO]
 > Glossarium now supports invisible glossaries by @quachpas in #155.
 > You can use the `invisible` parameter in `print-glossary` to create
 > a glossary that does not take up any space in the document.
@@ -12,6 +12,22 @@
 >   invisible: true,
 > )
 > ```
+
+> [!INFO]
+> Version v0.5.9 introduces a new contextual function `reset-counts`
+> that clears the usage counts of entries by @quachpas in #156.
+> By default, it clears all usage counts.
+> ```typ
+> #context reset-counts() // clears the usage counts of all entries
+> ```
+>
+> Pass any registered keys to selectively reset them.
+> ```typ
+> #context reset-counts("foo", "bar") // clears the usage counts of "foo" and "bar"
+> ```
+>
+> Note that `print-glossary` will print all used entries regardless of
+> whether they have been reset throughout the document.
 
 ## 0.5.8
 

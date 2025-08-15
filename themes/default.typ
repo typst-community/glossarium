@@ -17,15 +17,6 @@
 // See `__normalize_entry_list`.
 #let __glossary_entries = state("__glossary_entries", (:))
 
-// global state containing the entry counts
-#let __glossary_counts = state("__glossary_counts", (:))
-#let __update_count(key) = {
-  __glossary_counts.update(x => {
-    x.insert(key, x.at(key, default: 0) + 1)
-    return x
-  })
-}
-
 // glossarium version
 #let glossarium_version = "0.5.8"
 
@@ -60,7 +51,6 @@
   CUSTOM,
 )
 
-
 // Errors types
 #let __key_not_found = "key_not_found"
 #let __key_already_exists = "key_already_exists"
@@ -77,6 +67,8 @@
 #let __style_is_not_a_function = "style_is_not_a_function"
 #let __style_unsupported_attributes = "style_unsupported_attributes"
 #let __style_unknown_attribute = "style_unknown_attribute"
+#let __keys_must_be_an_array = "keys_must_be_an_array"
+#let __groups_must_be_an_array_of_strings = "groups_must_be_an_array_of_strings"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -133,12 +125,61 @@
   } else if kind == __style_unknown_attribute {
     let attr = kwargs.at("attr")
     msg = "style-entries: unknown attribute '" + attr + "' for styling."
+  } else if kind == __keys_must_be_an_array {
+    msg = "keys must be an array."
+  } else if kind == __groups_must_be_an_array_of_strings {
+    msg = "groups must be an array of strings, e.g., (\"\",)"
   } else {
     msg = "unknown error"
   }
 
   // return the error message
   return __glossarium_error_prefix + msg
+}
+
+
+// global state containing the entry counts
+#let __glossary_counts = state("__glossary_counts", (:))
+#let __glossary_reset_locations = state("__glossary_reset_locations", ())
+#let __glossary_final_counts() = {
+  __glossary_reset_locations
+    .final()
+    .fold(__glossary_counts.final(), (acc, loc) => {
+      for (k, v) in __glossary_counts.at(loc).pairs() {
+        acc.insert(k, acc.at(k, default: 0) + v)
+      }
+      return acc
+    })
+}
+#let __update_count(key) = {
+  __glossary_counts.update(x => {
+    x.insert(key, x.at(key, default: 0) + 1)
+    return x
+  })
+}
+#let reset-counts(..keys) = {
+  keys = keys.pos()
+  if type(keys) != array {
+    panic(__error_message(none, __keys_must_be_an_array))
+  }
+  for key in keys {
+    if key not in __glossary_entries.get() {
+      panic(__error_message(key, __key_not_registered))
+    }
+  }
+  if keys == () {
+    __glossary_counts.update((:))
+  } else {
+    // partial reset
+    __glossary_counts.update(x => {
+      for key in keys {
+        let _ = x.remove(key, default: none)
+      }
+      return x
+    })
+  }
+  let loc = here()
+  __glossary_reset_locations.update(x => x + (loc,))
 }
 
 #let default-capitalize(text) = {
@@ -203,7 +244,7 @@
 // #context count-refs("potato")
 // ```
 #let count-refs(key) = {
-  return __glossary_counts.final().at(key, default: 0)
+  return __glossary_final_counts().at(key, default: 0)
 }
 
 // count-all-refs(entry-list: none, groups: none) -> array<(str, int)>
@@ -231,7 +272,7 @@
   } else if type(groups) == array {
     groups
   } else {
-    panic("groups must be an array of strings, e.g., (\"\",)")
+    panic(__error_message(none, kind: __groups_must_be_an_array_of_strings))
   }
   el = el.filter(x => x.at(GROUP, default: "") in g)
   let counts = el.map(x => (x.at(KEY), count-refs(x.at(KEY))))
