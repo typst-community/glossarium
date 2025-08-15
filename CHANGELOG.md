@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.9
+
+> [!TIP]
+> Glossarium now supports invisible glossaries by @quachpas in #155.
+> You can use the `invisible` parameter in `print-glossary` to create
+> a glossary that does not take up any space in the document.
+> ```typ
+> #print-glossary(
+>   entry-list,
+>   invisible: true,
+> )
+> ```
+
 ## 0.5.8
 
 > [!CAUTION]

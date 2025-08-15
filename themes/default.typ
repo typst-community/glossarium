@@ -1117,8 +1117,9 @@
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
-) = [
-  #figure(supplement: "", kind: __glossarium_figure, numbering: none, user-print-gloss(
+) = {
+  let body = []
+  let main_figure = figure(supplement: "", kind: __glossarium_figure, numbering: none, user-print-gloss(
     entry,
     show-all: show-all,
     disable-back-references: disable-back-references,
@@ -1128,27 +1129,33 @@
     user-print-title: user-print-title,
     user-print-description: user-print-description,
     user-print-back-references: user-print-back-references,
-  ))#label(entry.at(KEY))
-  // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
-  #figure(
+  ))
+  body += [#main_figure#label(entry.at(KEY))]
+
+  // Add ref shorthand for plural, e.g., "@term:pl"
+  let plural_figure = figure(
     kind: __glossarium_figure,
     supplement: "",
-  )[]#label(entry.at(KEY) + ":pl")
+  )[]
+  body += [#plural_figure#label(entry.at(KEY) + ":pl")]
+
   // Same as above, but for capitalized form, e.g., "@Term"
   // Skip if key is already capitalized
-  #if upper(entry.at(KEY).at(0)) != entry.at(KEY).at(0) {
-    [
-      #figure(
-        kind: __glossarium_figure,
-        supplement: "",
-      )[]#label(default-capitalize(entry.at(KEY)))
-      #figure(
-        kind: __glossarium_figure,
-        supplement: "",
-      )[]#label(default-capitalize(entry.at(KEY)) + ":pl")
-    ]
+  if upper(entry.at(KEY).at(0)) != entry.at(KEY).at(0) {
+    let capitalize_figure = figure(
+      kind: __glossarium_figure,
+      supplement: "",
+    )[]
+    body += [#capitalize_figure#label(default-capitalize(entry.at(KEY)))]
+    let capitalize_plural_figure = figure(
+      kind: __glossarium_figure,
+      supplement: "",
+    )[]
+    body += [#capitalize_plural_figure#label(default-capitalize(entry.at(KEY)) + ":pl")]
   }
-]
+
+  return body
+}
 
 // default-group-break() -> content
 // Default group break
@@ -1443,6 +1450,7 @@
   entry-list,
   groups: (),
   show-all: false,
+  invisible: false,
   disable-back-references: false,
   deduplicate-back-references: false,
   group-heading-level: none,
@@ -1458,23 +1466,30 @@
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
-) = context _print-glossary(
-  entry-list,
-  groups: groups,
-  show-all: show-all,
-  disable-back-references: disable-back-references,
-  deduplicate-back-references: deduplicate-back-references,
-  group-heading-level: group-heading-level,
-  minimum-refs: minimum-refs,
-  description-separator: description-separator,
-  group-sortkey: group-sortkey,
-  entry-sortkey: entry-sortkey,
-  user-print-glossary: user-print-glossary,
-  user-print-group-heading: user-print-group-heading,
-  user-print-reference: user-print-reference,
-  user-group-break: user-group-break,
-  user-print-gloss: user-print-gloss,
-  user-print-title: user-print-title,
-  user-print-description: user-print-description,
-  user-print-back-references: user-print-back-references,
-)
+) = {
+  if invisible {
+    user-print-group-heading = (..args) => []
+    user-group-break = () => []
+    user-print-gloss = (..args) => []
+  }
+  return context _print-glossary(
+    entry-list,
+    groups: groups,
+    show-all: show-all,
+    disable-back-references: disable-back-references,
+    deduplicate-back-references: deduplicate-back-references,
+    group-heading-level: group-heading-level,
+    minimum-refs: minimum-refs,
+    description-separator: description-separator,
+    group-sortkey: group-sortkey,
+    entry-sortkey: entry-sortkey,
+    user-print-glossary: user-print-glossary,
+    user-print-group-heading: user-print-group-heading,
+    user-print-reference: user-print-reference,
+    user-group-break: user-group-break,
+    user-print-gloss: user-print-gloss,
+    user-print-title: user-print-title,
+    user-print-description: user-print-description,
+    user-print-back-references: user-print-back-references,
+  )
+}
