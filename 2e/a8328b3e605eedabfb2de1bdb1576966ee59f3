@@ -1,2 +1,14 @@
 [ver:1,total:60]
 .gtm/terminal.app:60,1755367200:60,r
+
+[ver:1,total:6540]
+themes/default.typ:3647,1755356400:1769,1755360000:1747,1755367200:131,m
+.gtm/terminal.app:1261,1755262800:180,1755356400:550,1755360000:306,1755367200:225,r
+tests/custom-shorthands/test.typ:544,1755360000:505,1755367200:39,m
+CHANGELOG.md:505,1755367200:505,m
+tests/show-link/test.typ:287,1755360000:287,m
+tests/glossary-table/test.typ:135,1755356400:30,1755360000:105,m
+tests/invisible-glossary/test.typ:80,1755360000:80,r
+tests/figures-linebreak/test.typ:47,1755356400:27,1755360000:20,m
+advanced-docs/main.typ:24,1755356400:24,r
+tests/custom-attribute/test.typ:10,1755360000:10,r
