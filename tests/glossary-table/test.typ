@@ -242,33 +242,22 @@
               grid.cell(inset: inset, {
                 [
                   // default-print-reference
-                  #figure(
-                    //
-                    supplement: "",
-                    kind: __glossarium_figure,
-                    numbering: none,
-                    user-print-gloss(
-                      entry,
-                      ..kwargs,
-                    ),
-                  )#label(entry.at(KEY))
+                  #__glossarium_figure(
+                    entry.at(KEY),
+                    body: user-print-gloss(entry, ..kwargs),
+                  )
                   // The line below adds a ref shorthand for plural form, e.g., "@term:pl"
-                  #figure(
-                    kind: __glossarium_figure,
-                    supplement: "",
-                  )[]#label(entry.at(KEY) + ":pl")
+                  #__glossarium_figure(entry.at(KEY) + ":pl")
                   // Same as above, but for capitalized form, e.g., "@Term"
                   // Skip if key is already capitalized
                   #if upper(entry.at(KEY).at(0)) != entry.at(KEY).at(0) {
                     [
-                      #figure(
-                        kind: __glossarium_figure,
-                        supplement: "",
-                      )[]#label(default-capitalize(entry.at(KEY)))
-                      #figure(
-                        kind: __glossarium_figure,
-                        supplement: "",
-                      )[]#label(default-capitalize(entry.at(KEY)) + ":pl")
+                      #__glossarium_figure(
+                        default-capitalize(entry.at(KEY)),
+                      )
+                      #__glossarium_figure(
+                        default-capitalize(entry.at(KEY)) + ":pl",
+                      )
                     ]
                   }
                 ]

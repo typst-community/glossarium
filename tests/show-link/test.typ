@@ -2,7 +2,7 @@
 #import "@preview/codly:1.3.0": *
 #show: codly-init.with()
 #set page(height: auto, margin: 10pt)
-
+#show: make-glossary
 #let glossary = (
   (key: "NN", short: "NN", long: "Neural Network"),
   (key: "SG", short: "SG", long: "Singular"),
