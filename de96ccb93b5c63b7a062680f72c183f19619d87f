@@ -1,0 +1,7 @@
+[ver:1,total:5580]
+themes/default.typ:3957,1755367200:487,1755370800:2771,1755374400:699,m
+tests/gls-in-description/test.typ:1094,1755367200:76,1755370800:769,1755374400:249,r
+.gtm/terminal.app:391,1755367200:222,1755374400:169,r
+tests/always-long/test.typ:83,1755374400:83,r
+tests/references-in-description/test.typ:35,1755367200:35,r
+tests/show-link/test.typ:20,1755367200:20,r
