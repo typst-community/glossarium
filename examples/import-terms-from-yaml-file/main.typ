@@ -3,7 +3,7 @@
 // The glossary command here is modeled after the bibliography command and accepts similar arguments.
 
 #import "../../glossarium.typ": *
-// #import "@preview/glossarium:0.5.8": *
+// #import "@preview/glossarium:0.5.9": *
 #let read-glossary-entries(file) = {
   let entries = yaml(file)
 
