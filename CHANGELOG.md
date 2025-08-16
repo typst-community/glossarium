@@ -29,6 +29,23 @@
 > Note that `print-glossary` will print all used entries regardless of
 > whether they have been reset throughout the document.
 
+> [!INFO]
+> More shorthand options have been added to each entry in #158. Previously,
+> only `@key`, `@key:pl`, `@Key` and `Key:pl` were available. Now,
+> you can also use `@key:short` and `key:long` to display the short
+> and long forms directly bypassing the need to call `gls-short`,
+> `gls-long` or `gls("key", long: true)`.
+>
+> Furthermore, you can configure which shorthands are enabled with
+> the argument `shorthands` in `print-glossary`. By default, the parameter
+> is set to `("plural", "capitalize", "capitalize-plural", "short", "long")`.
+>
+> More shorthands are available:
+> - `"description"` enables the shorthand `@key:description`.
+> - `"long-plural"` enables the shorthand `@key:long-plural`.
+> - `"custom"` enables the shorthand `@key:custom`.
+
+
 ## 0.5.8
 
 > [!CAUTION]

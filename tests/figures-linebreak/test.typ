@@ -25,7 +25,7 @@
   [
     #figure(
       supplement: "",
-      kind: __glossarium_figure,
+      kind: __glossarium_entry,
       numbering: none,
       caption: user-print-gloss(
         entry,

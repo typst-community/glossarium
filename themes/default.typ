@@ -7,7 +7,8 @@
 // SOFTWARE.
 
 // glossarium figure kind
-#let __glossarium_figure = "glossarium_entry"
+#let __glossarium_entry = "glossarium_entry"
+#let __glossarium_entry_selector = figure.where(kind: __glossarium_entry)
 
 // prefix of label for references query
 #let __glossary_label_prefix = "__gls:"
@@ -51,6 +52,28 @@
   CUSTOM,
 )
 
+// Shorthands @key:pl
+#let __glossarium_shorthands = (
+  "plural",
+  "capitalize",
+  "capitalize-plural",
+  SHORT,
+  LONG,
+  DESCRIPTION,
+  LONG_PLURAL,
+  CUSTOM,
+)
+#let __glossarium_shorthands_suffixes = (
+  ":pl",
+  ":" + SHORT,
+  ":" + LONG,
+  ":" + DESCRIPTION,
+  ":" + LONG_PLURAL,
+  ":" + CUSTOM,
+)
+// ! Modify the user print-glossary if default changes
+#let default-shorthands = ("plural", "capitalize", "capitalize-plural", "short", "long")
+
 // Errors types
 #let __key_not_found = "key_not_found"
 #let __key_already_exists = "key_already_exists"
@@ -69,6 +92,7 @@
 #let __style_unknown_attribute = "style_unknown_attribute"
 #let __keys_must_be_an_array = "keys_must_be_an_array"
 #let __groups_must_be_an_array_of_strings = "groups_must_be_an_array_of_strings"
+#let __shorthand_is_not_supported = "shorthand_is_not_supported"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -129,6 +153,10 @@
     msg = "keys must be an array."
   } else if kind == __groups_must_be_an_array_of_strings {
     msg = "groups must be an array of strings, e.g., (\"\",)"
+  } else if kind == __shorthand_is_not_supported {
+    msg = (
+      "shorthand '" + kwargs.at("shorthand") + "' is not supported. Use one of " + __glossarium_shorthands.join(", ")
+    )
   } else {
     msg = "unknown error"
   }
@@ -885,13 +913,15 @@
   user-plural: default-plural,
 ) = {
   if (
-    r.element != none and r.element.func() == figure and r.element.kind == __glossarium_figure
+    r.element != none and r.element.func() == figure and r.element.kind == __glossarium_entry
   ) {
     let position = r.element.location()
     // call to the general citing function
-    let key = str(r.target)
-    if key.ends-with(":pl") {
-      key = key.slice(0, -3)
+    let refkey = str(r.target)
+    let key = refkey.split(":").at(0)
+    let suffixes = __glossarium_shorthands_suffixes
+    if refkey.ends-with(suffixes.at(0)) {
+      // :pl
       // Plural ref
       return glspl(
         key,
@@ -901,6 +931,46 @@
         capitalize: is-upper(key),
         user-capitalize: user-capitalize,
         user-plural: user-plural,
+      )
+    } else if refkey.ends-with(suffixes.at(1)) {
+      // :short
+      return gls-short(
+        key,
+        ctx: false,
+        update: update,
+        link: link,
+      )
+    } else if refkey.ends-with(suffixes.at(2)) {
+      // :long
+      return gls-long(
+        key,
+        ctx: false,
+        update: update,
+        link: link,
+      )
+    } else if refkey.ends-with(suffixes.at(3)) {
+      // :description
+      return gls-description(
+        key,
+        ctx: false,
+        update: update,
+        link: link,
+      )
+    } else if refkey.ends-with(suffixes.at(4)) {
+      // :longplural
+      return gls-longplural(
+        key,
+        ctx: false,
+        update: update,
+        link: link,
+      )
+    } else if refkey.ends-with(suffixes.at(5)) {
+      // :custom
+      return gls-custom(
+        key,
+        ctx: false,
+        update: update,
+        link: link,
       )
     } else {
       // Default ref
@@ -939,7 +1009,7 @@
 ) = {
   [#metadata("glossarium:make-glossary")<glossarium:make-glossary>]
   // Set figure body alignment
-  show figure.where(kind: __glossarium_figure): it => {
+  show __glossarium_entry_selector: it => {
     align(start, it.body)
   }
   show ref: refrule.with(link: link, long: always-long, user-capitalize: user-capitalize, user-plural: user-plural)
@@ -1123,6 +1193,43 @@
   }
 }
 
+// Helper function to create a labeled glossarium figure
+#let __glossarium_figure(label-key, body: []) = {
+  if body == [] {
+    return [#figure(kind: __glossarium_entry, supplement: "", numbering: none)[]#label(label-key)]
+  }
+  return [#figure(kind: __glossarium_entry, supplement: "", numbering: none, body)#label(label-key)]
+}
+
+// Define label generators as functions
+#let __glossarium_shorthand_functions = (
+  // Plural reference shorthand (@key:pl)
+  plural: (entry, key) => (key + ":pl", []),
+  // Capitalized form (@Key) - only if not already capitalized
+  capitalize: (entry, key) => if upper(key.at(0)) != key.at(0) {
+    (default-capitalize(key), [])
+  },
+  // Capitalized plural form (@Key:pl) - only if not already capitalized
+  capitalize-plural: (entry, key) => if upper(key.at(0)) != key.at(0) {
+    (default-capitalize(key) + ":pl", [])
+  },
+  // Short form reference (@key:short) - only if has short form
+  short: (entry, key) => if has-short(entry) {
+    (key + ":" + SHORT, [])
+  },
+  // Long form reference (@key:long) - only if has long form
+  long: (entry, key) => if has-long(entry) {
+    (key + ":" + LONG, [])
+  },
+  // Description reference (@key:description) - only if has description
+  description: (entry, key) => if has-description(entry) {
+    (key + ":" + DESCRIPTION, [])
+  },
+  // Long plural form reference (@key:longplural) - only if has long or long plural
+  longplural: (entry, key) => if has-longplural(entry) {
+    (key + ":" + LONG_PLURAL, [])
+  },
+)
 
 // default-print-reference(
 //  entry,
@@ -1154,45 +1261,48 @@
   deduplicate-back-references: false,
   minimum-refs: 1,
   description-separator: ": ",
+  shorthands: default-shorthands,
   user-print-gloss: default-print-gloss,
   user-print-title: default-print-title,
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
 ) = {
   let body = []
-  let main_figure = figure(supplement: "", kind: __glossarium_figure, numbering: none, user-print-gloss(
-    entry,
-    show-all: show-all,
-    disable-back-references: disable-back-references,
-    deduplicate-back-references: deduplicate-back-references,
-    minimum-refs: minimum-refs,
-    description-separator: description-separator,
-    user-print-title: user-print-title,
-    user-print-description: user-print-description,
-    user-print-back-references: user-print-back-references,
-  ))
-  body += [#main_figure#label(entry.at(KEY))]
+  let key = entry.at(KEY)
 
-  // Add ref shorthand for plural, e.g., "@term:pl"
-  let plural_figure = figure(
-    kind: __glossarium_figure,
-    supplement: "",
-  )[]
-  body += [#plural_figure#label(entry.at(KEY) + ":pl")]
+  // Shorthands
+  let shorthands-functions = (
+    // Main figure with full gloss content (always generated)
+    (entry, key) => (
+      key,
+      user-print-gloss(
+        entry,
+        show-all: show-all,
+        disable-back-references: disable-back-references,
+        deduplicate-back-references: deduplicate-back-references,
+        minimum-refs: minimum-refs,
+        description-separator: description-separator,
+        user-print-title: user-print-title,
+        user-print-description: user-print-description,
+        user-print-back-references: user-print-back-references,
+      ),
+    ),
+  )
+  for shorthand in shorthands {
+    if shorthand in __glossarium_shorthands {
+      shorthands-functions.push(__glossarium_shorthand_functions.at(shorthand))
+    } else {
+      panic(__error_message(key, __shorthand_is_not_supported, shorthand: shorthand))
+    }
+  }
 
-  // Same as above, but for capitalized form, e.g., "@Term"
-  // Skip if key is already capitalized
-  if upper(entry.at(KEY).at(0)) != entry.at(KEY).at(0) {
-    let capitalize_figure = figure(
-      kind: __glossarium_figure,
-      supplement: "",
-    )[]
-    body += [#capitalize_figure#label(default-capitalize(entry.at(KEY)))]
-    let capitalize_plural_figure = figure(
-      kind: __glossarium_figure,
-      supplement: "",
-    )[]
-    body += [#capitalize_plural_figure#label(default-capitalize(entry.at(KEY)) + ":pl")]
+  // Generate shorthand figures based on shorthands parameter
+  for fn in shorthands-functions {
+    let res = fn(entry, key)
+    if res != none {
+      let (label-key, figure-body) = res
+      body += __glossarium_figure(label-key, body: figure-body)
+    }
   }
 
   return body
@@ -1263,6 +1373,7 @@
   description-separator: ": ",
   group-sortkey: g => g,
   entry-sortkey: e => e.at(SORT),
+  shorthands: default-shorthands,
   user-print-group-heading: default-print-group-heading,
   user-print-reference: default-print-reference,
   user-group-break: default-group-break,
@@ -1290,6 +1401,7 @@
         deduplicate-back-references: deduplicate-back-references,
         minimum-refs: minimum-refs,
         description-separator: description-separator,
+        shorthands: shorthands,
         user-print-gloss: user-print-gloss,
         user-print-title: user-print-title,
         user-print-description: user-print-description,
@@ -1371,6 +1483,7 @@
   description-separator: ": ",
   group-sortkey: g => g,
   entry-sortkey: e => e.at(SORT),
+  shorthands: default-shorthands,
   user-print-glossary: default-print-glossary,
   user-print-group-heading: default-print-group-heading,
   user-print-reference: default-print-reference,
@@ -1433,6 +1546,7 @@
       description-separator: description-separator,
       group-sortkey: group-sortkey,
       entry-sortkey: entry-sortkey,
+      shorthands: shorthands,
       user-print-reference: user-print-reference,
       user-print-group-heading: user-print-group-heading,
       user-group-break: user-group-break,
@@ -1499,6 +1613,7 @@
   description-separator: ": ",
   group-sortkey: g => g,
   entry-sortkey: e => e.at(SORT),
+  shorthands: ("plural", "capitalize", "capitalize-plural", "short", "long"),
   user-print-glossary: default-print-glossary,
   user-print-group-heading: default-print-group-heading,
   user-print-reference: default-print-reference,
@@ -1524,6 +1639,7 @@
     description-separator: description-separator,
     group-sortkey: group-sortkey,
     entry-sortkey: entry-sortkey,
+    shorthands: shorthands,
     user-print-glossary: user-print-glossary,
     user-print-group-heading: user-print-group-heading,
     user-print-reference: user-print-reference,
