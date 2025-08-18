@@ -37,6 +37,7 @@
 #let DESCRIPTION = "description"
 #let GROUP = "group"
 #let SORT = "sort"
+#let FIRST_STYLE = "first-style"
 #let CUSTOM = "custom"
 #let ATTRIBUTES = (
   KEY,
@@ -49,6 +50,7 @@
   DESCRIPTION,
   GROUP,
   SORT,
+  FIRST_STYLE,
   CUSTOM,
 )
 
@@ -93,6 +95,7 @@
 #let __keys_must_be_an_array = "keys_must_be_an_array"
 #let __groups_must_be_an_array_of_strings = "groups_must_be_an_array_of_strings"
 #let __shorthand_is_not_supported = "shorthand_is_not_supported"
+#let __unknown_first_style = "unknown_first_style"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -157,6 +160,9 @@
     msg = (
       "shorthand '" + kwargs.at("shorthand") + "' is not supported. Use one of " + __glossarium_shorthands.join(", ")
     )
+  } else if kind == __unknown_first_style {
+    let first-style = kwargs.at("first-style")
+    msg = "entry '" + key + "' has an unknown first-style: " + first-style
   } else {
     msg = "unknown error"
   }
@@ -370,6 +376,7 @@
 #let __get_description(entry) = __get_attribute(entry, DESCRIPTION)
 #let __get_group(entry) = __get_attribute(entry, GROUP)
 #let __get_sort(entry) = __get_attribute(entry, SORT)
+#let __get_first_style(entry) = __get_attribute(entry, FIRST_STYLE)
 #let __get_custom(entry) = __get_attribute(entry, CUSTOM)
 
 #let __has_attribute(entry, attrname) = {
@@ -385,6 +392,7 @@
 #let has-description(entry) = __has_attribute(entry, DESCRIPTION)
 #let has-group(entry) = __has_attribute(entry, GROUP)
 #let has-sort(entry) = __has_attribute(entry, SORT)
+#let has-first-style(entry) = __has_attribute(entry, FIRST_STYLE)
 #let has-custom(entry) = __has_attribute(entry, CUSTOM)
 
 #let _get-attribute(key, attrname, link: false, update: false) = {
@@ -645,6 +653,7 @@
   suffix: none,
   long: none,
   display: none,
+  first-style: none,
   link: true,
   update: true,
   capitalize: false,
@@ -660,6 +669,7 @@
   let ent-long = __get_long(entry)
   let ent-plural = __get_plural(entry)
   let ent-longplural = __get_longplural(entry)
+  let ent-first-style = __get_first_style(entry)
   let artlong = __get_artlong(entry)
   let artshort = __get_artshort(entry)
   if capitalize {
@@ -671,12 +681,15 @@
     artshort = user-capitalize(artshort)
   }
 
+  let counts = count-refs(key)
+
   // Conditions
   let is-first = is-first(entry.at(KEY))
   let has-short = has-short(entry)
   let has-long = has-long(entry)
   let has-plural = has-plural(entry)
   let has-longplural = has-longplural(entry)
+  let has-first-style = has-first-style(entry)
   let eshort = ent-short
   let elong = ent-long
   if plural {
@@ -693,6 +706,12 @@
   }
   eshort += suffix
 
+  let resolved-first-style = if first-style != none {
+    first-style
+  } else {
+    ent-first-style
+  }
+
   // Priority order:
   //  1. `gls(key, display: "text")` will return `text`
   //  2. `gls(key, long: false)` will return `short+suffix`
@@ -705,9 +724,17 @@
   } else if long == false {
     // 2. Always use short+suffix if long: false, even on first appearance
     [#eshort]
+  } else if is-first and has-long and resolved-first-style != none {
+    if resolved-first-style == "reversed" {
+      [#eshort (#elong)]
+    } else if resolved-first-style == "footnote" {
+      [#eshort#footnote[#elong]]
+    } else {
+      panic(__error_message(key, __unknown_first_style, first-style: resolved-first-style))
+    }
   } else if (is-first or long == true) and has-long {
     // 3 & 4. long (short+suffix) (first or long requested, and has long form)
-    if has-short {
+     if has-short {
       [#elong (#eshort)]
     } else {
       [#elong]
@@ -746,6 +773,7 @@
   suffix: none,
   long: none,
   display: none,
+  first-style: none,
   link: true,
   update: true,
   capitalize: false,
@@ -758,6 +786,7 @@
   suffix: suffix,
   long: long,
   display: display,
+  first-style: first-style,
   link: link,
   update: update,
   capitalize: capitalize,
@@ -774,6 +803,7 @@
   suffix: none,
   long: none,
   display: none,
+  first-style: none,
   link: true,
   update: true,
   user-capitalize: default-capitalize,
@@ -783,6 +813,7 @@
   suffix: suffix,
   long: long,
   display: display,
+  first-style: first-style,
   link: link,
   update: update,
   capitalize: true,
@@ -805,6 +836,7 @@
   suffix: none,
   long: none,
   display: none,
+  first-style: none,
   link: true,
   update: true,
   capitalize: false,
@@ -815,6 +847,7 @@
   suffix: suffix,
   long: long,
   display: display,
+  first-style: first-style,
   link: link,
   update: update,
   capitalize: capitalize,
@@ -827,6 +860,7 @@
   suffix: none,
   long: none,
   display: none,
+  first-style: none,
   link: true,
   update: true,
   user-capitalize: default-capitalize,
@@ -836,6 +870,7 @@
   suffix: suffix,
   long: long,
   display: display,
+  first-style: first-style,
   link: link,
   update: update,
   capitalize: true,
@@ -859,6 +894,7 @@
   suffix: none,
   long: none,
   display: none,
+  first-style: none,
   link: true,
   update: true,
   capitalize: false,
@@ -869,6 +905,7 @@
   long: long,
   suffix: suffix,
   display: display,
+  first-style: first-style,
   link: link,
   update: update,
   capitalize: capitalize,
@@ -884,6 +921,7 @@
   suffix: none,
   long: none,
   display: none,
+  first-style: none,
   link: true,
   update: true,
   user-capitalize: default-capitalize,
@@ -893,6 +931,7 @@
   long: long,
   suffix: suffix,
   display: display,
+  first-style: first-style,
   link: link,
   update: update,
   capitalize: true,
@@ -1043,6 +1082,7 @@
       description: entry.at(DESCRIPTION, default: none),
       group: entry.at(GROUP, default: ""),
       sort: entry.at(SORT, default: entry.at(KEY)),
+      first-style: entry.at(FIRST_STYLE, default: none),
       custom: entry.at(CUSTOM, default: none),
     )
     if not use-key-as-short and not has-short(newentry) and not has-long(newentry) {
