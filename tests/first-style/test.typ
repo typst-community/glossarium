@@ -11,19 +11,19 @@
     key: "first-style-short-long",
     long: "I have a reversed first style",
     short: "first-style-short-long",
-    styles: ("short-long", )
+    styles: ("short-long",),
   ),
   (
     key: "first-style-footnote",
     long: "I have a footnote first style",
     short: "first-style-footnote",
-    styles: ("footnote", )
+    styles: ("footnote",),
   ),
   (
     key: "unknown-first-style",
     long: "I have an unknown first style",
     short: "unknown-first-style",
-    styles: ("unknown", )
+    styles: ("unknown",),
   ),
 )
 #register-glossary(entry-list)
@@ -50,9 +50,9 @@
   reset-counts()
 }
 
-#gls(styles: ("footnote", ), "no-first-style")
+#gls(styles: ("footnote",), "no-first-style")
 
-#gls(styles: ("footnote", ), "no-first-style")
+#gls(styles: ("footnote",), "no-first-style")
 
 = Correctly Handle Unknown `styles`
 
