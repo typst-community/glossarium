@@ -681,7 +681,6 @@
     artshort = user-capitalize(artshort)
   }
 
-  let counts = count-refs(key)
 
   // Conditions
   let is-first = is-first(entry.at(KEY))
@@ -708,10 +707,11 @@
 
   let resolved-first-style = if first-style != none {
     first-style
-  } else {
+  } else if has-first-style {
     ent-first-style
+  } else {
+    first-style // none default
   }
-
   // Priority order:
   //  1. `gls(key, display: "text")` will return `text`
   //  2. `gls(key, long: false)` will return `short+suffix`
