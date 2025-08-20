@@ -37,7 +37,7 @@
 #let DESCRIPTION = "description"
 #let GROUP = "group"
 #let SORT = "sort"
-#let FIRST_STYLE = "first-style"
+#let STYLES = "styles"
 #let CUSTOM = "custom"
 #let ATTRIBUTES = (
   KEY,
@@ -50,7 +50,7 @@
   DESCRIPTION,
   GROUP,
   SORT,
-  FIRST_STYLE,
+  STYLES,
   CUSTOM,
 )
 
@@ -376,7 +376,7 @@
 #let __get_description(entry) = __get_attribute(entry, DESCRIPTION)
 #let __get_group(entry) = __get_attribute(entry, GROUP)
 #let __get_sort(entry) = __get_attribute(entry, SORT)
-#let __get_first_style(entry) = __get_attribute(entry, FIRST_STYLE)
+#let __get_styles(entry) = __get_attribute(entry, STYLES)
 #let __get_custom(entry) = __get_attribute(entry, CUSTOM)
 
 #let __has_attribute(entry, attrname) = {
@@ -392,7 +392,7 @@
 #let has-description(entry) = __has_attribute(entry, DESCRIPTION)
 #let has-group(entry) = __has_attribute(entry, GROUP)
 #let has-sort(entry) = __has_attribute(entry, SORT)
-#let has-first-style(entry) = __has_attribute(entry, FIRST_STYLE)
+#let has-styles(entry) = __has_attribute(entry, STYLES)
 #let has-custom(entry) = __has_attribute(entry, CUSTOM)
 
 #let _get-attribute(key, attrname, link: false, update: false) = {
@@ -653,7 +653,7 @@
   suffix: none,
   long: none,
   display: none,
-  first-style: none,
+  styles: none,
   link: true,
   update: true,
   capitalize: false,
@@ -669,7 +669,7 @@
   let ent-long = __get_long(entry)
   let ent-plural = __get_plural(entry)
   let ent-longplural = __get_longplural(entry)
-  let ent-first-style = __get_first_style(entry)
+  let ent-styles = __get_styles(entry)
   let artlong = __get_artlong(entry)
   let artshort = __get_artshort(entry)
   if capitalize {
@@ -688,7 +688,7 @@
   let has-long = has-long(entry)
   let has-plural = has-plural(entry)
   let has-longplural = has-longplural(entry)
-  let has-first-style = has-first-style(entry)
+  let has-styles = has-styles(entry)
   let eshort = ent-short
   let elong = ent-long
   if plural {
@@ -705,13 +705,16 @@
   }
   eshort += suffix
 
-  let resolved-first-style = if first-style != none {
-    first-style
-  } else if has-first-style {
-    ent-first-style
+  let resolved-styles = if styles != none {
+    styles
+  } else if has-styles {
+    ent-styles
   } else {
-    first-style // none default
+    ()
   }
+
+  let first-style = resolved-styles.at(0, default: none)
+
   // Priority order:
   //  1. `gls(key, display: "text")` will return `text`
   //  2. `gls(key, long: false)` will return `short+suffix`
@@ -724,13 +727,15 @@
   } else if long == false {
     // 2. Always use short+suffix if long: false, even on first appearance
     [#eshort]
-  } else if is-first and has-long and resolved-first-style != none {
-    if resolved-first-style == "reversed" {
+  } else if is-first and has-long and first-style != none {
+    if first-style == "long-short" {
+      [#elong (#eshort)]
+    } else if first-style == "short-long" {
       [#eshort (#elong)]
-    } else if resolved-first-style == "footnote" {
+    } else if first-style == "footnote" {
       [#eshort#footnote[#elong]]
     } else {
-      panic(__error_message(key, __unknown_first_style, first-style: resolved-first-style))
+      panic(__error_message(key, __unknown_first_style, first-style: first-style))
     }
   } else if (is-first or long == true) and has-long {
     // 3 & 4. long (short+suffix) (first or long requested, and has long form)
@@ -773,7 +778,7 @@
   suffix: none,
   long: none,
   display: none,
-  first-style: none,
+  styles: none,
   link: true,
   update: true,
   capitalize: false,
@@ -786,7 +791,7 @@
   suffix: suffix,
   long: long,
   display: display,
-  first-style: first-style,
+  styles: styles,
   link: link,
   update: update,
   capitalize: capitalize,
@@ -803,7 +808,7 @@
   suffix: none,
   long: none,
   display: none,
-  first-style: none,
+  styles: none,
   link: true,
   update: true,
   user-capitalize: default-capitalize,
@@ -813,7 +818,7 @@
   suffix: suffix,
   long: long,
   display: display,
-  first-style: first-style,
+  styles: styles,
   link: link,
   update: update,
   capitalize: true,
@@ -836,7 +841,7 @@
   suffix: none,
   long: none,
   display: none,
-  first-style: none,
+  styles: none,
   link: true,
   update: true,
   capitalize: false,
@@ -847,7 +852,7 @@
   suffix: suffix,
   long: long,
   display: display,
-  first-style: first-style,
+  styles: styles,
   link: link,
   update: update,
   capitalize: capitalize,
@@ -860,7 +865,7 @@
   suffix: none,
   long: none,
   display: none,
-  first-style: none,
+  styles: none,
   link: true,
   update: true,
   user-capitalize: default-capitalize,
@@ -870,7 +875,7 @@
   suffix: suffix,
   long: long,
   display: display,
-  first-style: first-style,
+  styles: styles,
   link: link,
   update: update,
   capitalize: true,
@@ -894,7 +899,7 @@
   suffix: none,
   long: none,
   display: none,
-  first-style: none,
+  styles: none,
   link: true,
   update: true,
   capitalize: false,
@@ -905,7 +910,7 @@
   long: long,
   suffix: suffix,
   display: display,
-  first-style: first-style,
+  styles: styles,
   link: link,
   update: update,
   capitalize: capitalize,
@@ -921,7 +926,7 @@
   suffix: none,
   long: none,
   display: none,
-  first-style: none,
+  styles: none,
   link: true,
   update: true,
   user-capitalize: default-capitalize,
@@ -931,7 +936,7 @@
   long: long,
   suffix: suffix,
   display: display,
-  first-style: first-style,
+  styles: styles,
   link: link,
   update: update,
   capitalize: true,
@@ -1082,7 +1087,7 @@
       description: entry.at(DESCRIPTION, default: none),
       group: entry.at(GROUP, default: ""),
       sort: entry.at(SORT, default: entry.at(KEY)),
-      first-style: entry.at(FIRST_STYLE, default: none),
+      styles: entry.at(STYLES, default: none),
       custom: entry.at(CUSTOM, default: none),
     )
     if not use-key-as-short and not has-short(newentry) and not has-long(newentry) {
