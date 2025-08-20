@@ -8,22 +8,22 @@
     short: "no-first-style",
   ),
   (
-    key: "first-style-reversed",
+    key: "first-style-short-long",
     long: "I have a reversed first style",
-    short: "first-style-reversed",
-    first-style: "reversed"
+    short: "first-style-short-long",
+    styles: ("short-long", )
   ),
   (
     key: "first-style-footnote",
     long: "I have a footnote first style",
     short: "first-style-footnote",
-    first-style: "footnote"
+    styles: ("footnote", )
   ),
   (
     key: "unknown-first-style",
     long: "I have an unknown first style",
     short: "unknown-first-style",
-    first-style: "unknown"
+    styles: ("unknown", )
   ),
 )
 #register-glossary(entry-list)
@@ -32,7 +32,7 @@
 
 @no-first-style
 
-@first-style-reversed
+@first-style-short-long
 
 @first-style-footnote
 
@@ -40,21 +40,21 @@
 
 @no-first-style
 
-@first-style-reversed
+@first-style-short-long
 
 @first-style-footnote
 
-= Correctly Handle First Occurrences With Overridden `first-style`s
+= Correctly Handle First Occurrences With Overridden `styles`
 
 #context {
   reset-counts()
 }
 
-#gls(first-style: "footnote", "no-first-style")
+#gls(styles: ("footnote", ), "no-first-style")
 
-#gls(first-style: "footnote", "no-first-style")
+#gls(styles: ("footnote", ), "no-first-style")
 
-= Correctly Handle Unknown `first-style`s
+= Correctly Handle Unknown `styles`
 
 // FIXME: This test does not work at the moment for some reason
 
