@@ -681,7 +681,6 @@
     artshort = user-capitalize(artshort)
   }
 
-
   // Conditions
   let is-first = is-first(entry.at(KEY))
   let has-short = has-short(entry)
@@ -739,7 +738,7 @@
     }
   } else if (is-first or long == true) and has-long {
     // 3 & 4. long (short+suffix) (first or long requested, and has long form)
-     if has-short {
+    if has-short {
       [#elong (#eshort)]
     } else {
       [#elong]
