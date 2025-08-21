@@ -56,12 +56,10 @@
 
 = Correctly Handle Unknown `styles`
 
-// FIXME: This test does not work at the moment for some reason
-
-// #context assert.eq(
-//   catch(() => gls("unknown-first-style")),
-//   "panicked with: \"glossarium@" + glossarium_version + " error : entry 'unknown-first-style' has an unknown first-style: unknown\"",
-// )
+#context assert.eq(
+  catch(() => _gls("unknown-first-style")),
+  "panicked with: \"glossarium@" + glossarium_version + " error : entry 'unknown-first-style' has an unknown first-style: unknown\"",
+)
 
 #v(1fr)
 
