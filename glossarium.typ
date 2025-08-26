@@ -13,6 +13,7 @@
   glspl,
   make-glossary,
   register-glossary,
+  reset-counts,
   print-glossary,
   gls-key,
   gls-short,
