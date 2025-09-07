@@ -20,9 +20,9 @@
     styles: ("footnote",),
   ),
   (
-    key: "unknown-first-style",
-    long: "I have an unknown first style",
-    short: "unknown-first-style",
+    key: "unknown-style",
+    long: "I have an unknown style",
+    short: "unknown-style",
     styles: ("unknown",),
   ),
 )
@@ -57,8 +57,12 @@
 = Correctly Handle Unknown `styles`
 
 #context assert.eq(
-  catch(() => _gls("unknown-first-style")),
-  "panicked with: \"glossarium@" + glossarium_version + " error : entry 'unknown-first-style' has an unknown first-style: unknown\"",
+  catch(() => _gls("unknown-style")),
+  "panicked with: \"glossarium@"
+    + glossarium_version
+    + " error : entry 'unknown-style' has an unknown style: unknown. Supported styles are "
+    + entry-styles.values().join(", ")
+    + "\"",
 )
 
 #v(1fr)

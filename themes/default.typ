@@ -75,6 +75,17 @@
 )
 // ! Modify the user print-glossary if default changes
 #let default-shorthands = ("plural", "capitalize", "capitalize-plural", "short", "long")
+#let entry-styles = (
+  long: LONG,
+  short: SHORT,
+  long-short: LONG + "-" + SHORT,
+  short-long: SHORT + "-" + LONG,
+  footnote: "footnote",
+)
+#let default-styles = (
+  entry-styles.long-short, //
+  entry-styles.short,
+)
 
 // Errors types
 #let __key_not_found = "key_not_found"
@@ -95,7 +106,7 @@
 #let __keys_must_be_an_array = "keys_must_be_an_array"
 #let __groups_must_be_an_array_of_strings = "groups_must_be_an_array_of_strings"
 #let __shorthand_is_not_supported = "shorthand_is_not_supported"
-#let __unknown_first_style = "unknown_first_style"
+#let __unknown_style = "unknown_style"
 #let __unknown_error = "unknown_error"
 
 // __error_message(key, kind, ..kwargs) -> str
@@ -160,9 +171,16 @@
     msg = (
       "shorthand '" + kwargs.at("shorthand") + "' is not supported. Use one of " + __glossarium_shorthands.join(", ")
     )
-  } else if kind == __unknown_first_style {
-    let first-style = kwargs.at("first-style")
-    msg = "entry '" + key + "' has an unknown first-style: " + first-style
+  } else if kind == __unknown_style {
+    let style = kwargs.at("style")
+    msg = (
+      "entry '"
+        + key
+        + "' has an unknown style: "
+        + style
+        + ". Supported styles are "
+        + entry-styles.values().join(", ")
+    )
   } else {
     msg = "unknown error"
   }
@@ -335,6 +353,10 @@
 }
 
 
+#let count(key) = {
+  return __glossary_counts.get().at(key, default: 0)
+}
+
 // is-first(key) -> bool
 // Check if the key is the first reference to the term
 //
@@ -345,7 +367,7 @@
 // # Returns
 // True if the key is the first reference to the term or long form is requested
 #let is-first(key) = {
-  return __glossary_counts.get().at(key, default: 0) == 0
+  return count(key) == 0
 }
 
 // __link_and_label(key, text, prefix: none, suffix: none, update: true) -> content
@@ -594,6 +616,14 @@
   ctx: ctx,
 )
 
+#let gls-styles(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  STYLES,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
+
 // gls-custom(key, link: false, update: false, ctx: true) -> user-defined content
 // Get the custom attribute of the term
 //
@@ -704,15 +734,17 @@
   }
   eshort += suffix
 
-  let resolved-styles = if styles != none {
+  let estyles = if styles != none {
     styles
-  } else if has-styles {
-    ent-styles
   } else {
-    ()
+    ent-styles
   }
-
-  let first-style = resolved-styles.at(0, default: none)
+  for style in estyles {
+    if style not in entry-styles.values() {
+      panic(__error_message(entry.at(KEY), __unknown_style, style: style))
+    }
+  }
+  let first-style = estyles.at(0, default: none)
 
   // Priority order:
   //  1. `gls(key, display: "text")` will return `text`
@@ -733,8 +765,6 @@
       [#eshort (#elong)]
     } else if first-style == "footnote" {
       [#eshort#footnote[#elong]]
-    } else {
-      panic(__error_message(key, __unknown_first_style, first-style: first-style))
     }
   } else if (is-first or long == true) and has-long {
     // 3 & 4. long (short+suffix) (first or long requested, and has long form)
@@ -1086,7 +1116,7 @@
       description: entry.at(DESCRIPTION, default: none),
       group: entry.at(GROUP, default: ""),
       sort: entry.at(SORT, default: entry.at(KEY)),
-      styles: entry.at(STYLES, default: none),
+      styles: entry.at(STYLES, default: default-styles),
       custom: entry.at(CUSTOM, default: none),
     )
     if not use-key-as-short and not has-short(newentry) and not has-long(newentry) {

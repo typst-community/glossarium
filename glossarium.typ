@@ -24,6 +24,7 @@
   gls-longplural,
   gls-description,
   gls-group,
+  gls-styles,
   gls-custom,
   get-entry-back-references,
   count-refs,
@@ -32,4 +33,5 @@
   Gls,
   Glspl,
   style-entries,
+  entry-styles,
 )
