@@ -180,21 +180,53 @@ By default, group breaks use `linebreaks`. This behaviour can be changed by sett
 
 You can call this function from anywhere in your document.
 
-## Referencing terms.
+## Referencing terms
 
-Referencing terms is done using the key of the terms using the `gls` function or the reference syntax.
+Referencing terms can be done by different means/interfaces. The function with the largest flexibility is `gls`. All others are shortcuts populated with different default parameters.
 
 ```typ
-// referencing the OIDC term using gls
+// Referencing the OIDC term using gls
 #gls("oidc")
-// displaying the long form forcibly
+// Displaying the long form forcibly
 #gls("oidc", long: true)
-
-// referencing the OIDC term using the reference syntax
-@oidc
+// Do not add a link
+#gls("oidc", link: false)
+// Do not update the usage count. If done on first use, the next reference will trigger printing the full version.
+#gls("oidc", update: false)
 ```
 
-## Handling plurals
+The graph below is an overview of the available interface groups and the individual functions. 
+
+```mermaid
+graph TD;
+    gls;
+    gls-x["**Access values**"<br>-----------------<br>gls-key<br>gls-short<br>gls-artshort<br>gls-plural<br>gls-long<br>gls-artlong<br>gls-longplural<br>gls-description<br>gls-group<br>gls-sort<br>gls-custom];
+    xgls["**Capitalizing, <br>Article, Plural**"<br>-----------------<br>Gls<br>agls<br>Agls<br>glspl<br>Glspl];
+    at-syntax["**@ syntax <br> modifiers**"<br>-----------------<br>:pl<br>:short<br>:long<br>:description<br>:longplural<br>:custom];
+
+    gls --> gls-x;
+    gls --> xgls;
+    gls --> at-syntax;
+```
+
+Examples for the usage of the typst reference syntax
+```typ
+// Will print the full version on first usage, short afterwards
+@oidc
+// Will always print the long version 
+@oidc:long
+```
+
+The default parameters of the interfaces are listed below:
+
+| Interface                                     | `update` | `link`  |
+| --------------------------------------------- | :------: | :-----: |
+| `gls`                                         | `true`   | `true`  |
+| Access values<br>(`gls-short`, ...)           | `false`  | `false` |
+| Capitalizing, article, plural<br>(`Gls`, ...) | `true`   | `true`  |
+| Reference syntax<br>(`@oidc:pl`, ...)         | `true`   | `true`  |
+
+### Handling plurals
 
 You can use the `glspl` function and the references supplements to pluralize terms.
 The `plural` key will be used when `short` should be pluralized and `longplural` will be used when `long` should be pluralized. If the `plural` key is missing then glossarium will add an 's' at the end of the short form as a fallback.
@@ -211,7 +243,7 @@ Alternatively, you can reference the automatically generated label:
 
 Please look at the examples regarding plurals.
 
-## Handling capitalization
+### Handling capitalization
 
 If you use a term at the beginning of a sentence, you might want to capitalize it.
 You can use the `capitalize` argument of `#gls` and `#glspl` to do so,
@@ -230,7 +262,7 @@ You can also reference the automatically generated labels:
 
 Please note that these are only generated if the `key` does not start with an uppercase letter.
 
-## Overriding the text shown
+### Overriding the text shown
 
 You can also override the text displayed by setting the `display` argument.
 
