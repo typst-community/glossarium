@@ -195,7 +195,7 @@ Referencing terms can be done by different means/interfaces. The function with t
 #gls("oidc", update: false)
 ```
 
-The graph below is an overview of the available interface groups and the individual functions. 
+The graph below is an overview of the available interface groups and their individual functions/modifiers. 
 
 ```mermaid
 graph TD;
@@ -209,15 +209,17 @@ graph TD;
     gls --> at-syntax;
 ```
 
-Examples for the usage of the typst reference syntax
+Examples usaging the typst reference syntax (`@` syntax)
 ```typ
-// Will print the full version on first usage, short afterwards
+// Prints the full version on first usage, short afterwards
 @oidc
-// Will always print the long version 
+// Will always display the long version 
 @oidc:long
+// Display the plural form
+@oidc:pl
 ```
 
-The default parameters of the interfaces are listed below:
+The different interfaces have different default parameters which you should keep in mind when using them.
 
 | Interface                                     | `update` | `link`  |
 | --------------------------------------------- | :------: | :-----: |
