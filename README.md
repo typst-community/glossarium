@@ -182,7 +182,7 @@ You can call this function from anywhere in your document.
 
 ## Referencing terms
 
-Referencing terms can be done by different means/interfaces. The function with the largest flexibility is `gls`. All others are shortcuts populated with different default parameters.
+Referencing terms can be done in different ways. The function with the largest flexibility is `gls`. All others are shortcuts populated with different default parameters.
 
 ```typ
 // Referencing the OIDC term using gls
