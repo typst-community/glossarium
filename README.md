@@ -202,14 +202,22 @@ graph TD;
     gls;
     gls-x["**Access values**"<br>-----------------<br>gls-key<br>gls-short<br>gls-artshort<br>gls-plural<br>gls-long<br>gls-artlong<br>gls-longplural<br>gls-description<br>gls-group<br>gls-sort<br>gls-custom];
     xgls["**Capitalizing, <br>Article, Plural**"<br>-----------------<br>Gls<br>agls<br>Agls<br>glspl<br>Glspl];
-    at-syntax["**@ syntax <br> modifiers**"<br>-----------------<br>:pl<br>:short<br>:long<br>:description<br>:longplural<br>:custom];
+    at-syntax["**@key syntax <br> modifiers**"<br>-----------------<br>@key:pl<br>@Key<br>@Key:pl<br>@key:short<br>@key:long<br>@key:description<br>@key:longplural<br>@key:custom];
 
     gls --> gls-x;
     gls --> xgls;
     gls --> at-syntax;
 ```
 
-Examples usaging the typst reference syntax (`@` syntax)
+Usually, you will want to use Typst reference syntax (`@` syntax). This is the most practical way to reference an entry. By default, some shorthands are made available: plural, capitalize, capitalized plural, short and long. More are available: description, longplural and custom corresponding respectively to `@key:description`, `@key:longplural` and `@key:custom`.
+
+This setting is managed when you print the glossary
+```typ
+print-glossary(
+  entry-list,
+  // default shorthands
+  shorthands: ("plural", "capitalize", "capitalize-plural", "short", "long"),
+)
 ```typ
 // Prints the full version on first usage, short afterwards
 @oidc
@@ -219,13 +227,12 @@ Examples usaging the typst reference syntax (`@` syntax)
 @oidc:pl
 ```
 
-The different interfaces have different default parameters which you should keep in mind when using them.
+The different interfaces have different default parameters which you should keep in mind when using them. In most cases, you will not need to manually set `update: false`, unless you are using `gls` in situations that create ambiguity, e.g., using `gls` in other entries' description.
 
 | Interface                                     | `update` | `link`  |
 | --------------------------------------------- | :------: | :-----: |
-| `gls`                                         | `true`   | `true`  |
+| `gls`, `Gls`, `glspl`, etc.                   | `true`   | `true`  |
 | Access values<br>(`gls-short`, ...)           | `false`  | `false` |
-| Capitalizing, article, plural<br>(`Gls`, ...) | `true`   | `true`  |
 | Reference syntax<br>(`@oidc:pl`, ...)         | `true`   | `true`  |
 
 ### Handling plurals
