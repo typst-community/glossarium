@@ -209,7 +209,18 @@ graph TD;
     gls --> at-syntax;
 ```
 
-Usually, you will want to use Typst reference syntax (`@` syntax). This is the most practical way to reference an entry. By default, some shorthands are made available: plural, capitalize, capitalized plural, short and long. More are available: description, longplural and custom corresponding respectively to `@key:description`, `@key:longplural` and `@key:custom`.
+Usually, you will want to use Typst reference syntax (`@` syntax). This is the most practical way to reference an entry. By default, some shorthands are made available: plural, capitalize, capitalized plural, short and long. 
+
+```typ
+// Prints the full version on first usage, short afterwards
+@oidc
+// Will always display the long version 
+@oidc:long
+// Display the plural form
+@oidc:pl
+```
+
+More are available: description, longplural and custom corresponding respectively to `@key:description`, `@key:longplural` and `@key:custom`.
 
 This setting is managed when you print the glossary
 ```typ
@@ -218,13 +229,6 @@ print-glossary(
   // default shorthands
   shorthands: ("plural", "capitalize", "capitalize-plural", "short", "long"),
 )
-```typ
-// Prints the full version on first usage, short afterwards
-@oidc
-// Will always display the long version 
-@oidc:long
-// Display the plural form
-@oidc:pl
 ```
 
 The different interfaces have different default parameters which you should keep in mind when using them. In most cases, you will not need to manually set `update: false`, unless you are using `gls` in situations that create ambiguity, e.g., using `gls` in other entries' description.
