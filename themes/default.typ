@@ -18,6 +18,10 @@
 // See `__normalize_entry_list`.
 #let __glossary_entries = state("__glossary_entries", (:))
 
+// when a glossarium entry is part of an outline entry, this is set to the
+// outline entry's target element
+#let __glossary_outline_entry_target = state("__glossary_outline_entry_target", none)
+
 // glossarium version
 #let glossarium_version = "0.5.9"
 
@@ -662,6 +666,10 @@
   user-capitalize: default-capitalize,
   user-plural: default-plural,
 ) = {
+  if __glossary_outline_entry_target.get() != none {
+    update = false
+  }
+
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
@@ -682,7 +690,11 @@
   }
 
   // Conditions
-  let is-first = is-first(entry.at(KEY))
+  let is-first = if __glossary_outline_entry_target.get() == none {
+    is-first(entry.at(KEY))
+  } else {
+    __glossary_counts.at(__glossary_outline_entry_target.get()).at(key, default: 0) == 0
+  }
   let has-short = has-short(entry)
   let has-long = has-long(entry)
   let has-plural = has-plural(entry)
@@ -1055,6 +1067,13 @@
   show __glossarium_entry_selector: it => {
     align(start, it.body)
   }
+
+  show outline.entry: it => {
+    __glossary_outline_entry_target.update(it.element.location())
+    it
+    __glossary_outline_entry_target.update(none)
+  }
+
   show ref: refrule.with(link: link, long: always-long, user-capitalize: user-capitalize, user-plural: user-plural)
   body
 }
