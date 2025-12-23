@@ -39,6 +39,7 @@
 #let SORT = "sort"
 #let STYLES = "styles"
 #let CUSTOM = "custom"
+#let SPECIAL = "special"
 #let ATTRIBUTES = (
   KEY,
   SHORT,
@@ -52,6 +53,7 @@
   SORT,
   STYLES,
   CUSTOM,
+  SPECIAL,
 )
 
 // Shorthands @key:pl
@@ -365,42 +367,48 @@
     )]
 }
 
-#let __get_attribute(entry, attrname) = entry.at(attrname)
-#let __get_key(entry) = __get_attribute(entry, KEY)
-#let __get_short(entry) = __get_attribute(entry, SHORT)
-#let __get_long(entry) = __get_attribute(entry, LONG)
-#let __get_artshort(entry) = __get_attribute(entry, ART_SHORT)
-#let __get_artlong(entry) = __get_attribute(entry, ART_LONG)
-#let __get_plural(entry) = __get_attribute(entry, PLURAL)
-#let __get_longplural(entry) = __get_attribute(entry, LONG_PLURAL)
-#let __get_description(entry) = __get_attribute(entry, DESCRIPTION)
-#let __get_group(entry) = __get_attribute(entry, GROUP)
-#let __get_sort(entry) = __get_attribute(entry, SORT)
-#let __get_styles(entry) = __get_attribute(entry, STYLES)
-#let __get_custom(entry) = __get_attribute(entry, CUSTOM)
+#let __get_attribute(entry, attrname, special) = {
+  if special != none {
+    return entry.special.at(special).at(attrname, default: entry.at(attrname))
+  } else {
+    return entry.at(attrname)
+  }
+}
+#let __get_key(entry) = __get_attribute(entry, KEY, none)
+#let __get_short(entry, special) = __get_attribute(entry, SHORT, special)
+#let __get_long(entry, special) = __get_attribute(entry, LONG, special)
+#let __get_artshort(entry, special) = __get_attribute(entry, ART_SHORT, special)
+#let __get_artlong(entry, special) = __get_attribute(entry, ART_LONG, special)
+#let __get_plural(entry, special) = __get_attribute(entry, PLURAL, special)
+#let __get_longplural(entry, special) = __get_attribute(entry, LONG_PLURAL, special)
+#let __get_description(entry, special) = __get_attribute(entry, DESCRIPTION, special)
+#let __get_group(entry, special) = __get_attribute(entry, GROUP, special)
+#let __get_sort(entry, special) = __get_attribute(entry, SORT, special)
+#let __get_styles(entry, special) = __get_attribute(entry, STYLES, special)
+#let __get_custom(entry, special) = __get_attribute(entry, CUSTOM, special)
 
-#let __has_attribute(entry, attrname) = {
-  let attr = __get_attribute(entry, attrname)
+#let __has_attribute(entry, attrname, special) = {
+  let attr = __get_attribute(entry, attrname, special)
   return attr != none and attr != "" and attr != []
 }
-#let has-short(entry) = __has_attribute(entry, SHORT)
-#let has-long(entry) = __has_attribute(entry, LONG)
-#let has-artshort(entry) = __has_attribute(entry, ART_SHORT)
-#let has-artlong(entry) = __has_attribute(entry, ART_LONG)
-#let has-plural(entry) = __has_attribute(entry, PLURAL)
-#let has-longplural(entry) = __has_attribute(entry, LONG_PLURAL)
-#let has-description(entry) = __has_attribute(entry, DESCRIPTION)
-#let has-group(entry) = __has_attribute(entry, GROUP)
-#let has-sort(entry) = __has_attribute(entry, SORT)
-#let has-styles(entry) = __has_attribute(entry, STYLES)
-#let has-custom(entry) = __has_attribute(entry, CUSTOM)
+#let has-short(entry, special) = __has_attribute(entry, SHORT, special)
+#let has-long(entry, special) = __has_attribute(entry, LONG, special)
+#let has-artshort(entry, special) = __has_attribute(entry, ART_SHORT, special)
+#let has-artlong(entry, special) = __has_attribute(entry, ART_LONG, special)
+#let has-plural(entry, special) = __has_attribute(entry, PLURAL, special)
+#let has-longplural(entry, special) = __has_attribute(entry, LONG_PLURAL, special)
+#let has-description(entry, special) = __has_attribute(entry, DESCRIPTION, special)
+#let has-group(entry, special) = __has_attribute(entry, GROUP, special)
+#let has-sort(entry, special) = __has_attribute(entry, SORT, special)
+#let has-styles(entry, special) = __has_attribute(entry, STYLES, special)
+#let has-custom(entry, special) = __has_attribute(entry, CUSTOM, special)
 
-#let _get-attribute(key, attrname, link: false, update: false) = {
+#let _get-attribute(key, attrname, special, link: false, update: false) = {
   let entry = __get_entry_with_key(here(), key)
-  let attr = entry.at(attrname)
+  let attr = __get_attribute(entry, attrname, special)
   if link {
-    return __link_and_label(entry.at(KEY), entry.at(attrname), update: update)
-  } else if attrname in entry and entry.at(attrname) != none {
+    return __link_and_label(entry.at(KEY), attr, update: update)
+  } else if attrname in entry and attr != none {
     return attr
   } else {
     panic(__error_message(key, __attribute_is_empty, attr: attrname))
@@ -415,10 +423,11 @@
 //
 // # Returns
 // The attribute of the term
-#let get-attribute(key, attrname, link: false, update: false, ctx: true) = {
+#let get-attribute(key, attrname, link: false, update: false, ctx: true, special: none) = {
   let call = () => _get-attribute(
     key,
     attrname,
+    special,
     link: link,
     update: update,
   )
@@ -661,17 +670,18 @@
   article: false,
   user-capitalize: default-capitalize,
   user-plural: default-plural,
+  special: none,
 ) = {
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
-  let ent-short = __get_short(entry)
-  let ent-long = __get_long(entry)
-  let ent-plural = __get_plural(entry)
-  let ent-longplural = __get_longplural(entry)
-  let ent-styles = __get_styles(entry)
-  let artlong = __get_artlong(entry)
-  let artshort = __get_artshort(entry)
+  let ent-short = __get_short(entry, special)
+  let ent-long = __get_long(entry, special)
+  let ent-plural = __get_plural(entry, special)
+  let ent-longplural = __get_longplural(entry, special)
+  let ent-styles = __get_styles(entry, special)
+  let artlong = __get_artlong(entry, special)
+  let artshort = __get_artshort(entry, special)
   if capitalize {
     ent-short = user-capitalize(ent-short)
     ent-long = user-capitalize(ent-long)
@@ -683,11 +693,11 @@
 
   // Conditions
   let is-first = is-first(entry.at(KEY))
-  let has-short = has-short(entry)
-  let has-long = has-long(entry)
-  let has-plural = has-plural(entry)
-  let has-longplural = has-longplural(entry)
-  let has-styles = has-styles(entry)
+  let has-short = has-short(entry, special)
+  let has-long = has-long(entry, special)
+  let has-plural = has-plural(entry, special)
+  let has-longplural = has-longplural(entry, special)
+  let has-styles = has-styles(entry, special)
   let eshort = ent-short
   let elong = ent-long
   if plural {
@@ -785,6 +795,7 @@
   article: false,
   user-capitalize: default-capitalize,
   user-plural: default-plural,
+  special: none,
 ) = context _gls(
   key,
   suffix: suffix,
@@ -798,6 +809,7 @@
   article: article,
   user-capitalize: user-capitalize,
   user-plural: user-plural,
+  special: special,
 )
 
 // gls(key, suffix: none, long: none, display: none) -> contextual content
@@ -904,6 +916,7 @@
   capitalize: false,
   user-capitalize: default-capitalize,
   user-plural: default-plural,
+  special: none,
 ) = gls(
   key,
   long: long,
@@ -916,6 +929,7 @@
   plural: true,
   user-capitalize: user-capitalize,
   user-plural: user-plural,
+  special: special,
 )
 
 // glspl(key, long: none) -> content
@@ -1088,11 +1102,12 @@
       sort: entry.at(SORT, default: entry.at(KEY)),
       styles: entry.at(STYLES, default: none),
       custom: entry.at(CUSTOM, default: none),
+      special: entry.at(SPECIAL, default: none),
     )
-    if not use-key-as-short and not has-short(newentry) and not has-long(newentry) {
+    if not use-key-as-short and not has-short(newentry, none) and not has-long(newentry, none) {
       panic(__error_message(newentry.at(KEY), __entry_has_neither_short_nor_long))
     }
-    if has-longplural(newentry) and not has-long(newentry) {
+    if has-longplural(newentry, none) and not has-long(newentry, none) {
       panic(__error_message(newentry.at(KEY), __longplural_but_not_long))
     }
     new-list.push(newentry)
@@ -1169,9 +1184,9 @@
   let caption = []
   let txt = strong.with(delta: 200)
 
-  if has-long(entry) and has-short(entry) {
+  if has-long(entry, none) and has-short(entry, none) {
     caption += txt(emph(entry.at(SHORT)) + [ -- ] + entry.at(LONG))
-  } else if has-long(entry) {
+  } else if has-long(entry, none) {
     caption += txt(entry.at(LONG))
   } else {
     caption += txt(emph(entry.at(SHORT)))
@@ -1222,7 +1237,7 @@
     user-print-title(entry)
 
     // Description
-    if has-description(entry) {
+    if has-description(entry, none) {
       // Title - Description separator
       description-separator
       user-print-description(entry)
@@ -1258,19 +1273,19 @@
     (default-capitalize(key) + ":pl", [])
   },
   // Short form reference (@key:short) - only if has short form
-  short: (entry, key) => if has-short(entry) {
+  short: (entry, key) => if has-short(entry, none) {
     (key + ":" + SHORT, [])
   },
   // Long form reference (@key:long) - only if has long form
-  long: (entry, key) => if has-long(entry) {
+  long: (entry, key) => if has-long(entry, none) {
     (key + ":" + LONG, [])
   },
   // Description reference (@key:description) - only if has description
-  description: (entry, key) => if has-description(entry) {
+  description: (entry, key) => if has-description(entry, none) {
     (key + ":" + DESCRIPTION, [])
   },
   // Long plural form reference (@key:longplural) - only if has long or long plural
-  longplural: (entry, key) => if has-longplural(entry) {
+  longplural: (entry, key) => if has-longplural(entry, none) {
     (key + ":" + LONG_PLURAL, [])
   },
 )
