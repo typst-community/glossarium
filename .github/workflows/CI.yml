@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         # https://typst-community.github.io/tytanic/reference/compat.html
-        # 0.2.2 -> 0.13.0
+        # 0.2.2 -> 0.13.1
         # 0.3.3 -> 0.14.2
         tytanic: [0.2.2]
     name: tytanic@${{ matrix.tytanic }}
