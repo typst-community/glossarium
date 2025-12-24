@@ -37,9 +37,9 @@
 ```typ
 #show: make-glossary.with(
   always-long: none,
-  outline-always-long: true,
+  outline-always-long: false,
   figure-caption-always-long: false,
-  heading-always-long: true,
+  heading-always-long: false,
 )
 ```
 
