@@ -1100,6 +1100,9 @@
   body,
   link: true,
   always-first: none,
+  outline-always-first: true,
+  figure-caption-always-first: true,
+  heading-always-first: true,
   user-capitalize: default-capitalize,
   user-plural: default-plural,
 ) = {
@@ -1114,6 +1117,27 @@
     user-capitalize: user-capitalize,
     user-plural: user-plural,
   )
+  show outline: it => {
+    show ref: refrule.with(
+      update: false,
+      first: outline-always-first,
+    )
+    it
+  }
+  show figure.caption: it => {
+    show ref: refrule.with(
+      update: false,
+      first: figure-caption-always-first,
+    )
+    it
+  }
+  show heading: it => {
+    show ref: refrule.with(
+      update: false,
+      first: heading-always-first,
+    )
+    it
+  }
   body
 }
 
