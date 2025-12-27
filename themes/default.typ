@@ -1609,6 +1609,28 @@
   use-key-as-short: use-key-as-short,
 )
 
+#let print-gloss(
+  key,
+  show-all: false,
+  disable-back-references: false,
+  deduplicate-back-references: false,
+  minimum-refs: 0, // Default to 0 to always print
+  description-separator: ": ",
+  user-print-title: default-print-title,
+  user-print-description: default-print-description,
+  user-print-back-references: default-print-back-references,
+) = context default-print-gloss(
+  __get_entry_with_key(here(), key),
+  show-all: show-all,
+  disable-back-references: disable-back-references,
+  deduplicate-back-references: deduplicate-back-references,
+  minimum-refs: minimum-refs,
+  description-separator: description-separator,
+  user-print-title: user-print-title,
+  user-print-description: user-print-description,
+  user-print-back-references: user-print-back-references,
+)
+
 #let _print-glossary(
   entry-list,
   groups: (),

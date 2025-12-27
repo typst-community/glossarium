@@ -14,6 +14,7 @@
   make-glossary,
   register-glossary,
   reset-counts,
+  print-gloss,
   print-glossary,
   gls-key,
   gls-short,
@@ -32,4 +33,5 @@
   Gls,
   Glspl,
   style-entries,
+  //
 )
