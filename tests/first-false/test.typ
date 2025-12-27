@@ -1,6 +1,6 @@
 #import "../../themes/default.typ": *
 
-#set page(height: auto, width: auto)
+#set page(height: 15cm, width: 13cm)
 
 #show: make-glossary
 
@@ -36,25 +36,24 @@
 
 / second ref: #gls("kuleuven")
 
-/ long true: #gls("kuleuven", long: true)
+/ first  true: #gls("kuleuven", first: true)
 
-/ first form long false: #gls("utc", long: false)
+/ first form long false: #gls("utc", first: false)
 
 / second form: #gls("utc")
 
-/ long true: #gls("utc", long: true)
-
+/ first true: #gls("utc", first: true)
 / first form: #agls("ups")
 
 / second form: #agls("ups")
 
-/ long true: #agls("ups", long: true)
+/ first true: #agls("ups", first: true)
 
 / first form: #gls("lorem", plural: true)
 
 / second form: #gls("lorem", plural: true)
 
-/ long true: #gls("lorem", plural: true, long: true)
+/ first true: #gls("lorem", plural: true, first: true)
 
 / suffix: #glspl("utc", suffix: "ah")
 

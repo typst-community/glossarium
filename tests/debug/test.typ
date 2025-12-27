@@ -33,7 +33,8 @@
     key: "hidden potato",
     short: "hiddenpotato",
     group: "show-all test",
-    description: [This potato does not appear, unless `print-glossary` is called with `show-all: true`],
+    description: [This potato does not appear, unless `print-glossary` is called
+      with `show-all: true`],
   ),
 )
 #let entry-list-2 = (
@@ -156,11 +157,11 @@ First: #gls("potato")
 
 Display: #gls("potato", display: "potato text")
 
-Force long: #gls("potato", long: true)
+Force long: #gls("potato", first: true)
 
 1st ref. when long is empty defaults to short: #gls("potato A")
 
-Force long when empty defaults to short: #gls("potato A", long: true)
+Force long when empty defaults to short: #gls("potato A", first: true)
 
 2nd ref.: #gls("potato A")
 
@@ -170,9 +171,9 @@ Force long when empty defaults to short: #gls("potato A", long: true)
 
 First: #glspl("potato C")
 
-Force long: #glspl("potato", long: true)
+Force long: #glspl("potato", first: true)
 
-Force long when empty defaults to plural: #glspl("potato A", long: true)
+Force long when empty defaults to plural: #glspl("potato A", first: true)
 
 2nd ref.: #glspl("potato A")
 
@@ -229,8 +230,7 @@ Only list 4: #context count-all-refs(entry-list: entry-list-4)
 == #there-are-refs
 
 true: #context there-are-refs()
-)
-false: #context there-are-refs(groups: (" ",))
+) false: #context there-are-refs(groups: (" ",))
 
 #context if there-are-refs(entry-list: ((key: "potato A"),)) [
   There are refs to potato A in the document.

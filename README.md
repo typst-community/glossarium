@@ -87,16 +87,16 @@ After importing the package and before making any calls to `gls`, ` print-glossa
 
 A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/).
 
-| Key           | Type              | Required/Optional | Description                                                                                                             |
-| :------------ | :---------------- | :---------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| `key`         | string            | required          | Case-sensitive, unique identifier used to reference the term.                                                           |
-| `short`       | string or content | semi-optional     | The short form of the term replacing the term citation.                                                                 |
-| `long`        | string or content | semi-optional     | The long form of the term, displayed in the glossary and on the first citation of the term.                             |
-| `description` | string or content | optional          | The description of the term.                                                                                            |
-| `plural`      | string or content | optional          | The pluralized short form of the term.                                                                                  |
-| `longplural`  | string or content | optional          | The pluralized long form of the term.                                                                                   |
-| `group`       | string            | optional          | Case-sensitive group the term belongs to. The terms are displayed by groups in the glossary.                            |
-| `custom`      | any               | optional          | Custom content for usage in "user functions", e.g. `user-print-glossary` (see [advanced docs](./advanced-docs/main.pdf))|
+| Key           | Type              | Required/Optional | Description                                                                                                              |
+| :------------ | :---------------- | :---------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| `key`         | string            | required          | Case-sensitive, unique identifier used to reference the term.                                                            |
+| `short`       | string or content | semi-optional     | The short form of the term replacing the term citation.                                                                  |
+| `long`        | string or content | semi-optional     | The long form of the term, displayed in the glossary and on the first citation of the term.                              |
+| `description` | string or content | optional          | The description of the term.                                                                                             |
+| `plural`      | string or content | optional          | The pluralized short form of the term.                                                                                   |
+| `longplural`  | string or content | optional          | The pluralized long form of the term.                                                                                    |
+| `group`       | string            | optional          | Case-sensitive group the term belongs to. The terms are displayed by groups in the glossary.                             |
+| `custom`      | any               | optional          | Custom content for usage in "user functions", e.g. `user-print-glossary` (see [advanced docs](./advanced-docs/main.pdf)) |
 
 
 ```typ
@@ -187,15 +187,15 @@ Referencing terms can be done in different ways. The function with the largest f
 ```typ
 // Referencing the OIDC term using gls
 #gls("oidc")
-// Displaying the long form forcibly
-#gls("oidc", long: true)
+// Displaying the first form forcibly
+#gls("oidc", first: true)
 // Do not add a link
 #gls("oidc", link: false)
 // Do not update the usage count. If done on first use, the next reference will trigger printing the full version.
 #gls("oidc", update: false)
 ```
 
-The graph below is an overview of the available interface groups and their individual functions/modifiers. 
+The graph below is an overview of the available interface groups and their individual functions/modifiers.
 
 ```mermaid
 graph TD;
@@ -209,12 +209,12 @@ graph TD;
     gls --> at-syntax;
 ```
 
-Usually, you will want to use Typst reference syntax (`@` syntax). This is the most practical way to reference an entry. By default, some shorthands are made available: plural, capitalize, capitalized plural, short and long. 
+Usually, you will want to use Typst reference syntax (`@` syntax). This is the most practical way to reference an entry. By default, some shorthands are made available: plural, capitalize, capitalized plural, short and long.
 
 ```typ
 // Prints the full version on first usage, short afterwards
 @oidc
-// Will always display the long version 
+// Will always display the long version
 @oidc:long
 // Display the plural form
 @oidc:pl
@@ -233,11 +233,11 @@ print-glossary(
 
 The different interfaces have different default parameters which you should keep in mind when using them. In most cases, you will not need to manually set `update: false`, unless you are using `gls` in situations that create ambiguity, e.g., using `gls` in other entries' description.
 
-| Interface                                     | `update` | `link`  |
-| --------------------------------------------- | :------: | :-----: |
-| `gls`, `Gls`, `glspl`, etc.                   | `true`   | `true`  |
-| Access values<br>(`gls-short`, ...)           | `false`  | `false` |
-| Reference syntax<br>(`@oidc:pl`, ...)         | `true`   | `true`  |
+| Interface                             | `update` | `link`  |
+| ------------------------------------- | :------: | :-----: |
+| `gls`, `Gls`, `glspl`, etc.           |  `true`  | `true`  |
+| Access values<br>(`gls-short`, ...)   | `false`  | `false` |
+| Reference syntax<br>(`@oidc:pl`, ...) |  `true`  | `true`  |
 
 ### Handling plurals
 
@@ -333,7 +333,7 @@ Note that when using the `show ref` rule approach together with a **global** `sh
 Further customization is possible. Here is a short list of alternative functions you can pass to `print-glossary` to modify the layout.
 
 - `user-print-glossary`: print the entire glossary
-- `user-print-group-heading`: print the group heading 
+- `user-print-group-heading`: print the group heading
 - `user-group-break`: display a break between groups
 - `user-print-gloss`: print one entry
 - `user-print-title`: print the entry's title

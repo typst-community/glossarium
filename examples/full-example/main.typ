@@ -9,7 +9,8 @@
     short: "KU Leuven",
     long: "Katholieke Universiteit Leuven",
     longplural: "Katholieke Universiteiten Leuven",
-    description: [Fugiat do fugiat est minim ullamco est eu duis minim nisi tempor adipisicing do _sunt_. #gls("vub")],
+    description: [Fugiat do fugiat est minim ullamco est eu duis minim nisi
+      tempor adipisicing do _sunt_. #gls("vub")],
     plural: "KU Leuvens",
     artshort: "the",
     artlong: "the",
@@ -30,9 +31,9 @@
     key: "vub",
     short: "VUB",
     long: "Vrije Universiteit Brussel",
-    description: [Proident veniam non aliquip commodo sunt cupidatat. Enim est cupidatat occaecat
-      elit et. Adipisicing irure id consequat ullamco non. Labore sunt tempor et
-      mollit. #gls("kuleuven", long: true)],
+    description: [Proident veniam non aliquip commodo sunt cupidatat. Enim est
+      cupidatat occaecat elit et. Adipisicing irure id consequat ullamco non.
+      Labore sunt tempor et mollit. #gls("kuleuven", first: true)],
   ),
   (
     key: "ulb",
@@ -67,8 +68,8 @@
   (
     key: "notused",
     short: "Not used",
-    description: [This key is not cited anywhere, it won't be in the glossary unless the
-      `show-all` argument is set to true],
+    description: [This key is not cited anywhere, it won't be in the glossary
+      unless the `show-all` argument is set to true],
   ),
 )
 #register-glossary(entry-list)
@@ -80,18 +81,25 @@
 
 There are many Belgian universities, like @kuleuven and @ulb. When repeating
 their names, they won't show as a long version: @kuleuven, @ulb. But we can
-still force them to be long using the `gls` function: #gls("kuleuven", long: true).
+still force them to be long using the `gls` function: #gls(
+  "kuleuven",
+  first: true,
+).
 
-We can also force them to be short: #gls("kuleuven", long: false). Finally, we
+We can also force them to be short: #gls("kuleuven", first: false). Finally, we
 can make them plural:
 + using the `suffix` parameter: #gls("kuleuven", suffix: "s"), or
 + using the additional `supplement` onto the `ref`: @kuleuven[s], or
 + the plural function `#glspl(key: "kuleuven")` #glspl("kuleuven"), or
 + call `@kuleuven:pl` @kuleuven:pl
 
-It is also possible to use the proper article with `#agls("lod")`: "#agls("lod") system", "#agls("lod") system".
+It is also possible to use the proper article with `#agls("lod")`: "#agls("lod")
+system", "#agls("lod") system".
 
-You can also override the text shown by setting the `display` argument: #gls("kuleuven", display: "whatever you want")
+You can also override the text shown by setting the `display` argument: #gls(
+  "kuleuven",
+  display: "whatever you want",
+)
 
 Attributes of an entry can be retrieved using the available functions:
 - `gls-key("kuleuven")`: #gls-key("kuleuven")
