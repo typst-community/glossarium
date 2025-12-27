@@ -1,0 +1,12 @@
+[ver:1,total:300]
+.gtm/terminal.app:160,1766844000:160,r
+themes/default.typ:120,1766844000:120,m
+.github/workflows/CI.yml:20,1766844000:20,r
+
+[ver:1,total:2100]
+themes/default.typ:992,1766581200:911,1766584800:81,m
+tests/with-outline/test.typ:586,1766581200:427,1766584800:159,m
+.gtm/terminal.app:328,1766581200:296,1766584800:32,r
+.github/workflows/CI.yml:88,1766581200:88,r
+examples/with-outline/main.typ:78,1766581200:78,d
+tests/always-long/test.typ:28,1766584800:28,r
