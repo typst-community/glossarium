@@ -13,6 +13,26 @@
 > entry's output.
 
 > [!TIP]
+> New options have been added to `make-glossary` to control which
+> elements always use the "first form" of an entry.
+> Previously, usages in outlines, figure captions and headings were
+> contextual. That is, the form used depended on whether the entry
+> had been used before in the document.
+> Now, these elements can be configured independently to be either always first (`true`),
+> dynamic (`none`) or always the short form (`false`).
+>
+> The default configuration is to always use the first form.
+>
+> ```typ
+> #show: make-glossary.with(
+>   always-first: none,
+>   outline-always-first: true,
+>   figure-caption-always-first: true,
+>   heading-always-first: true,
+> )
+> ```
+
+> [!TIP]
 > A new utility `print-gloss` has been added to allow printing the default's
 > formatting for a single entry. This is useful when you want to print
 > a single entry outside of `print-glossary`.
