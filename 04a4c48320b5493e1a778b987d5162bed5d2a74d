@@ -1,0 +1,13 @@
+[ver:1,total:2820]
+.gtm/terminal.app:1060,1766779200:480,1766782800:255,1766840400:180,1766844000:145,r
+themes/default.typ:516,1766782800:45,1766840400:441,1766844000:30,m
+CHANGELOG.md:467,1766840400:72,1766844000:395,m
+tests/custom-shorthands/test.typ:312,1766782800:270,1766840400:27,1766844000:15,r
+tests/with-outline/test.typ:180,1766584800:180,d
+tests/first-false/test.typ:85,1766844000:85,m
+README.md:75,1766844000:75,m
+tests/debug/test.typ:40,1766844000:40,m
+tests/always-long/test.typ:30,1766782800:15,1766844000:15,d
+tests/long-false/test.typ:25,1766782800:15,1766844000:10,d
+tests/always-first/test.typ:20,1766844000:20,m
+examples/full-example/main.typ:10,1766844000:10,m
