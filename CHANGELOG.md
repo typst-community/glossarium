@@ -12,6 +12,11 @@
 > definition, whereas the long in `#gls(...)` refers to the "long form" of the
 > entry's output.
 
+> [!TIP]
+> A new utility `print-gloss` has been added to allow printing the default's
+> formatting for a single entry. This is useful when you want to print
+> a single entry outside of `print-glossary`.
+> Fixes #166.
 
 ## 0.5.9
 
