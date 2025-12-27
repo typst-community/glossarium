@@ -1,8 +1,8 @@
 #import "../../themes/default.typ": *
 
-== always-long
+== always-first
 
-#show: make-glossary.with(always-long: true)
+#show: make-glossary.with(always-first: true)
 #let entry-list-8 = (
   (
     key: "short",
