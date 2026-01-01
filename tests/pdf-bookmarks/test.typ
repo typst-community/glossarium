@@ -28,3 +28,9 @@
   query(figure.where(kind: "Bh"))
 }
 
+= Correct bookmark: @foo[foo]
+
+#context {
+  (query(selector(heading).before(here())).at(-1),)
+}
+
