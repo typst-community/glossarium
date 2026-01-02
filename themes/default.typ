@@ -19,7 +19,7 @@
 #let __glossary_entries = state("__glossary_entries", (:))
 
 // glossarium version
-#let glossarium_version = "0.5.9"
+#let glossarium_version = "0.5.10"
 
 // error prefix
 #let __glossarium_error_prefix = (
