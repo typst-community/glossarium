@@ -1,2 +1,6 @@
 [ver:1,total:480]
 .gtm/terminal.app:480,1767376800:360,1767380400:120,r
+
+[ver:1,total:480]
+.gtm/terminal.app:450,1767304800:450,r
+.gitignore:30,1767304800:30,m
