@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.5.10
+
+> [!NOTE]
+> The changelog incorrectly states that `@gls:long` and `#gls("gls", long: true)` are the same.
+> The option `long` of `gls` and others similar functions has been renamed to `first`
+> to better reflect the real meaning of the option. (reported in #172 by @AnnsAnns)
+> `make-glossary`'s option has been renamed from `always-long` to `always-first`.
+>
+> In fact, the long in `@gls:long` refers to the long attribute in the entry's
+> definition, whereas the long in `#gls(...)` refers to the "long form" of the
+> entry's output.
+
+> [!TIP]
+> New options have been added to `make-glossary` to control which
+> elements always use the "first form" of an entry.
+> Previously, usages in outlines, figure captions and headings were
+> contextual. That is, the form used depended on whether the entry
+> had been used before in the document.
+> Now, these elements can be configured independently to be either always first (`true`),
+> dynamic (`none`) or always the short form (`false`).
+>
+> The default configuration is to always use the first form.
+>
+> ```typ
+> #show: make-glossary.with(
+>   always-first: none,
+>   outline-always-first: true,
+>   figure-caption-always-first: true,
+>   heading-always-first: true,
+> )
+> ```
+
+> [!TIP]
+> A new utility `print-gloss` has been added to allow printing the default's
+> formatting for a single entry. This is useful when you want to print
+> a single entry outside of `print-glossary`.
+> Fixes #166.
+
 ## 0.5.9
 
 > [!TIP]

@@ -19,7 +19,7 @@
 #let __glossary_entries = state("__glossary_entries", (:))
 
 // glossarium version
-#let glossarium_version = "0.5.9"
+#let glossarium_version = "0.5.10"
 
 // error prefix
 #let __glossarium_error_prefix = (
@@ -68,15 +68,21 @@
   CUSTOM,
 )
 #let __glossarium_shorthands_suffixes = (
-  ":pl",
-  ":" + SHORT,
-  ":" + LONG,
-  ":" + DESCRIPTION,
-  ":" + LONG_PLURAL,
-  ":" + CUSTOM,
+  plural: ":pl",
+  short: ":" + SHORT,
+  long: ":" + LONG,
+  description: ":" + DESCRIPTION,
+  longplural: ":" + LONG_PLURAL,
+  custom: ":" + CUSTOM,
 )
 // ! Modify the user print-glossary if default changes
-#let default-shorthands = ("plural", "capitalize", "capitalize-plural", "short", "long")
+#let default-shorthands = (
+  "plural",
+  "capitalize",
+  "capitalize-plural",
+  "short",
+  "long",
+)
 
 // Errors types
 #let __key_not_found = "key_not_found"
@@ -120,21 +126,31 @@
   } else if kind == __key_already_exists {
     msg = "key '" + key + "' already exists in the glossary"
   } else if kind == __key_capitalization_is_ambiguous {
-    msg = "key '" + key + "' already exists in the glossary with different capitalization"
+    msg = (
+      "key '"
+        + key
+        + "' already exists in the glossary with different capitalization"
+    )
   } else if kind == __attribute_is_empty {
     let attr = kwargs.at("attr")
     msg = "requested attribute " + attr + " is empty for key '" + key + "'"
   } else if kind == __glossary_is_empty {
     msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
   } else if kind == __key_not_registered {
-    msg = "key '" + key + "' is not registered in the glossary. Use `register-glossary(entry-list)`."
+    msg = (
+      "key '"
+        + key
+        + "' is not registered in the glossary. Use `register-glossary(entry-list)`."
+    )
   } else if kind == __entry_has_neither_short_nor_long {
     msg = "entry '" + key + "' has neither short nor long form"
   } else if kind == __make_glossary_not_called {
     msg = "make-glossary not called. Add `#show: make-glossary` at the beginning of the document."
   } else if kind == __capitalize_called_with_content_type {
     msg = (
-      "Capitalization was requested for " + key + ", but short or long is of type content. Use a string instead."
+      "Capitalization was requested for "
+        + key
+        + ", but short or long is of type content. Use a string instead."
     )
   } else if kind == __entry_has_unknown_keys {
     let keys = kwargs.at("keys")
@@ -142,12 +158,18 @@
   } else if kind == __entry_list_is_not_array {
     msg = "entry-list is not an array."
   } else if kind == __longplural_but_not_long {
-    msg = "'" + key + "' has a longplural attribute but no long attribute. Longplural will not be shown."
+    msg = (
+      "'"
+        + key
+        + "' has a longplural attribute but no long attribute. Longplural will not be shown."
+    )
   } else if kind == __style_is_not_a_function {
     msg = "style-entries: style is not a function. Use a function to style the entries."
   } else if kind == __style_unsupported_attributes {
     let attr = kwargs.at("attr")
-    msg = "style-entries: attribute '" + attr + "' is not supported for styling."
+    msg = (
+      "style-entries: attribute '" + attr + "' is not supported for styling."
+    )
     if attr == GROUP {
       msg += " Use `user-print-group-heading` in `print-glossary` to style groups."
     }
@@ -160,7 +182,10 @@
     msg = "groups must be an array of strings, e.g., (\"\",)"
   } else if kind == __shorthand_is_not_supported {
     msg = (
-      "shorthand '" + kwargs.at("shorthand") + "' is not supported. Use one of " + __glossarium_shorthands.join(", ")
+      "shorthand '"
+        + kwargs.at("shorthand")
+        + "' is not supported. Use one of "
+        + __glossarium_shorthands.join(", ")
     )
   } else if kind == __unknown_first_style {
     let first-style = kwargs.at("first-style")
@@ -361,8 +386,17 @@
 //
 // # Returns
 // The link and the entry label
-#let __link_and_label(key, text, prefix: none, suffix: none, href: true, update: true) = {
-  return [#if update { __update_count(key) }#prefix#if href { link(label(key), text) } else { text }#suffix#label(
+#let __link_and_label(
+  key,
+  text,
+  prefix: none,
+  suffix: none,
+  href: true,
+  update: true,
+) = {
+  return [#if update { __update_count(key) }#prefix#if href {
+      link(label(key), text)
+    } else { text }#suffix#label(
       __glossary_label_prefix + key,
     )]
 }
@@ -447,7 +481,13 @@
 //
 // # Returns
 // The key of the term
-#let gls-key(key, link: false, update: false, ctx: true) = get-attribute(key, KEY, link: link, update: update, ctx: ctx)
+#let gls-key(key, link: false, update: false, ctx: true) = get-attribute(
+  key,
+  KEY,
+  link: link,
+  update: update,
+  ctx: ctx,
+)
 
 // gls-short(key, link: false) -> contextual content
 // Get the short form of the term
@@ -560,7 +600,12 @@
 //
 // # Returns
 // The description of the term
-#let gls-description(key, link: false, update: false, ctx: true) = get-attribute(
+#let gls-description(
+  key,
+  link: false,
+  update: false,
+  ctx: true,
+) = get-attribute(
   key,
   DESCRIPTION,
   link: link,
@@ -629,7 +674,9 @@
 )
 
 // Check capitalization of user input (@ref, or @Ref) against real key
-#let is-upper(key) = key.at(0) != __get_key(__get_entry_with_key(here(), key)).at(0)
+#let is-upper(key) = (
+  key.at(0) != __get_key(__get_entry_with_key(here(), key)).at(0)
+)
 
 #let _style-entries(attr, style) = {
   if type(style) != function {
@@ -660,7 +707,7 @@
 #let _gls(
   key,
   suffix: none,
-  long: none,
+  first: none,
   display: none,
   styles: none,
   link: true,
@@ -726,15 +773,15 @@
 
   // Priority order:
   //  1. `gls(key, display: "text")` will return `text`
-  //  2. `gls(key, long: false)` will return `short+suffix`
+  //  2. `gls(key, first: false)` will return `short+suffix`
   //  3. The first ref will return `long (short+suffix)` if has-long
-  //  4. `gls(key, long: true)` will return `long (short+suffix)` or `long` if has-long
+  //  4. `gls(key, first: true)` will return `long (short+suffix)` or `long` if has-long
   //  5. `gls(key)` will return `short+suffix`
   let text = if display != none {
     // 1. display
     [#display]
-  } else if long == false {
-    // 2. Always use short+suffix if long: false, even on first appearance
+  } else if first == false {
+    // 2. Always use short+suffix if first: false, even on first appearance
     [#eshort]
   } else if is-first and has-long and first-style != none {
     if first-style == "long-short" {
@@ -744,10 +791,14 @@
     } else if first-style == "footnote" {
       [#eshort#footnote[#elong]]
     } else {
-      panic(__error_message(key, __unknown_first_style, first-style: first-style))
+      panic(__error_message(
+        key,
+        __unknown_first_style,
+        first-style: first-style,
+      ))
     }
-  } else if (is-first or long == true) and has-long {
-    // 3 & 4. long (short+suffix) (first or long requested, and has long form)
+  } else if (is-first or first == true) and has-long {
+    // 3 & 4. long (short+suffix) (is first or first requested, and has long form)
     if has-short {
       [#elong (#eshort)]
     } else {
@@ -757,9 +808,9 @@
     // 5. fallback to short+suffix
     [#eshort]
   }
-  let art = if long == false {
+  let art = if first == false {
     artshort
-  } else if (is-first or long == true) and has-long {
+  } else if (is-first or first == true) and has-long {
     artlong
   } else {
     artshort
@@ -770,22 +821,22 @@
   }
   return __link_and_label(entry.at(KEY), text, href: link, update: update)
 }
-// gls(key, suffix: none, long: none, display: none) -> contextual content
+// gls(key, suffix: none, first: none, display: none) -> contextual content
 // Reference to term
 //
 // # Arguments
 //  key (str): the key of the term
 //  suffix (str): the suffix to be added to the short form
-//  long (bool): enable/disable the long form
+//  first (bool): enable/disable the first form
 //  display (str): override text to be displayed
-//  capitalize (bool): Capitalize first letter of long form
+//  capitalize (bool): Capitalize first letter of first form
 //
 // # Returns
 // The link and the entry label
 #let gls(
   key,
   suffix: none,
-  long: none,
+  first: none,
   display: none,
   styles: none,
   link: true,
@@ -799,7 +850,7 @@
 ) = context _gls(
   key,
   suffix: suffix,
-  long: long,
+  first: first,
   display: display,
   styles: styles,
   link: link,
@@ -812,12 +863,12 @@
   special: special,
 )
 
-// gls(key, suffix: none, long: none, display: none) -> contextual content
+// gls(key, suffix: none, first: none, display: none) -> contextual content
 // Reference to term, capitalized
 #let Gls(
   key,
   suffix: none,
-  long: none,
+  first: none,
   display: none,
   styles: none,
   link: true,
@@ -827,7 +878,7 @@
 ) = gls(
   key,
   suffix: suffix,
-  long: long,
+  first: first,
   display: display,
   styles: styles,
   link: link,
@@ -837,20 +888,20 @@
   user-plural: user-plural,
 )
 
-// agls(key, suffix: none, long: none) -> contextual content
+// agls(key, suffix: none, first: none) -> contextual content
 // Reference to term with article
 //
 // # Arguments
 //  key (str): the key of the term
 //  suffix (str|content): the suffix to be added to the short form
-//  long (bool): enable/disable the long form
+//  first (bool): enable/disable the first form
 //
 // # Returns
 // The link and the entry label
 #let agls(
   key,
   suffix: none,
-  long: none,
+  first: none,
   display: none,
   styles: none,
   link: true,
@@ -861,7 +912,7 @@
 ) = gls(
   key,
   suffix: suffix,
-  long: long,
+  first: first,
   display: display,
   styles: styles,
   link: link,
@@ -874,7 +925,7 @@
 #let Agls(
   key,
   suffix: none,
-  long: none,
+  first: none,
   display: none,
   styles: none,
   link: true,
@@ -884,7 +935,7 @@
 ) = gls(
   key,
   suffix: suffix,
-  long: long,
+  first: first,
   display: display,
   styles: styles,
   link: link,
@@ -895,20 +946,20 @@
   user-plural: user-plural,
 )
 
-// glspl(key, long: false) -> content
+// glspl(key, first: false) -> content
 // Reference to term with plural form
 //
 // # Arguments
 //  key (str): the key of the term
-//  long (bool): enable/disable the long form
-//  capitalize (bool): Capitalize first letter of long form
+//  first (bool): enable/disable the first form
+//  capitalize (bool): Capitalize first letter of first form
 //
 // # Returns
 // The link and the entry label
 #let glspl(
   key,
   suffix: none,
-  long: none,
+  first: none,
   display: none,
   styles: none,
   link: true,
@@ -919,7 +970,7 @@
   special: none,
 ) = gls(
   key,
-  long: long,
+  first: first,
   suffix: suffix,
   display: display,
   styles: styles,
@@ -932,12 +983,12 @@
   special: special,
 )
 
-// glspl(key, long: none) -> content
+// glspl(key, first: none) -> content
 // Reference to term with plural form, capitalized
 #let Glspl(
   key,
   suffix: none,
-  long: none,
+  first: none,
   display: none,
   styles: none,
   link: true,
@@ -946,7 +997,7 @@
   user-plural: default-plural,
 ) = gls(
   key,
-  long: long,
+  first: first,
   suffix: suffix,
   display: display,
   styles: styles,
@@ -964,32 +1015,34 @@
 #let refrule(
   r,
   update: true,
-  long: none,
+  first: none,
   link: true,
   user-capitalize: default-capitalize,
   user-plural: default-plural,
 ) = {
   if (
-    r.element != none and r.element.func() == figure and r.element.kind == __glossarium_entry
+    r.element != none
+      and r.element.func() == figure
+      and r.element.kind == __glossarium_entry
   ) {
     let position = r.element.location()
     // call to the general citing function
     let refkey = str(r.target)
     let key = refkey.split(":").at(0)
     let suffixes = __glossarium_shorthands_suffixes
-    if refkey.ends-with(suffixes.at(0)) {
+    if refkey.ends-with(suffixes.at(PLURAL)) {
       // :pl
       // Plural ref
       return glspl(
         key,
         update: update,
         link: link,
-        long: long,
+        first: first,
         capitalize: is-upper(key),
         user-capitalize: user-capitalize,
         user-plural: user-plural,
       )
-    } else if refkey.ends-with(suffixes.at(1)) {
+    } else if refkey.ends-with(suffixes.at(SHORT)) {
       // :short
       return gls-short(
         key,
@@ -997,7 +1050,7 @@
         update: update,
         link: link,
       )
-    } else if refkey.ends-with(suffixes.at(2)) {
+    } else if refkey.ends-with(suffixes.at(LONG)) {
       // :long
       return gls-long(
         key,
@@ -1005,7 +1058,7 @@
         update: update,
         link: link,
       )
-    } else if refkey.ends-with(suffixes.at(3)) {
+    } else if refkey.ends-with(suffixes.at(DESCRIPTION)) {
       // :description
       return gls-description(
         key,
@@ -1013,7 +1066,7 @@
         update: update,
         link: link,
       )
-    } else if refkey.ends-with(suffixes.at(4)) {
+    } else if refkey.ends-with(suffixes.at(LONG_PLURAL)) {
       // :longplural
       return gls-longplural(
         key,
@@ -1021,7 +1074,7 @@
         update: update,
         link: link,
       )
-    } else if refkey.ends-with(suffixes.at(5)) {
+    } else if refkey.ends-with(suffixes.at(CUSTOM)) {
       // :custom
       return gls-custom(
         key,
@@ -1035,7 +1088,7 @@
         key,
         update: update,
         link: link,
-        long: long,
+        first: first,
         capitalize: is-upper(key),
         user-capitalize: user-capitalize,
         user-plural: user-plural,
@@ -1060,7 +1113,10 @@
 #let make-glossary(
   body,
   link: true,
-  always-long: none,
+  always-first: none,
+  outline-always-first: true,
+  figure-caption-always-first: true,
+  heading-always-first: true,
   user-capitalize: default-capitalize,
   user-plural: default-plural,
 ) = {
@@ -1069,7 +1125,33 @@
   show __glossarium_entry_selector: it => {
     align(start, it.body)
   }
-  show ref: refrule.with(link: link, long: always-long, user-capitalize: user-capitalize, user-plural: user-plural)
+  show ref: refrule.with(
+    link: link,
+    first: always-first,
+    user-capitalize: user-capitalize,
+    user-plural: user-plural,
+  )
+  show outline: it => {
+    show ref: refrule.with(
+      update: false,
+      first: outline-always-first,
+    )
+    it
+  }
+  show figure.caption: it => {
+    show ref: refrule.with(
+      update: false,
+      first: figure-caption-always-first,
+    )
+    it
+  }
+  show heading: it => {
+    show ref: refrule.with(
+      update: false,
+      first: heading-always-first,
+    )
+    it
+  }
   body
 }
 
@@ -1087,11 +1169,17 @@
   for entry in entry-list {
     let unknown_keys = entry.keys().filter(x => (x not in ATTRIBUTES))
     if unknown_keys.len() > 0 {
-      panic(__error_message(entry.at(KEY), __entry_has_unknown_keys, keys: unknown_keys.join(",")))
+      panic(__error_message(
+        entry.at(KEY),
+        __entry_has_unknown_keys,
+        keys: unknown_keys.join(","),
+      ))
     }
     let newentry = (
       key: entry.at(KEY),
-      short: entry.at(SHORT, default: if use-key-as-short { entry.at(KEY) } else { none }),
+      short: entry.at(SHORT, default: if use-key-as-short {
+        entry.at(KEY)
+      } else { none }),
       artshort: entry.at(ART_SHORT, default: "a"),
       plural: entry.at(PLURAL, default: none),
       long: entry.at(LONG, default: none),
@@ -1104,8 +1192,15 @@
       custom: entry.at(CUSTOM, default: none),
       special: entry.at(SPECIAL, default: none),
     )
-    if not use-key-as-short and not has-short(newentry, none) and not has-long(newentry, none) {
-      panic(__error_message(newentry.at(KEY), __entry_has_neither_short_nor_long))
+    if (
+      not use-key-as-short
+        and not has-short(newentry, none)
+        and not has-long(newentry, none)
+    ) {
+      panic(__error_message(
+        newentry.at(KEY),
+        __entry_has_neither_short_nor_long,
+      ))
     }
     if has-longplural(newentry, none) and not has-long(newentry, none) {
       panic(__error_message(newentry.at(KEY), __longplural_but_not_long))
@@ -1125,7 +1220,9 @@
 // The back references as an array of links
 #let get-entry-back-references(entry, deduplicate: false) = {
   let term-references = __query_labels_with_key(entry.at(KEY))
-  let back-references = term-references.map(x => x.location()).sorted(key: x => x.page())
+  let back-references = term-references
+    .map(x => x.location())
+    .sorted(key: x => x.page())
   if deduplicate {
     back-references = back-references
       .fold((values: (), pages: ()), ((values, pages), x) => {
@@ -1247,7 +1344,10 @@
     // Separate context window to separate BR's query
     context if disable-back-references != true {
       " "
-      user-print-back-references(entry, deduplicate: deduplicate-back-references)
+      user-print-back-references(
+        entry,
+        deduplicate: deduplicate-back-references,
+      )
     }
   }
 }
@@ -1255,9 +1355,18 @@
 // Helper function to create a labeled glossarium figure
 #let __glossarium_figure(label-key, body: []) = {
   if body == [] {
-    return [#figure(kind: __glossarium_entry, supplement: "", numbering: none)[]#label(label-key)]
+    return [#figure(
+        kind: __glossarium_entry,
+        supplement: "",
+        numbering: none,
+      )[]#label(label-key)]
   }
-  return [#figure(kind: __glossarium_entry, supplement: "", numbering: none, body)#label(label-key)]
+  return [#figure(
+      kind: __glossarium_entry,
+      supplement: "",
+      numbering: none,
+      body,
+    )#label(label-key)]
 }
 
 // Define label generators as functions
@@ -1351,7 +1460,11 @@
     if shorthand in __glossarium_shorthands {
       shorthands-functions.push(__glossarium_shorthand_functions.at(shorthand))
     } else {
-      panic(__error_message(key, __shorthand_is_not_supported, shorthand: shorthand))
+      panic(__error_message(
+        key,
+        __shorthand_is_not_supported,
+        shorthand: shorthand,
+      ))
     }
   }
 
@@ -1446,7 +1559,8 @@
     let group-ref-counts = group-entries.map(x => count-refs(x.at(KEY)))
     let print-group = (
       // ? group-heading-pagebreak Layout divergence if location is conditional on print-group
-      group != "" and (show-all == true or group-ref-counts.any(x => x >= minimum-refs))
+      group != ""
+        and (show-all == true or group-ref-counts.any(x => x >= minimum-refs))
     )
     // Only print group name if any entries are referenced
     if print-group {
@@ -1526,9 +1640,34 @@
 // # Arguments
 //  entries (array<dictionary>): the list of entries
 //  use-key-as-short (bool): flag to use the key as the short form
-#let register-glossary(entry-list, use-key-as-short: true) = context _register-glossary(
+#let register-glossary(
+  entry-list,
+  use-key-as-short: true,
+) = context _register-glossary(
   entry-list,
   use-key-as-short: use-key-as-short,
+)
+
+#let print-gloss(
+  key,
+  show-all: false,
+  disable-back-references: false,
+  deduplicate-back-references: false,
+  minimum-refs: 0, // Default to 0 to always print
+  description-separator: ": ",
+  user-print-title: default-print-title,
+  user-print-description: default-print-description,
+  user-print-back-references: default-print-back-references,
+) = context default-print-gloss(
+  __get_entry_with_key(here(), key),
+  show-all: show-all,
+  disable-back-references: disable-back-references,
+  deduplicate-back-references: deduplicate-back-references,
+  minimum-refs: minimum-refs,
+  description-separator: description-separator,
+  user-print-title: user-print-title,
+  user-print-description: user-print-description,
+  user-print-back-references: user-print-back-references,
 )
 
 #let _print-glossary(

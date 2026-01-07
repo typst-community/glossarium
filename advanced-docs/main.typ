@@ -73,11 +73,16 @@
   heading([`glossarium@`#glossarium_version], level: 1, numbering: none),
 )\
 
-#text(fill: red.darken(10%), size: 11pt, font: "Iosevka Extrabold Extended")[
+#text(fill: red.darken(10%), size: 11pt)[
   This document outline how to change the default behaviour of `glossarium` by
-  implementing "user functions". It is recommended to keep the default implementation and not to change the default behaviour of the package.
+  implementing "user functions". It is recommended to keep the default
+  implementation and not to change the default behaviour of the package.
 
-  If you have a need that require to change the defaults, you are expected to be knowledgeable in writing complex typst code and to try to debug your issues first on you own. Be aware that helping regular users and fixing bugs will take priority over helping you debug your own implementation of `glossarium` internal functions.]
+  If you have a need that require to change the defaults, you are expected to be
+  knowledgeable in writing complex typst code and to try to debug your issues
+  first on you own. Be aware that helping regular users and fixing bugs will
+  take priority over helping you debug your own implementation of `glossarium`
+  internal functions.]
 
 #outline(indent: 1em)
 
@@ -86,18 +91,20 @@
 This section shows how to change the default behaviour of `glossarium` by
 implementing user functions. It is recommended to keep to the user available
 interface and not to change the default behaviour of the package. If you have
-any suggestions or need help, please open an issue on the
-#link("https://github.com/typst-community/glossarium")[GitHub repository].
+any suggestions or need help, please open an issue on the #link(
+  "https://github.com/typst-community/glossarium",
+)[GitHub repository].
 
 There are effectively two requirements for a user to use `glossarium`:
-+ Write a #typc("show: make-glossary") rule to transform all
-  #typc("@key") and #typc("@key:pl") into #typc("#gls(key)") or
++ Write a #typc("show: make-glossary") rule to transform all #typc("@key") and
+  #typc("@key:pl") into #typc("#gls(key)") or
   #typc("#glspl(key)")
 + Call #typc("print-glossary(entry-list)") somewhere in order to write all
   labels
 
-The `glossarium` package provides a default behaviour to
-#typc("print-glossary"). In ascending order, all implemented behaviours are:
+The `glossarium` package provides a default behaviour to #typc(
+  "print-glossary",
+). In ascending order, all implemented behaviours are:
 
 + #typc("default-print-back-references(entry) -> contextual content")
 + #typc("default-print-description(entry) -> content")
@@ -110,7 +117,9 @@ The `glossarium` package provides a default behaviour to
   *title*, a *description*, and a list of *back references*.
 
 / reference: A *reference* is the construct `glossarium` uses to manage the
-  glossary. Internally, it is constructed using #typc("figure()") and #typc("label()").
+  glossary. Internally, it is constructed using #typc("figure()") and #typc(
+    "label()",
+  ).
 
 / glossary: A *glossary* is the list of all glosses. It is composed of a list of
   *entries* and a list of *groups*. The default *group* is #typc("\"\"").
@@ -129,9 +138,11 @@ e.g.,
 ]
 
 Keep in mind that some options are available from the start:
-- `show-all (bool)` : show all entries, even if they are not referenced in the document
+- `show-all (bool)` : show all entries, even if they are not referenced in the
+  document
 - `disable-back-references (bool)`: do not show back references
-- `user-group-break (function: () => content)`: a function to call between groups
+- `user-group-break (function: () => content)`: a function to call between
+  groups
 
 == Default functions
 
@@ -150,9 +161,9 @@ The functions are listed in order of reverse call hierarchy:
   user, it is not recommended to modify this function.
 ])
 
-The full signatures for #typc("default-print-gloss()"),
-#typc("default-print-reference()"), and
-#typc("default-print-glossary()") in the next sections.
+The full signatures for #typc("default-print-gloss()"), #typc(
+  "default-print-reference()",
+), and #typc("default-print-glossary()") in the next sections.
 
 === Arguments
 
@@ -188,9 +199,10 @@ The default implementation is:
   ```
 ]
 
-Without going into details, assume that
-#typc("get-entry-back-references(entry)") returns a list of back references. The
-function simply joins them with a comma.
+Without going into details, assume that #typc(
+  "get-entry-back-references(entry)",
+) returns a list of back references. The function simply joins them with a
+comma.
 
 For example, for @WHO, the back references are:
 #typc-block[#context get-entry-back-references(entries.first()).join(", ")]
@@ -232,8 +244,12 @@ The default implementation is:
 ]
 
 The function is fairly simple to understand:
-- If the entry has a long description, it returns #typc("text.with(weight: 600)[emph(entry.short) -- entry.long]")
-- If the entry does not have a long description, it returns #typc("text.with(weight: 600)[emph(entry.short)]")
+- If the entry has a long description, it returns #typc(
+    "text.with(weight: 600)[emph(entry.short) -- entry.long]",
+  )
+- If the entry does not have a long description, it returns #typc(
+    "text.with(weight: 600)[emph(entry.short)]",
+  )
 
 === #typc("default-print-gloss(entry)") <ssec:print-gloss>
 
@@ -278,40 +294,43 @@ The default implementation is
 - #typc("default-print-gloss") is responsible for printing separators between
   the title, description, and back references.
 - It also checks if the entry should be printed or not. If the entry is not
-  referenced in the document, it will not be printed unless #typc("show-all:
-  true").
+  referenced in the document, it will not be printed unless #typc(
+    "show-all:
+  true",
+  ).
 - If back references are disabled (#typc("disable-back-references: true")), they
   will not be printed.
 
 The default behaviour will be displayed as such:
 #typc-block[
-  #default-print-gloss(entries.first())
+  #context default-print-gloss(entries.first())
 ]
 
 Without back references:
 #typc-block[
-  #default-print-gloss(entries.first(), disable-back-references: true)
+  #context default-print-gloss(entries.first(), disable-back-references: true)
 ]
 
 For a non-referenced entry:
 #typc-block[
-  show-all: false => #default-print-gloss(entries.at(1))
+  show-all: false => #context default-print-gloss(entries.at(1))
 
-  show-all: true => #default-print-gloss(entries.at(2), show-all: true)
+  show-all: true => #context default-print-gloss(entries.at(2), show-all: true)
 ]
 
-One important utility function is #typc("count-refs"). For @WHO,
-#typc("#context count-refs(entry)") is
+One important utility function is #typc("count-refs"). For @WHO, #typc(
+  "#context count-refs(entry)",
+) is
 #typc-block[
-  #context count-refs(entries.first())
+  #context count-refs(entries.first().key)
 ]
 
 === #typc("default-print-reference(entry)") <ssec:print-reference>
 
 #text.with(fill: red.darken(10%))([
-  #emoji.warning There are few reasons to modify this function. It is recommended
-  to keep the default behaviour, but an override option is provided for advanced
-  users.
+  #emoji.warning There are few reasons to modify this function. It is
+  recommended to keep the default behaviour, but an override option is provided
+  for advanced users.
 ])
 
 The default implementation is:
@@ -361,9 +380,9 @@ for the gloss.
   to uniquely identify glossary figures
 - the figure's caption is the result of #typc("user-print-gloss()") (see
   previous section @ssec:print-gloss)
-- By default, an additional empty figure with label #typc("key:pl")
-  is created. This is useful for referencing plural forms of the glossary entry,
-  e.g., #typc("@WHO:pl")=@WHO:pl. It can be safely removed.
+- By default, an additional empty figure with label #typc("key:pl") is created.
+  This is useful for referencing plural forms of the glossary entry, e.g.,
+  #typc("@WHO:pl")=@WHO:pl. It can be safely removed.
 
 #text.with(fill: red.darken(10%))([
   #emoji.warning Notice that #typc("entry.key") is used as the label. This usage
@@ -442,8 +461,10 @@ with error
 
 The function is responsible for printing the glossary. It iterates over all
 groups and prints the entries. It also checks if the group should be printed or
-not. If the group is empty, it will not be printed unless #typc("show-all:
-true").
+not. If the group is empty, it will not be printed unless #typc(
+  "show-all:
+true",
+).
 
 See the default style in @sssec:default-style.
 
