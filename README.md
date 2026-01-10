@@ -96,6 +96,7 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/).
 | `plural`      | string or content | optional          | The pluralized short form of the term.                                                                                  |
 | `longplural`  | string or content | optional          | The pluralized long form of the term.                                                                                   |
 | `group`       | string            | optional          | Case-sensitive group the term belongs to. The terms are displayed by groups in the glossary.                            |
+| `styles`      | array of strings  | optional          | Array of style names controlling how the term is displayed (e.g., `("short-long", "short")`). Defaults to global setting.|
 | `custom`      | any               | optional          | Custom content for usage in "user functions", e.g. `user-print-glossary` (see [advanced docs](./advanced-docs/main.pdf))|
 
 
@@ -161,8 +162,52 @@ A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/).
     // The custom key will be ignored by the default print-glossary function
     custom: (unit: $op("m s")^(-1)$),
   ),
+  // Add STYLES to control how the term is displayed on first reference
+  (
+    key: "nasa",
+    short: "NASA",
+    long: "National Aeronautics and Space Administration",
+    // First style is used on first reference, subsequent styles for later references
+    // Available styles: "long", "short", "long-short", "short-long", "footnote"
+    styles: ("short-long", "short"),  // First ref: "NASA (National Aeronautics and Space Administration)", later: "NASA"
+  ),
 )
 ```
+
+### Managing default styles
+
+By default, entries use the `("long-short", "short")` style, meaning the first reference shows "Long Form (Short Form)" and subsequent references show "Short Form". You can customize this behavior globally or per-entry.
+
+```typ
+// Import the style management functions
+#import "@preview/glossarium:0.5.9": set-default-styles, get-default-styles, set-entry-styles, entry-styles
+
+// Change default styles for all new entries registered after this point
+#context set-default-styles((entry-styles.short-long, entry-styles.short))
+
+// Register entries - they will use the new default
+#register-glossary(my-entries)
+
+// Update styles for specific entries after registration
+#context set-entry-styles(
+  ((key: "nasa"), (key: "eu")),  // List of entries to update
+  (entry-styles.footnote, entry-styles.short)  // New styles for these entries
+)
+
+// Get current default styles
+#context {
+  let current = get-default-styles()
+  // Returns: ("short-long", "short")
+}
+```
+
+Available styles in `entry-styles`:
+- `entry-styles.long`: Always show long form
+- `entry-styles.short`: Always show short form  
+- `entry-styles.long-short`: Show "Long Form (Short Form)"
+- `entry-styles.short-long`: Show "Short Form (Long Form)"
+- `entry-styles.footnote`: Show "Short Form" with long form in a footnote
+
 
 ## Printing the glossary
 
