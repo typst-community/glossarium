@@ -45,6 +45,33 @@
 > - `"long-plural"` enables the shorthand `@key:long-plural`.
 > - `"custom"` enables the shorthand `@key:custom`.
 
+> [!TIP]
+> Glossarium now supports dynamic style management! You can change how terms
+> are displayed on first and subsequent references at runtime.
+> 
+> **New functions:**
+> - `set-default-styles(styles)`: Change the default style for new entries
+> - `get-default-styles()`: Get the current default styles
+> - `set-entry-styles(entry-list, styles)`: Update styles for specific entries
+>
+> **Available styles:**
+> - `entry-styles.long-short`: "Long Form (Short Form)"
+> - `entry-styles.short-long`: "Short Form (Long Form)"
+> - `entry-styles.footnote`: "Short Form" with long form in footnote
+> - `entry-styles.long`: Always show long form
+> - `entry-styles.short`: Always show short form
+>
+> **Example:**
+> ```typ
+> // Change default style for all new entries
+> #context set-default-styles((entry-styles.short-long, entry-styles.short))
+> 
+> // Update specific entries after registration
+> #context set-entry-styles(
+>   ((key: "nasa"),),
+>   (entry-styles.footnote, entry-styles.short)
+> )
+> ```
 
 ## 0.5.8
 
