@@ -34,4 +34,7 @@
   Glspl,
   style-entries,
   entry-styles,
+  set-default-styles,
+  get-default-styles,
+  set-entry-styles,
 )

@@ -87,6 +87,9 @@
   entry-styles.short,
 )
 
+// global state containing the default styles for entries
+#let __default_styles_state = state("__default_styles_state", default-styles)
+
 // Errors types
 #let __key_not_found = "key_not_found"
 #let __key_already_exists = "key_already_exists"
@@ -232,6 +235,76 @@
   }
   let loc = here()
   __glossary_reset_locations.update(x => x + (loc,))
+}
+
+// set-default-styles(styles) -> none
+// Set the default styles for entries that don't have explicit styles
+//
+// # Arguments
+//  styles (array<str>): the list of styles to be used as default
+//
+// # Usage
+// ```typ
+// #context set-default-styles((entry-styles.short-long, entry-styles.short))
+// ```
+#let set-default-styles(styles) = {
+  // Validate styles
+  for style in styles {
+    if style not in entry-styles.values() {
+      panic(__error_message("", __unknown_style, style: style))
+    }
+  }
+  __default_styles_state.update(styles)
+}
+
+// get-default-styles() -> array<str>
+// Get the current default styles
+//
+// # Returns
+// The current default styles
+//
+// # Usage
+// ```typ
+// #context get-default-styles()
+// ```
+#let get-default-styles() = {
+  return __default_styles_state.get()
+}
+
+// set-entry-styles(entry-list, styles) -> none
+// Set styles for specific entries in the glossary
+//
+// # Arguments
+//  entry-list (array<dictionary>): the list of entries with keys to update
+//  styles (array<str>): the styles to apply to these entries
+//
+// # Usage
+// ```typ
+// #context set-entry-styles(
+//   ((key: "foo"), (key: "bar")),
+//   (entry-styles.footnote, entry-styles.short)
+// )
+// ```
+#let set-entry-styles(entry-list, styles) = {
+  // Validate styles
+  for style in styles {
+    if style not in entry-styles.values() {
+      panic(__error_message("", __unknown_style, style: style))
+    }
+  }
+  
+  __glossary_entries.update(x => {
+    for entry in entry-list {
+      let key = entry.at(KEY)
+      if key not in x {
+        panic(__error_message(key, __key_not_registered))
+      }
+      let current = x.at(key)
+      current.insert(STYLES, styles)
+      x.insert(key, current)
+    }
+    return x
+  })
 }
 
 #let default-capitalize(text) = {
@@ -1098,7 +1171,7 @@
 //
 // # Returns
 // The normalized entry list
-#let __normalize_entry_list(entry-list, use-key-as-short: true) = {
+#let __normalize_entry_list(entry-list, use-key-as-short: true, current-default-styles: default-styles) = {
   let new-list = ()
   for entry in entry-list {
     let unknown_keys = entry.keys().filter(x => (x not in ATTRIBUTES))
@@ -1116,7 +1189,7 @@
       description: entry.at(DESCRIPTION, default: none),
       group: entry.at(GROUP, default: ""),
       sort: entry.at(SORT, default: entry.at(KEY)),
-      styles: entry.at(STYLES, default: default-styles),
+      styles: entry.at(STYLES, default: current-default-styles),
       custom: entry.at(CUSTOM, default: none),
     )
     if not use-key-as-short and not has-short(newentry) and not has-long(newentry) {
@@ -1529,6 +1602,7 @@
   let entries = __normalize_entry_list(
     entry-list,
     use-key-as-short: use-key-as-short,
+    current-default-styles: __default_styles_state.get(),
   )
 
   __check_keys(entries)
