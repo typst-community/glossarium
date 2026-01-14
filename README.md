@@ -85,7 +85,7 @@ After importing the package and before making any calls to `gls`, ` print-glossa
 
 ## Registering the glossary
 
-A term is a [dictionary](https://typst.app/docs/reference/types/dictionary/).
+A term is a [dictionary](https://typst.app/docs/reference/foundations/dictionary/).
 
 | Key           | Type              | Required/Optional | Description                                                                                                              |
 | :------------ | :---------------- | :---------------- | :----------------------------------------------------------------------------------------------------------------------- |
