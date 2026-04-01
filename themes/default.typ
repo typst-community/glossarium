@@ -1539,9 +1539,10 @@
   user-print-description: default-print-description,
   user-print-back-references: default-print-back-references,
 ) = {
+  let ref-counts = count-all-refs(entry-list: entries).to-dict()
   for group in groups.sorted(key: group-sortkey) {
     let group-entries = entries.filter(x => x.at(GROUP) == group)
-    let group-ref-counts = group-entries.map(x => count-refs(x.at(KEY)))
+    let group-ref-counts = group-entries.map(x => ref-counts.at(x.at(KEY), default: 0))
     let print-group = (
       // ? group-heading-pagebreak Layout divergence if location is conditional on print-group
       group != ""
@@ -1552,9 +1553,10 @@
       user-print-group-heading(group, level: group-heading-level)
     }
     for entry in group-entries.sorted(key: entry-sortkey) {
+      let entry-visible = show-all or ref-counts.at(entry.at(KEY), default: 0) >= minimum-refs
       user-print-reference(
         entry,
-        show-all: show-all,
+        show-all: entry-visible,
         disable-back-references: disable-back-references,
         deduplicate-back-references: deduplicate-back-references,
         minimum-refs: minimum-refs,
