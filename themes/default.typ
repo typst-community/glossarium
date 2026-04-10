@@ -241,6 +241,33 @@
   __glossary_reset_locations.update(x => x + (loc,))
 }
 
+/// Extracts raw text from Typst content by stripping away formatting.
+///
+/// This is useful when you need the "letters only" version of a title—for 
+/// example, to use a heading name inside a PDF bookmark where bold or 
+/// italics aren't allowed.
+///
+/// - object (any): The item to extract text from (can be a string, 
+///   formatted content like *Bold*, or a list of items).
+/// -> return: A plain string containing only the text found in the object.
+#let get-plain-text(object) = {
+  if object == none {
+    ""
+  }
+
+  if type(object) == str {
+    object
+  } else if object.has("text") {
+    object.text
+  } else if object.has("children") {
+    object.children.map(get-plain-text).join("")
+  } else if object.has("body") {
+    get-plain-text(object.body)
+  } else {
+    ""
+  }
+}
+
 #let default-capitalize(text) = {
   if text == none { return text }
   if type(text) == content {
@@ -1254,24 +1281,25 @@
 // The description of the entry
 #let default-print-description(entry) = entry.at(DESCRIPTION)
 
-// default-print-title(entry) -> content
-// Print the title of the entry
-//
-// # Arguments
-// entry (dictionary): the entry
-//
-// # Returns
-// The title of the entry
+/// Formats and displays the title of a glossary entry.
+///
+/// This function decides how the "short" (acronym) and "long" (full name) 
+/// versions of a term appear in your glossary list.
+///
+/// - entry (dictionary): A collection containing the 'short' and 'long' 
+///   definitions for a term.
+/// -> content: Returns the formatted text (e.g., "CPU -- Central Processing Unit").
 #let default-print-title(entry) = {
   let caption = []
   let txt = strong.with(delta: 200)
-
+  let short-val = plain-text(entry.at("short"))
+  let long-val = plain-text(entry.at("long"))
   if has-long(entry) and has-short(entry) {
-    caption += txt(emph(entry.at(SHORT)) + [ -- ] + entry.at(LONG))
+    caption += txt(emph(short-val) + [ -- ] + long-val)
   } else if has-long(entry) {
-    caption += txt(entry.at(LONG))
+    caption += txt(long-val)
   } else {
-    caption += txt(emph(entry.at(SHORT)))
+    caption += txt(emph(short-val))
   }
   return caption
 }
