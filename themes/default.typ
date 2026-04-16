@@ -257,6 +257,8 @@
 
   if type(object) == str {
     object
+  } else if it == [ ] {
+    " "
   } else if object.has("text") {
     object.text
   } else if object.has("children") {
