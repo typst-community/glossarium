@@ -1294,8 +1294,8 @@
 #let default-print-title(entry) = {
   let caption = []
   let txt = strong.with(delta: 200)
-  let short-val = plain-text(entry.at("short"))
-  let long-val = plain-text(entry.at("long"))
+  let short-val = get-plain-text(entry.at("short"))
+  let long-val = get-plain-text(entry.at("long"))
   if has-long(entry) and has-short(entry) {
     caption += txt(emph(short-val) + [ -- ] + long-val)
   } else if has-long(entry) {
