@@ -10,7 +10,43 @@
 __glossarium_figure,
 __glossarium_entry,
 __glossarium_entry_selector,
-__glossarium_error_prefix
+__glossarium_error_prefix,
+__glossary_entries,
+__glossary_label_prefix,
+default-shorthands,
+get-entry-back-references,
+KEY,
+SHORT,
+LONG,
+ART_SHORT,
+ART_LONG,
+PLURAL,
+LONG_PLURAL,
+DESCRIPTION,
+GROUP,
+SORT,
+STYLES,
+CUSTOM,
+ATTRIBUTES,
+count-refs,
+reset-counts,
+default-capitalize,
+has-short,
+has-long,
+has-artshort,
+has-artlong,
+has-plural,
+has-longplural,
+has-description,
+has-group,
+has-sort,
+has-styles,
+has-custom,
+__get_attribute,
+__glossarium_shorthands_suffixes,
+__uncapitalize,
+__glossary_counts,
+__update_count,
 )
 #import "list-theme.typ"
 #import "table-theme.typ"
@@ -20,61 +56,6 @@ __glossarium_error_prefix
     "table": dictionary(table-theme)
 )
 
-// Attributes
-#let KEY = "key"
-#let SHORT = "short"
-#let LONG = "long"
-#let ART_SHORT = "artshort"
-#let ART_LONG = "artlong"
-#let PLURAL = "plural"
-#let LONG_PLURAL = "longplural"
-#let DESCRIPTION = "description"
-#let GROUP = "group"
-#let SORT = "sort"
-#let STYLES = "styles"
-#let CUSTOM = "custom"
-#let ATTRIBUTES = (
-  KEY,
-  SHORT,
-  LONG,
-  ART_SHORT,
-  ART_LONG,
-  PLURAL,
-  LONG_PLURAL,
-  DESCRIPTION,
-  GROUP,
-  SORT,
-  STYLES,
-  CUSTOM,
-)
-
-// Shorthands @key:pl
-#let __glossarium_shorthands = (
-  "plural",
-  "capitalize",
-  "capitalize-plural",
-  SHORT,
-  LONG,
-  DESCRIPTION,
-  LONG_PLURAL,
-  CUSTOM,
-)
-#let __glossarium_shorthands_suffixes = (
-  plural: ":pl",
-  short: ":" + SHORT,
-  long: ":" + LONG,
-  description: ":" + DESCRIPTION,
-  longplural: ":" + LONG_PLURAL,
-  custom: ":" + CUSTOM,
-)
-// ! Modify the user print-glossary if default changes
-#let default-shorthands = (
-  "plural",
-  "capitalize",
-  "capitalize-plural",
-  "short",
-  "long",
-)
 
 // Errors types
 #let __key_not_found = "key_not_found"
@@ -191,114 +172,6 @@ __glossarium_error_prefix
 }
 
 
-// global state containing the entry counts
-#let __glossary_counts = state("__glossary_counts", (:))
-#let __glossary_reset_locations = state("__glossary_reset_locations", ())
-#let __glossary_final_counts() = {
-  __glossary_reset_locations
-    .final()
-    .fold(__glossary_counts.final(), (acc, loc) => {
-      for (k, v) in __glossary_counts.at(loc).pairs() {
-        acc.insert(k, acc.at(k, default: 0) + v)
-      }
-      return acc
-    })
-}
-#let __update_count(key) = {
-  __glossary_counts.update(x => {
-    x.insert(key, x.at(key, default: 0) + 1)
-    return x
-  })
-}
-#let reset-counts(..keys) = {
-  keys = keys.pos()
-  if type(keys) != array {
-    panic(__error_message(none, __keys_must_be_an_array))
-  }
-  for key in keys {
-    if key not in __glossary_entries.get() {
-      panic(__error_message(key, __key_not_registered))
-    }
-  }
-  if keys == () {
-    __glossary_counts.update((:))
-  } else {
-    // partial reset
-    __glossary_counts.update(x => {
-      for key in keys {
-        let _ = x.remove(key, default: none)
-      }
-      return x
-    })
-  }
-  let loc = here()
-  __glossary_reset_locations.update(x => x + (loc,))
-}
-
-#let default-capitalize(text) = {
-  if text == none { return text }
-  if type(text) == content {
-    panic(__error_message(text, __capitalize_called_with_content_type))
-  }
-  return upper(text.first()) + text.slice(1)
-}
-#let __uncapitalize(text) = {
-  return lower(text.first()) + text.slice(1)
-}
-
-// __query_labels_with_key(loc, key) -> array<label>
-// Query the labels with the key
-//
-// # Arguments
-//  loc (location): the location of the reference
-//  key (str): the key of the term
-//
-// # Returns
-// The labels with the key
-#let __query_labels_with_key(key) = {
-  return query(selector(label(__glossary_label_prefix + key)))
-}
-
-// __get_entry_with_key(loc, key) -> dictionary
-// Get an entry from the glossary
-//
-// # Arguments
-//  loc (location): the location of the reference
-//  key (str): the key of the term
-//
-// # Returns
-// The entry of the term
-//
-// # Panics
-// If the key is not found, it will raise a `key_not_found` error
-#let __get_entry_with_key(loc, key) = {
-  let entries = __glossary_entries.at(loc)
-  let lowerkey = __uncapitalize(key)
-  if key in entries {
-    return entries.at(key)
-  } else if lowerkey in entries {
-    return entries.at(lowerkey)
-  } else {
-    panic(__error_message(key, __key_not_found))
-  }
-}
-
-// count-refs(key) -> int
-// Count the number of references to the entry in the document
-//
-// # Arguments
-// entry (dictionary): the entry
-//
-// # Returns
-// The number of references to the entry
-//
-// # Usage
-// ```typ
-// #context count-refs("potato")
-// ```
-#let count-refs(key) = {
-  return __glossary_final_counts().at(key, default: 0)
-}
 
 // count-all-refs(entry-list: none, groups: none) -> array<(str, int)>
 // Return the number of references for each entry in the document
@@ -393,7 +266,6 @@ __glossarium_error_prefix
     )]
 }
 
-#let __get_attribute(entry, attrname) = entry.at(attrname)
 #let __get_key(entry) = __get_attribute(entry, KEY)
 #let __get_short(entry) = __get_attribute(entry, SHORT)
 #let __get_long(entry) = __get_attribute(entry, LONG)
@@ -407,21 +279,29 @@ __glossarium_error_prefix
 #let __get_styles(entry) = __get_attribute(entry, STYLES)
 #let __get_custom(entry) = __get_attribute(entry, CUSTOM)
 
-#let __has_attribute(entry, attrname) = {
-  let attr = __get_attribute(entry, attrname)
-  return attr != none and attr != "" and attr != []
+// __get_entry_with_key(loc, key) -> dictionary
+// Get an entry from the glossary
+//
+// # Arguments
+//  loc (location): the location of the reference
+//  key (str): the key of the term
+//
+// # Returns
+// The entry of the term
+//
+// # Panics
+// If the key is not found, it will raise a `key_not_found` error
+#let __get_entry_with_key(loc, key) = {
+  let entries = __glossary_entries.at(loc)
+  let lowerkey = __uncapitalize(key)
+  if key in entries {
+    return entries.at(key)
+  } else if lowerkey in entries {
+    return entries.at(lowerkey)
+  } else {
+    panic(__error_message(key, __key_not_found))
+  }
 }
-#let has-short(entry) = __has_attribute(entry, SHORT)
-#let has-long(entry) = __has_attribute(entry, LONG)
-#let has-artshort(entry) = __has_attribute(entry, ART_SHORT)
-#let has-artlong(entry) = __has_attribute(entry, ART_LONG)
-#let has-plural(entry) = __has_attribute(entry, PLURAL)
-#let has-longplural(entry) = __has_attribute(entry, LONG_PLURAL)
-#let has-description(entry) = __has_attribute(entry, DESCRIPTION)
-#let has-group(entry) = __has_attribute(entry, GROUP)
-#let has-sort(entry) = __has_attribute(entry, SORT)
-#let has-styles(entry) = __has_attribute(entry, STYLES)
-#let has-custom(entry) = __has_attribute(entry, CUSTOM)
 
 #let _get-attribute(key, attrname, link: false, update: false) = {
   let entry = __get_entry_with_key(here(), key)
@@ -1191,35 +1071,6 @@ __glossarium_error_prefix
 
 
 
-// Define label generators as functions
-#let __glossarium_shorthand_functions = (
-  // Plural reference shorthand (@key:pl)
-  plural: (entry, key) => (key + ":pl", []),
-  // Capitalized form (@Key) - only if not already capitalized
-  capitalize: (entry, key) => if upper(key.at(0)) != key.at(0) {
-    (default-capitalize(key), [])
-  },
-  // Capitalized plural form (@Key:pl) - only if not already capitalized
-  capitalize-plural: (entry, key) => if upper(key.at(0)) != key.at(0) {
-    (default-capitalize(key) + ":pl", [])
-  },
-  // Short form reference (@key:short) - only if has short form
-  short: (entry, key) => if has-short(entry) {
-    (key + ":" + SHORT, [])
-  },
-  // Long form reference (@key:long) - only if has long form
-  long: (entry, key) => if has-long(entry) {
-    (key + ":" + LONG, [])
-  },
-  // Description reference (@key:description) - only if has description
-  description: (entry, key) => if has-description(entry) {
-    (key + ":" + DESCRIPTION, [])
-  },
-  // Long plural form reference (@key:longplural) - only if has long or long plural
-  longplural: (entry, key) => if has-longplural(entry) {
-    (key + ":" + LONG_PLURAL, [])
-  },
-)
 
 
 // __check_keys(entry-list) -> none
@@ -1293,22 +1144,19 @@ __glossarium_error_prefix
   theme: "list",
   user-print-title: none,
   user-print-description: none,
-  user-print-back-references: none,
-) =
-context {
+  user-print-back-references: none
+) = {
     let default-print-gloss = themes.at(theme).at("default-print-gloss")
-    if user-print-title == none
-    {
+    if user-print-title == none {
         user-print-title = themes.at(theme).at("default-print-title")
     }
-    if user-print-description == none
-    {
+    if user-print-description == none {
         user-print-description = themes.at(theme).at("default-print-description")
     }
     if user-print-backreferences == none {
         user-print-backreferences = themes.at(theme).at("default-print-backreferences")
     }
-    default-print-gloss(
+    context default-print-gloss(
         __get_entry_with_key(here(), key),
         show-all: show-all,
         disable-back-references: disable-back-references,
@@ -1318,7 +1166,7 @@ context {
         user-print-title: user-print-title,
         user-print-description: user-print-description,
         user-print-back-references: user-print-back-references,
-)
+  )
 }
 
 #let _print-glossary(
@@ -1333,14 +1181,15 @@ context {
   group-sortkey: g => g,
   entry-sortkey: e => e.at(SORT),
   shorthands: default-shorthands,
-  user-print-glossary: default-print-glossary,
-  user-print-group-heading: default-print-group-heading,
-  user-print-reference: default-print-reference,
-  user-group-break: default-group-break,
-  user-print-gloss: default-print-gloss,
-  user-print-title: default-print-title,
-  user-print-description: default-print-description,
-  user-print-back-references: default-print-back-references,
+  theme: "list",
+  user-print-glossary: none,
+  user-print-group-heading: none,
+  user-print-reference: none,
+  user-group-break: none,
+  user-print-gloss: none,
+  user-print-title: none,
+  user-print-description: none,
+  user-print-back-references: none,
 ) = {
   {
     if query(<glossarium:make-glossary>).len() == 0 {
@@ -1364,6 +1213,31 @@ context {
       }
     }
   }
+  if user-print-title == none {
+      user-print-title = themes.at(theme).at("default-print-title")
+  }
+  if user-print-glossary == none {
+      user-print-glossary = themes.at(theme).at("default-print-glossary")
+  }
+  if user-print-group-heading == none {
+      user-print-group-heading = themes.at(theme).at("default-print-group-heading")
+  }
+  if user-print-reference == none {
+      user-print-reference = themes.at(theme).at("default-print-reference")
+  }
+  if user-print-gloss == none {
+      user-print-gloss = themes.at(theme).at("default-print-gloss")
+  }
+  if user-print-description == none {
+      user-print-description = themes.at(theme).at("default-print-description")
+  }
+  if user-print-back-references == none {
+      user-print-back-references = themes.at(theme).at("default-print-back-references")
+  }
+  if user-group-break == none {
+      user-group-break = themes.at(theme).at("default-group-break")
+  }
+
 
   // Glossary
   let body = []
@@ -1463,7 +1337,7 @@ context {
   group-sortkey: g => g,
   entry-sortkey: e => e.at(SORT),
   shorthands: ("plural", "capitalize", "capitalize-plural", "short", "long"),
-  theme: "list"
+  theme: "list",
   user-print-glossary: none,
   user-print-group-heading: none,
   user-print-reference: none,
@@ -1490,6 +1364,7 @@ context {
     group-sortkey: group-sortkey,
     entry-sortkey: entry-sortkey,
     shorthands: shorthands,
+    theme: theme,
     user-print-glossary: user-print-glossary,
     user-print-group-heading: user-print-group-heading,
     user-print-reference: user-print-reference,

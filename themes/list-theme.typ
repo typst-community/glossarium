@@ -1,7 +1,5 @@
-#import utils.typ: (
-__glossarium_figure,
-get-entry-back-references
-)
+#import "utils.typ": *
+
 // default-print-back-references(entry) -> content
 // Print the back references of the entry
 //
