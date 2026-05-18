@@ -17,15 +17,28 @@
 #let __glossarium_error_prefix = (
   "glossarium@" + glossarium_version + " error : "
 )
+// Errors types
+#let __key_not_found = "key_not_found"
+#let __key_already_exists = "key_already_exists"
+#let __key_capitalization_is_ambiguous = "key_capitalization_is_ambiguous"
+#let __attribute_is_empty = "attribute_is_empty"
+#let __glossary_is_empty = "glossary_is_empty"
+#let __key_not_registered = "key_not_registered"
+#let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
+#let __make_glossary_not_called = "make_glossary_not_called"
+#let __capitalize_called_with_content_type = "capitalize_called_with_content_type"
+#let __entry_has_unknown_keys = "entry_has_unknown_keys"
+#let __entry_list_is_not_array = "entry_list_is_not_array"
+#let __longplural_but_not_long = "longplural_but_not_long"
+#let __style_is_not_a_function = "style_is_not_a_function"
+#let __style_unsupported_attributes = "style_unsupported_attributes"
+#let __style_unknown_attribute = "style_unknown_attribute"
+#let __keys_must_be_an_array = "keys_must_be_an_array"
+#let __groups_must_be_an_array_of_strings = "groups_must_be_an_array_of_strings"
+#let __shorthand_is_not_supported = "shorthand_is_not_supported"
+#let __unknown_first_style = "unknown_first_style"
+#let __unknown_error = "unknown_error"
 
-// ! Modify the user print-glossary if default changes
-#let default-shorthands = (
-  "plural",
-  "capitalize",
-  "capitalize-plural",
-  "short",
-  "long",
-)
 // Attributes
 #let KEY = "key"
 #let SHORT = "short"
@@ -52,6 +65,110 @@
   SORT,
   STYLES,
   CUSTOM,
+)
+
+
+
+// __error_message(key, kind, ..kwargs) -> str
+// Generate an error message
+//
+// # Arguments
+//  key (str): the key of the term
+//  kind (str): the kind of the error
+//  kwargs (arguments): additional arguments
+//
+// # Returns
+// The error message
+#let __error_message(key, kind, ..kwargs) = {
+  let msg = none
+  let kwargs = kwargs.named() // convert arguments sink to dictionary
+
+  // Generate the error message
+  if kind == __key_not_found {
+    msg = "key '" + key + "' not found"
+  } else if kind == __key_already_exists {
+    msg = "key '" + key + "' already exists in the glossary"
+  } else if kind == __key_capitalization_is_ambiguous {
+    msg = (
+      "key '"
+        + key
+        + "' already exists in the glossary with different capitalization"
+    )
+  } else if kind == __attribute_is_empty {
+    let attr = kwargs.at("attr")
+    msg = "requested attribute " + attr + " is empty for key '" + key + "'"
+  } else if kind == __glossary_is_empty {
+    msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
+  } else if kind == __key_not_registered {
+    msg = (
+      "key '"
+        + key
+        + "' is not registered in the glossary. Use `register-glossary(entry-list)`."
+    )
+  } else if kind == __entry_has_neither_short_nor_long {
+    msg = "entry '" + key + "' has neither short nor long form"
+  } else if kind == __make_glossary_not_called {
+    msg = "make-glossary not called. Add `#show: make-glossary` at the beginning of the document."
+  } else if kind == __capitalize_called_with_content_type {
+    msg = (
+      "Capitalization was requested for "
+        + key
+        + ", but short or long is of type content. Use a string instead."
+    )
+  } else if kind == __entry_has_unknown_keys {
+    let keys = kwargs.at("keys")
+    msg = "entry '" + key + "' has unknown keys: " + keys
+  } else if kind == __entry_list_is_not_array {
+    msg = "entry-list is not an array."
+  } else if kind == __longplural_but_not_long {
+    msg = (
+      "'"
+        + key
+        + "' has a longplural attribute but no long attribute. Longplural will not be shown."
+    )
+  } else if kind == __style_is_not_a_function {
+    msg = "style-entries: style is not a function. Use a function to style the entries."
+  } else if kind == __style_unsupported_attributes {
+    let attr = kwargs.at("attr")
+    msg = (
+      "style-entries: attribute '" + attr + "' is not supported for styling."
+    )
+    if attr == GROUP {
+      msg += " Use `user-print-group-heading` in `print-glossary` to style groups."
+    }
+  } else if kind == __style_unknown_attribute {
+    let attr = kwargs.at("attr")
+    msg = "style-entries: unknown attribute '" + attr + "' for styling."
+  } else if kind == __keys_must_be_an_array {
+    msg = "keys must be an array."
+  } else if kind == __groups_must_be_an_array_of_strings {
+    msg = "groups must be an array of strings, e.g., (\"\",)"
+  } else if kind == __shorthand_is_not_supported {
+    msg = (
+      "shorthand '"
+        + kwargs.at("shorthand")
+        + "' is not supported. Use one of "
+        + __glossarium_shorthands.join(", ")
+    )
+  } else if kind == __unknown_first_style {
+    let first-style = kwargs.at("first-style")
+    msg = "entry '" + key + "' has an unknown first-style: " + first-style
+  } else {
+    msg = "unknown error"
+  }
+
+  // return the error message
+  return __glossarium_error_prefix + msg
+}
+
+
+// ! Modify the user print-glossary if default changes
+#let default-shorthands = (
+  "plural",
+  "capitalize",
+  "capitalize-plural",
+  "short",
+  "long",
 )
 #let default-capitalize(text) = {
   if text == none { return text }

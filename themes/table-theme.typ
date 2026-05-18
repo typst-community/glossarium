@@ -88,22 +88,24 @@
   //   first-line-indent: 0em,
   // )
   let table_entry = ()
+  let key = entry.at(KEY)
   // ? references-in-description layout divergence
-  if show-all == true or count-refs(entry.at(KEY)) >= minimum-refs {
+    // We ALWAYS need to generate the __glossarium_figures and attach them to the table (since we cannot count-refs without the shorthands)
+  if show-all == true or count-refs(key) >= minimum-refs {
     // Title
     table_entry = ("", "", "")
 
     if has-short(entry){
         let formatted-short-entry = user-print-title.at(0)(entry.at(SHORT))
         if not has-long(entry){
-            table_entry.at(0) = __glossarium_figure(entry.at(KEY), body:formatted-short-entry)
+            table_entry.at(0) = __glossarium_figure(key, body:formatted-short-entry)
         } else {
             table_entry.at(0) = formatted-short-entry
         }
     }
 
     if has-long(entry){
-        table_entry.at(1) = __glossarium_figure(entry.at(KEY), body:user-print-title.at(1)(entry.at(LONG)))
+        table_entry.at(1) = __glossarium_figure(key, body:user-print-title.at(1)(entry.at(LONG)))
     }
 
     // Description
@@ -121,6 +123,8 @@
         deduplicate: deduplicate-back-references,
         )
     }
+  } else {
+      table_entry = (__glossarium_figure(key),)
   }
   return table_entry
 
@@ -197,10 +201,12 @@
   // Generate shorthand figures based on shorthands parameter
   for fn in shorthands-functions {
     let res = fn(entry, key)
-      if table_entry.len() != 0 {
       let (label-key, figure-body) = res
+      if table_entry.len() == 3 {
         table_entry.at(2) += __glossarium_figure(label-key, body: figure-body)
-    }
+      } else if table_entry.len() == 1 {
+        table_entry.at(0) += __glossarium_figure(label-key, body: figure-body)
+      }
   }
   return table_entry
 }
@@ -280,6 +286,7 @@
   user-print-back-references: default-print-back-references,
 ) = {
     let rows = ()
+    let labels = ""
     for group in groups.sorted(key: group-sortkey) {
         let group-entries = entries.filter(x => x.at(GROUP) == group)
         let group-ref-counts = group-entries.map(x => count-refs(x.at(KEY)))
@@ -307,8 +314,10 @@
                 user-print-description: user-print-description,
                 user-print-back-references: user-print-back-references,
             )
-            if row.len() > 0{
+            if row.len() == 3{
                 rows.push(row)
+            } else if row.len() == 1 {
+                labels += row.at(0)
             }
         }
         if print-group {
@@ -316,11 +325,12 @@
         }
   }
 
-      table(
-          columns: (20%, 75%, 5%),
-          stroke: 0pt,
-          inset: (x: 5pt, y: 2pt),
-          // column-gutter: 40pt,
-          ..rows.flatten()
-          )
+    table(
+        columns: (20%, 60%, 20%),
+        stroke: 0pt,
+        inset: (x: 5pt, y: 2pt),
+        // column-gutter: 40pt,
+        ..rows.flatten()
+    )
+    block(height: 0pt, width: 0pt, spacing: 0pt)[#labels]
 }
