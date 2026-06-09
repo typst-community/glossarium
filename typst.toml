@@ -11,7 +11,7 @@ license = "MIT"
 description = "Glossarium is a simple, easily customizable typst glossary."
 repository = "https://github.com/typst-community/glossarium"
 keywords = ["glossary", "acronyms"]
-compiler = "0.13.0"
+compiler = "0.14.2"
 exclude = [
     "tbump.toml",
     "makefile",
