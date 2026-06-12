@@ -3,3 +3,5 @@ glossarium.pdf
 /.gtm/
 out/
 diff/
+.direnv/
+.DS_Store

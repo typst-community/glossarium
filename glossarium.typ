@@ -7,6 +7,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#import "themes/default.typ" as internal: (
+  glossarium_version,
+  ATTRIBUTES,
+  default-shorthands,
+  default-capitalize,
+  there-are-refs,
+  is-first,
+  has-short,
+  has-long,
+  has-artshort,
+  has-artlong,
+  has-plural,
+  has-longplural,
+  has-description,
+  has-group,
+  has-sort,
+  has-styles,
+  has-custom,
+  get-attribute,
+  is-upper,
+  default-plural,
+  refrule,
+  default-print-back-references,
+  default-print-description,
+  default-group-break,
+  default-print-gloss,
+  default-print-glossary,
+  default-print-group-heading,
+  default-print-reference,
+  default-print-title,
+  default-group-break,
+)
+
 #import "themes/default.typ": (
   gls,
   agls,

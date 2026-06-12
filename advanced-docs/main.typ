@@ -95,6 +95,12 @@ any suggestions or need help, please open an issue on the #link(
   "https://github.com/typst-community/glossarium",
 )[GitHub repository].
 
+Internal functions (for example all `default-print-*` functions showed in the following) are exported from a module `internal`:
+
+```typ
+#import "@preview/glossarium:x.x.x": internal
+```
+
 There are effectively two requirements for a user to use `glossarium`:
 + Write a #typc("show: make-glossary") rule to transform all #typc("@key") and
   #typc("@key:pl") into #typc("#gls(key)") or
