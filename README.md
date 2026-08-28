@@ -340,4 +340,10 @@ Further customization is possible. Here is a short list of alternative functions
 - `user-print-description`: print the entry's description
 - `user-print-back-references`: print the entry's backreferences.
 
+The corresponding default implementations are exported from the package. This
+lets a customization wrap or delegate to functions such as
+`default-print-reference` and `default-print-glossary` instead of copying their
+implementation. The package also exports `default-capitalize`, `default-plural`,
+`default-shorthands`, and the other `default-print-...` helpers.
+
 Read more about customizing glossarium in the [advanced documentation](advanced-docs/main.pdf).

@@ -33,5 +33,16 @@
   Gls,
   Glspl,
   style-entries,
+  default-shorthands,
+  default-capitalize,
+  default-plural,
+  default-print-back-references,
+  default-print-description,
+  default-print-title,
+  default-print-gloss,
+  default-group-break,
+  default-print-group-heading,
+  default-print-reference,
+  default-print-glossary,
   //
 )
