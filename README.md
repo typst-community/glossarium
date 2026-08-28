@@ -275,6 +275,18 @@ You can also reference the automatically generated labels:
 
 Please note that these are only generated if the `key` does not start with an uppercase letter.
 
+To customize capitalization once for both `@Ref` syntax and direct calls such as
+`#Gls("ref")`, configure `user-capitalize` on `make-glossary`:
+
+```typ
+#show: make-glossary.with(
+  user-capitalize: text => text
+    .split(" ")
+    .map(word => upper(word.first()) + word.slice(1))
+    .join(" "),
+)
+```
+
 ### Overriding the text shown
 
 You can also override the text displayed by setting the `display` argument.

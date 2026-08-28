@@ -4,6 +4,7 @@
   (key: "bar"),
   (key: "baz"),
   (key: "qux", short: $xi zeta eta$),
+  (key: "syscall", short: "system call"),
 )
 #register-glossary(entry-list)
 #show: make-glossary.with(
@@ -12,7 +13,7 @@
     if type(txt) == content and txt.func() == math.equation {
       txt.body.children.filter(x => x != [ ]).join("-")
     } else if type(txt) == str {
-      upper(txt.at(0)) + txt.slice(1)
+      txt.split(" ").map(word => upper(word.at(0)) + word.slice(1)).join(" ")
     } else if type(txt) == none {
       txt
     }
@@ -25,3 +26,7 @@
 @bar, @Bar
 
 @qux, @Qux
+
+@syscall, @Syscall
+
+#gls("syscall"), #Gls("syscall"), #gls("syscall", capitalize: true)

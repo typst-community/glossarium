@@ -248,6 +248,10 @@
   }
   return upper(text.first()) + text.slice(1)
 }
+#let __glossarium_user_capitalize = state(
+  "__glossarium_user_capitalize",
+  default-capitalize,
+)
 #let __uncapitalize(text) = {
   return lower(text.first()) + text.slice(1)
 }
@@ -706,9 +710,12 @@
   capitalize: false,
   plural: false,
   article: false,
-  user-capitalize: default-capitalize,
+  user-capitalize: none,
   user-plural: default-plural,
 ) = {
+  if user-capitalize == none {
+    user-capitalize = __glossarium_user_capitalize.at(here())
+  }
   let entry = __get_entry_with_key(here(), key)
 
   // Attributes
@@ -834,7 +841,7 @@
   capitalize: false,
   plural: false,
   article: false,
-  user-capitalize: default-capitalize,
+  user-capitalize: none,
   user-plural: default-plural,
 ) = context _gls(
   key,
@@ -861,7 +868,7 @@
   styles: none,
   link: true,
   update: true,
-  user-capitalize: default-capitalize,
+  user-capitalize: none,
   user-plural: default-plural,
 ) = gls(
   key,
@@ -895,7 +902,7 @@
   link: true,
   update: true,
   capitalize: false,
-  user-capitalize: default-capitalize,
+  user-capitalize: none,
   user-plural: default-plural,
 ) = gls(
   key,
@@ -918,7 +925,7 @@
   styles: none,
   link: true,
   update: true,
-  user-capitalize: default-capitalize,
+  user-capitalize: none,
   user-plural: default-plural,
 ) = gls(
   key,
@@ -953,7 +960,7 @@
   link: true,
   update: true,
   capitalize: false,
-  user-capitalize: default-capitalize,
+  user-capitalize: none,
   user-plural: default-plural,
 ) = gls(
   key,
@@ -979,7 +986,7 @@
   styles: none,
   link: true,
   update: true,
-  user-capitalize: default-capitalize,
+  user-capitalize: none,
   user-plural: default-plural,
 ) = gls(
   key,
@@ -1106,6 +1113,7 @@
   user-capitalize: default-capitalize,
   user-plural: default-plural,
 ) = {
+  __glossarium_user_capitalize.update(_ => user-capitalize)
   [#metadata("glossarium:make-glossary")<glossarium:make-glossary>]
   // Set figure body alignment
   show __glossarium_entry_selector: it => {
