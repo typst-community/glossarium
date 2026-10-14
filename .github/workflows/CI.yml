@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/themes
   pull_request:
     branches:
       - '**'
