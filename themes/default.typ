@@ -6,305 +6,71 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// glossarium figure kind
-#let __glossarium_entry = "glossarium_entry"
-#let __glossarium_entry_selector = figure.where(kind: __glossarium_entry)
+#import "utils.typ" : (
+glossarium_version,
+KEY,
+SHORT,
+LONG,
+ART_SHORT,
+ART_LONG,
+PLURAL,
+LONG_PLURAL,
+DESCRIPTION,
+GROUP,
+SORT,
+STYLES,
+CUSTOM,
+ATTRIBUTES,
+__glossarium_figure,
+__glossarium_entry,
+__glossarium_entry_selector,
+__error_message,
+__glossarium_error_prefix,
+__entry_has_unknown_keys,
+__entry_list_is_not_array,
+__entry_has_neither_short_nor_long,
+__style_unsupported_attributes,
+__style_unknown_attribute,
+__style_is_not_a_function,
+__key_not_registered,
+__longplural_but_not_long,
+__key_capitalization_is_ambiguous,
+__key_already_exists,
+__unknown_first_style,
+__glossary_entries,
+__glossary_label_prefix,
+default-shorthands,
+get-entry-back-references,
+count-refs,
+reset-counts,
+default-capitalize,
+has-short,
+has-long,
+has-artshort,
+has-artlong,
+has-plural,
+has-longplural,
+has-description,
+has-group,
+has-sort,
+has-styles,
+has-custom,
+__get_attribute,
+__glossarium_shorthands_suffixes,
+__uncapitalize,
+__glossary_counts,
+__update_count,
+)
+#import "list-theme.typ"
+#import "table-theme.typ"
 
-// prefix of label for references query
-#let __glossary_label_prefix = "__gls:"
-
-// global state containing the glossary entry and their location
-// A glossary entry is a `dictionary`.
-// See `__normalize_entry_list`.
-#let __glossary_entries = state("__glossary_entries", (:))
-
-// glossarium version
-#let glossarium_version = "0.5.10"
-
-// error prefix
-#let __glossarium_error_prefix = (
-  "glossarium@" + glossarium_version + " error : "
+#let themes = (
+    "list": dictionary(list-theme),
+    "table": dictionary(table-theme)
 )
 
-// Attributes
-#let KEY = "key"
-#let SHORT = "short"
-#let LONG = "long"
-#let ART_SHORT = "artshort"
-#let ART_LONG = "artlong"
-#let PLURAL = "plural"
-#let LONG_PLURAL = "longplural"
-#let DESCRIPTION = "description"
-#let GROUP = "group"
-#let SORT = "sort"
-#let STYLES = "styles"
-#let CUSTOM = "custom"
-#let ATTRIBUTES = (
-  KEY,
-  SHORT,
-  LONG,
-  ART_SHORT,
-  ART_LONG,
-  PLURAL,
-  LONG_PLURAL,
-  DESCRIPTION,
-  GROUP,
-  SORT,
-  STYLES,
-  CUSTOM,
-)
-
-// Shorthands @key:pl
-#let __glossarium_shorthands = (
-  "plural",
-  "capitalize",
-  "capitalize-plural",
-  SHORT,
-  LONG,
-  DESCRIPTION,
-  LONG_PLURAL,
-  CUSTOM,
-)
-#let __glossarium_shorthands_suffixes = (
-  plural: ":pl",
-  short: ":" + SHORT,
-  long: ":" + LONG,
-  description: ":" + DESCRIPTION,
-  longplural: ":" + LONG_PLURAL,
-  custom: ":" + CUSTOM,
-)
-// ! Modify the user print-glossary if default changes
-#let default-shorthands = (
-  "plural",
-  "capitalize",
-  "capitalize-plural",
-  "short",
-  "long",
-)
-
-// Errors types
-#let __key_not_found = "key_not_found"
-#let __key_already_exists = "key_already_exists"
-#let __key_capitalization_is_ambiguous = "key_capitalization_is_ambiguous"
-#let __attribute_is_empty = "attribute_is_empty"
-#let __glossary_is_empty = "glossary_is_empty"
-#let __key_not_registered = "key_not_registered"
-#let __entry_has_neither_short_nor_long = "entry_has_neither_short_nor_long"
-#let __make_glossary_not_called = "make_glossary_not_called"
-#let __capitalize_called_with_content_type = "capitalize_called_with_content_type"
-#let __entry_has_unknown_keys = "entry_has_unknown_keys"
-#let __entry_list_is_not_array = "entry_list_is_not_array"
-#let __longplural_but_not_long = "longplural_but_not_long"
-#let __style_is_not_a_function = "style_is_not_a_function"
-#let __style_unsupported_attributes = "style_unsupported_attributes"
-#let __style_unknown_attribute = "style_unknown_attribute"
-#let __keys_must_be_an_array = "keys_must_be_an_array"
-#let __groups_must_be_an_array_of_strings = "groups_must_be_an_array_of_strings"
-#let __shorthand_is_not_supported = "shorthand_is_not_supported"
-#let __unknown_first_style = "unknown_first_style"
-#let __unknown_error = "unknown_error"
-
-// __error_message(key, kind, ..kwargs) -> str
-// Generate an error message
-//
-// # Arguments
-//  key (str): the key of the term
-//  kind (str): the kind of the error
-//  kwargs (arguments): additional arguments
-//
-// # Returns
-// The error message
-#let __error_message(key, kind, ..kwargs) = {
-  let msg = none
-  let kwargs = kwargs.named() // convert arguments sink to dictionary
-
-  // Generate the error message
-  if kind == __key_not_found {
-    msg = "key '" + key + "' not found"
-  } else if kind == __key_already_exists {
-    msg = "key '" + key + "' already exists in the glossary"
-  } else if kind == __key_capitalization_is_ambiguous {
-    msg = (
-      "key '"
-        + key
-        + "' already exists in the glossary with different capitalization"
-    )
-  } else if kind == __attribute_is_empty {
-    let attr = kwargs.at("attr")
-    msg = "requested attribute " + attr + " is empty for key '" + key + "'"
-  } else if kind == __glossary_is_empty {
-    msg = "glossary is empty. Use `register-glossary(entry-list)` immediately after `make-glossary`."
-  } else if kind == __key_not_registered {
-    msg = (
-      "key '"
-        + key
-        + "' is not registered in the glossary. Use `register-glossary(entry-list)`."
-    )
-  } else if kind == __entry_has_neither_short_nor_long {
-    msg = "entry '" + key + "' has neither short nor long form"
-  } else if kind == __make_glossary_not_called {
-    msg = "make-glossary not called. Add `#show: make-glossary` at the beginning of the document."
-  } else if kind == __capitalize_called_with_content_type {
-    msg = (
-      "Capitalization was requested for "
-        + key
-        + ", but short or long is of type content. Use a string instead."
-    )
-  } else if kind == __entry_has_unknown_keys {
-    let keys = kwargs.at("keys")
-    msg = "entry '" + key + "' has unknown keys: " + keys
-  } else if kind == __entry_list_is_not_array {
-    msg = "entry-list is not an array."
-  } else if kind == __longplural_but_not_long {
-    msg = (
-      "'"
-        + key
-        + "' has a longplural attribute but no long attribute. Longplural will not be shown."
-    )
-  } else if kind == __style_is_not_a_function {
-    msg = "style-entries: style is not a function. Use a function to style the entries."
-  } else if kind == __style_unsupported_attributes {
-    let attr = kwargs.at("attr")
-    msg = (
-      "style-entries: attribute '" + attr + "' is not supported for styling."
-    )
-    if attr == GROUP {
-      msg += " Use `user-print-group-heading` in `print-glossary` to style groups."
-    }
-  } else if kind == __style_unknown_attribute {
-    let attr = kwargs.at("attr")
-    msg = "style-entries: unknown attribute '" + attr + "' for styling."
-  } else if kind == __keys_must_be_an_array {
-    msg = "keys must be an array."
-  } else if kind == __groups_must_be_an_array_of_strings {
-    msg = "groups must be an array of strings, e.g., (\"\",)"
-  } else if kind == __shorthand_is_not_supported {
-    msg = (
-      "shorthand '"
-        + kwargs.at("shorthand")
-        + "' is not supported. Use one of "
-        + __glossarium_shorthands.join(", ")
-    )
-  } else if kind == __unknown_first_style {
-    let first-style = kwargs.at("first-style")
-    msg = "entry '" + key + "' has an unknown first-style: " + first-style
-  } else {
-    msg = "unknown error"
-  }
-
-  // return the error message
-  return __glossarium_error_prefix + msg
-}
 
 
-// global state containing the entry counts
-#let __glossary_counts = state("__glossary_counts", (:))
-#let __glossary_reset_locations = state("__glossary_reset_locations", ())
-#let __glossary_final_counts() = {
-  __glossary_reset_locations
-    .final()
-    .fold(__glossary_counts.final(), (acc, loc) => {
-      for (k, v) in __glossary_counts.at(loc).pairs() {
-        acc.insert(k, acc.at(k, default: 0) + v)
-      }
-      return acc
-    })
-}
-#let __update_count(key) = {
-  __glossary_counts.update(x => {
-    x.insert(key, x.at(key, default: 0) + 1)
-    return x
-  })
-}
-#let reset-counts(..keys) = {
-  keys = keys.pos()
-  if type(keys) != array {
-    panic(__error_message(none, __keys_must_be_an_array))
-  }
-  for key in keys {
-    if key not in __glossary_entries.get() {
-      panic(__error_message(key, __key_not_registered))
-    }
-  }
-  if keys == () {
-    __glossary_counts.update((:))
-  } else {
-    // partial reset
-    __glossary_counts.update(x => {
-      for key in keys {
-        let _ = x.remove(key, default: none)
-      }
-      return x
-    })
-  }
-  let loc = here()
-  __glossary_reset_locations.update(x => x + (loc,))
-}
-
-#let default-capitalize(text) = {
-  if text == none { return text }
-  if type(text) == content {
-    panic(__error_message(text, __capitalize_called_with_content_type))
-  }
-  return upper(text.first()) + text.slice(1)
-}
-#let __uncapitalize(text) = {
-  return lower(text.first()) + text.slice(1)
-}
-
-// __query_labels_with_key(loc, key) -> array<label>
-// Query the labels with the key
-//
-// # Arguments
-//  loc (location): the location of the reference
-//  key (str): the key of the term
-//
-// # Returns
-// The labels with the key
-#let __query_labels_with_key(key) = {
-  return query(selector(label(__glossary_label_prefix + key)))
-}
-
-// __get_entry_with_key(loc, key) -> dictionary
-// Get an entry from the glossary
-//
-// # Arguments
-//  loc (location): the location of the reference
-//  key (str): the key of the term
-//
-// # Returns
-// The entry of the term
-//
-// # Panics
-// If the key is not found, it will raise a `key_not_found` error
-#let __get_entry_with_key(loc, key) = {
-  let entries = __glossary_entries.at(loc)
-  let lowerkey = __uncapitalize(key)
-  if key in entries {
-    return entries.at(key)
-  } else if lowerkey in entries {
-    return entries.at(lowerkey)
-  } else {
-    panic(__error_message(key, __key_not_found))
-  }
-}
-
-// count-refs(key) -> int
-// Count the number of references to the entry in the document
-//
-// # Arguments
-// entry (dictionary): the entry
-//
-// # Returns
-// The number of references to the entry
-//
-// # Usage
-// ```typ
-// #context count-refs("potato")
-// ```
-#let count-refs(key) = {
-  return __glossary_final_counts().at(key, default: 0)
-}
 
 // count-all-refs(entry-list: none, groups: none) -> array<(str, int)>
 // Return the number of references for each entry in the document
@@ -399,7 +165,6 @@
     )]
 }
 
-#let __get_attribute(entry, attrname) = entry.at(attrname)
 #let __get_key(entry) = __get_attribute(entry, KEY)
 #let __get_short(entry) = __get_attribute(entry, SHORT)
 #let __get_long(entry) = __get_attribute(entry, LONG)
@@ -413,21 +178,29 @@
 #let __get_styles(entry) = __get_attribute(entry, STYLES)
 #let __get_custom(entry) = __get_attribute(entry, CUSTOM)
 
-#let __has_attribute(entry, attrname) = {
-  let attr = __get_attribute(entry, attrname)
-  return attr != none and attr != "" and attr != []
+// __get_entry_with_key(loc, key) -> dictionary
+// Get an entry from the glossary
+//
+// # Arguments
+//  loc (location): the location of the reference
+//  key (str): the key of the term
+//
+// # Returns
+// The entry of the term
+//
+// # Panics
+// If the key is not found, it will raise a `key_not_found` error
+#let __get_entry_with_key(loc, key) = {
+  let entries = __glossary_entries.at(loc)
+  let lowerkey = __uncapitalize(key)
+  if key in entries {
+    return entries.at(key)
+  } else if lowerkey in entries {
+    return entries.at(lowerkey)
+  } else {
+    panic(__error_message(key, __key_not_found))
+  }
 }
-#let has-short(entry) = __has_attribute(entry, SHORT)
-#let has-long(entry) = __has_attribute(entry, LONG)
-#let has-artshort(entry) = __has_attribute(entry, ART_SHORT)
-#let has-artlong(entry) = __has_attribute(entry, ART_LONG)
-#let has-plural(entry) = __has_attribute(entry, PLURAL)
-#let has-longplural(entry) = __has_attribute(entry, LONG_PLURAL)
-#let has-description(entry) = __has_attribute(entry, DESCRIPTION)
-#let has-group(entry) = __has_attribute(entry, GROUP)
-#let has-sort(entry) = __has_attribute(entry, SORT)
-#let has-styles(entry) = __has_attribute(entry, STYLES)
-#let has-custom(entry) = __has_attribute(entry, CUSTOM)
 
 #let _get-attribute(key, attrname, link: false, update: false) = {
   let entry = __get_entry_with_key(here(), key)
@@ -1195,382 +968,9 @@
   return new-list
 }
 
-// get-entry-back-references(entry) -> array<content>
-// Get the back references of the entry
-//
-// # Arguments
-// entry (dictionary): the entry
-//
-// # Returns
-// The back references as an array of links
-#let get-entry-back-references(entry, deduplicate: false) = {
-  let term-references = __query_labels_with_key(entry.at(KEY))
-  let back-references = term-references
-    .map(x => x.location())
-    .sorted(key: x => x.page())
-  if deduplicate {
-    back-references = back-references
-      .fold((values: (), pages: ()), ((values, pages), x) => {
-        if pages.contains(x.page()) {
-          // Skip duplicate references
-          return (values: values, pages: pages)
-        } else {
-          // Add the back reference
-          values.push(x)
-          pages.push(x.page())
-          return (values: values, pages: pages)
-        }
-      })
-      .values
-  }
-  return back-references.map(x => {
-    let page-numbering = x.page-numbering()
-    if page-numbering == none {
-      page-numbering = "1"
-    }
-    return link(x)[#numbering(page-numbering, ..counter(page).at(x))]
-  })
-}
 
-// default-print-back-references(entry) -> content
-// Print the back references of the entry
-//
-// # Arguments
-// entry (dictionary): the entry
-//
-// # Returns
-// Joined back references
-#let default-print-back-references(entry, deduplicate: false) = {
-  return get-entry-back-references(entry, deduplicate: deduplicate).join(", ")
-}
 
-// default-print-description(entry) -> content
-// Print the description of the entry
-//
-// # Arguments
-// entry (dictionary): the entry
-//
-// # Returns
-// The description of the entry
-#let default-print-description(entry) = entry.at(DESCRIPTION)
 
-// default-print-title(entry) -> content
-// Print the title of the entry
-//
-// # Arguments
-// entry (dictionary): the entry
-//
-// # Returns
-// The title of the entry
-#let default-print-title(entry) = {
-  let caption = []
-  let txt = strong.with(delta: 200)
-
-  if has-long(entry) and has-short(entry) {
-    caption += txt(emph(entry.at(SHORT)) + [ -- ] + entry.at(LONG))
-  } else if has-long(entry) {
-    caption += txt(entry.at(LONG))
-  } else {
-    caption += txt(emph(entry.at(SHORT)))
-  }
-  return caption
-}
-
-// default-print-gloss(
-//  entry,
-//  show-all: false,
-//  disable-back-references: false,
-//  deduplicate-back-references: false,
-//  minimum-refs: 1,
-//  description-separator: ": ",
-//  user-print-title: default-print-title,
-//  user-print-description: default-print-description,
-//  user-print-back-references: default-print-back-references,
-// ) -> content
-// Print the entry
-//
-// # Arguments
-//  entry (dictionary): the entry
-//  show-all (bool): show all entries
-//  disable-back-references (bool): disable back references
-//  minimum-refs (int): minimum number of references to show the entry
-//  ...
-//
-// # Returns
-//  The gloss content
-#let default-print-gloss(
-  entry,
-  show-all: false,
-  disable-back-references: false,
-  deduplicate-back-references: false,
-  minimum-refs: 1,
-  description-separator: ": ",
-  user-print-title: default-print-title,
-  user-print-description: default-print-description,
-  user-print-back-references: default-print-back-references,
-) = {
-  set par(
-    hanging-indent: 1em,
-    first-line-indent: 0em,
-  )
-  // ? references-in-description layout divergence
-  if show-all == true or count-refs(entry.at(KEY)) >= minimum-refs {
-    // Title
-    user-print-title(entry)
-
-    // Description
-    if has-description(entry) {
-      // Title - Description separator
-      description-separator
-      user-print-description(entry)
-    }
-
-    // Back references
-    // Separate context window to separate BR's query
-    context if disable-back-references != true {
-      " "
-      user-print-back-references(
-        entry,
-        deduplicate: deduplicate-back-references,
-      )
-    }
-  }
-}
-
-// Helper function to create a labeled glossarium figure
-#let __glossarium_figure(label-key, body: []) = {
-  if body == [] {
-    return [#figure(
-        kind: __glossarium_entry,
-        supplement: "",
-        numbering: none,
-      )[]#label(label-key)]
-  }
-  return [#figure(
-      kind: __glossarium_entry,
-      supplement: "",
-      numbering: none,
-      body,
-    )#label(label-key)]
-}
-
-// Define label generators as functions
-#let __glossarium_shorthand_functions = (
-  // Plural reference shorthand (@key:pl)
-  plural: (entry, key) => (key + ":pl", []),
-  // Capitalized form (@Key) - only if not already capitalized
-  capitalize: (entry, key) => if upper(key.at(0)) != key.at(0) {
-    (default-capitalize(key), [])
-  },
-  // Capitalized plural form (@Key:pl) - only if not already capitalized
-  capitalize-plural: (entry, key) => if upper(key.at(0)) != key.at(0) {
-    (default-capitalize(key) + ":pl", [])
-  },
-  // Short form reference (@key:short) - only if has short form
-  short: (entry, key) => if has-short(entry) {
-    (key + ":" + SHORT, [])
-  },
-  // Long form reference (@key:long) - only if has long form
-  long: (entry, key) => if has-long(entry) {
-    (key + ":" + LONG, [])
-  },
-  // Description reference (@key:description) - only if has description
-  description: (entry, key) => if has-description(entry) {
-    (key + ":" + DESCRIPTION, [])
-  },
-  // Long plural form reference (@key:longplural) - only if has long or long plural
-  longplural: (entry, key) => if has-longplural(entry) {
-    (key + ":" + LONG_PLURAL, [])
-  },
-)
-
-// default-print-reference(
-//  entry,
-//  show-all: false,
-//  disable-back-references: false,
-//  deduplicate-back-references: false,
-//  minimum-refs: 1,
-//  description-separator: ": ",
-//  user-print-gloss: default-print-gloss,
-//  user-print-title: default-print-title,
-//  user-print-description: default-print-description,
-//  user-print-back-references: default-print-back-references,
-// ) -> content
-// Print the entry
-//
-// # Arguments
-//  entry (dictionary): the entry
-//  show-all (bool): show all entries
-//  disable-back-references (bool): disable back references
-//  minimum-refs (int): minimum number of references to show the entry
-//  ..;
-//
-// # Returns
-// A glossarium figure+labels
-#let default-print-reference(
-  entry,
-  show-all: false,
-  disable-back-references: false,
-  deduplicate-back-references: false,
-  minimum-refs: 1,
-  description-separator: ": ",
-  shorthands: default-shorthands,
-  user-print-gloss: default-print-gloss,
-  user-print-title: default-print-title,
-  user-print-description: default-print-description,
-  user-print-back-references: default-print-back-references,
-) = {
-  let body = []
-  let key = entry.at(KEY)
-
-  // Shorthands
-  let shorthands-functions = (
-    // Main figure with full gloss content (always generated)
-    (entry, key) => (
-      key,
-      user-print-gloss(
-        entry,
-        show-all: show-all,
-        disable-back-references: disable-back-references,
-        deduplicate-back-references: deduplicate-back-references,
-        minimum-refs: minimum-refs,
-        description-separator: description-separator,
-        user-print-title: user-print-title,
-        user-print-description: user-print-description,
-        user-print-back-references: user-print-back-references,
-      ),
-    ),
-  )
-  for shorthand in shorthands {
-    if shorthand in __glossarium_shorthands {
-      shorthands-functions.push(__glossarium_shorthand_functions.at(shorthand))
-    } else {
-      panic(__error_message(
-        key,
-        __shorthand_is_not_supported,
-        shorthand: shorthand,
-      ))
-    }
-  }
-
-  // Generate shorthand figures based on shorthands parameter
-  for fn in shorthands-functions {
-    let res = fn(entry, key)
-    if res != none {
-      let (label-key, figure-body) = res
-      body += __glossarium_figure(label-key, body: figure-body)
-    }
-  }
-
-  return body
-}
-
-// default-group-break() -> content
-// Default group break
-#let default-group-break() = {
-  return []
-}
-
-#let default-print-group-heading(group, level: none) = {
-  if level == none {
-    let previous-headings = query(selector(heading).before(here()))
-    if previous-headings.len() != 0 {
-      level = previous-headings.last().level + 1
-    } else {
-      level = 1
-    }
-  }
-  heading(group, level: level, outlined: false)
-}
-
-// default-print-glossary(
-//  entries,
-//  groups,
-//  show-all: false,
-//  disable-back-references: false,
-//  group-heading-level: none,
-//  minimum-refs: 1,
-//  description-separator: ": ",
-//  group-sortkey: g => g,
-//  entry-sortkey: e => e.at(SORT),
-//  user-print-reference: default-print-reference
-//  user-group-break: default-group-break,
-//  user-print-gloss: default-print-gloss,
-//  user-print-title: default-print-title,
-//  user-print-description: default-print-description,
-//  user-print-back-references: default-print-back-references,
-// ) -> contextual content
-// Default glossary print function
-//
-// # Arguments
-//  entries (array<dictionary>): the list of entries
-//  groups (array<str>): the list of groups
-//  show-all (bool): show all entries
-//  disable-back-references (bool): disable back references
-//  deduplicate-back-references (bool): deduplicate back references
-//  group-heading-level (int): force the level of the group heading
-//  minimum-refs (int): minimum number of references to show the entry
-//  ...
-//
-// # Warnings
-// A strong warning is given not to override `user-print-reference` without
-// careful consideration of `default-print-reference`'s original implementation.
-// The package's behaviour may break in unexpected ways if not handled correctly.
-//
-// # Returns
-// The glossary content
-#let default-print-glossary(
-  entries,
-  groups,
-  show-all: false,
-  disable-back-references: false,
-  deduplicate-back-references: false,
-  group-heading-level: none,
-  minimum-refs: 1,
-  description-separator: ": ",
-  group-sortkey: g => g,
-  entry-sortkey: e => e.at(SORT),
-  shorthands: default-shorthands,
-  user-print-group-heading: default-print-group-heading,
-  user-print-reference: default-print-reference,
-  user-group-break: default-group-break,
-  user-print-gloss: default-print-gloss,
-  user-print-title: default-print-title,
-  user-print-description: default-print-description,
-  user-print-back-references: default-print-back-references,
-) = {
-  for group in groups.sorted(key: group-sortkey) {
-    let group-entries = entries.filter(x => x.at(GROUP) == group)
-    let group-ref-counts = group-entries.map(x => count-refs(x.at(KEY)))
-    let print-group = (
-      // ? group-heading-pagebreak Layout divergence if location is conditional on print-group
-      group != ""
-        and (show-all == true or group-ref-counts.any(x => x >= minimum-refs))
-    )
-    // Only print group name if any entries are referenced
-    if print-group {
-      user-print-group-heading(group, level: group-heading-level)
-    }
-    for entry in group-entries.sorted(key: entry-sortkey) {
-      user-print-reference(
-        entry,
-        show-all: show-all,
-        disable-back-references: disable-back-references,
-        deduplicate-back-references: deduplicate-back-references,
-        minimum-refs: minimum-refs,
-        description-separator: description-separator,
-        shorthands: shorthands,
-        user-print-gloss: user-print-gloss,
-        user-print-title: user-print-title,
-        user-print-description: user-print-description,
-        user-print-back-references: user-print-back-references,
-      )
-    }
-    if print-group {
-      user-group-break()
-    }
-  }
-}
 
 // __check_keys(entry-list) -> none
 // Check for ambiguosity of the keys and in existing keys from previously registered glossaries
@@ -1638,22 +1038,35 @@
   show-all: false,
   disable-back-references: false,
   deduplicate-back-references: false,
-  minimum-refs: 0, // Default to 0 to always print
+  minimum-refs: 1, // Default to 0 to always print
   description-separator: ": ",
-  user-print-title: default-print-title,
-  user-print-description: default-print-description,
-  user-print-back-references: default-print-back-references,
-) = context default-print-gloss(
-  __get_entry_with_key(here(), key),
-  show-all: show-all,
-  disable-back-references: disable-back-references,
-  deduplicate-back-references: deduplicate-back-references,
-  minimum-refs: minimum-refs,
-  description-separator: description-separator,
-  user-print-title: user-print-title,
-  user-print-description: user-print-description,
-  user-print-back-references: user-print-back-references,
-)
+  theme: "list",
+  user-print-title: none,
+  user-print-description: none,
+  user-print-back-references: none
+) = {
+    let default-print-gloss = themes.at(theme).at("default-print-gloss")
+    if user-print-title == none {
+        user-print-title = themes.at(theme).at("default-print-title")
+    }
+    if user-print-description == none {
+        user-print-description = themes.at(theme).at("default-print-description")
+    }
+    if user-print-back-references == none {
+        user-print-back-references = themes.at(theme).at("default-print-back-references")
+    }
+    context default-print-gloss(
+        __get_entry_with_key(here(), key),
+        show-all: show-all,
+        disable-back-references: disable-back-references,
+        deduplicate-back-references: deduplicate-back-references,
+        minimum-refs: minimum-refs,
+        description-separator: description-separator,
+        user-print-title: user-print-title,
+        user-print-description: user-print-description,
+        user-print-back-references: user-print-back-references,
+  )
+}
 
 #let _print-glossary(
   entry-list,
@@ -1667,14 +1080,15 @@
   group-sortkey: g => g,
   entry-sortkey: e => e.at(SORT),
   shorthands: default-shorthands,
-  user-print-glossary: default-print-glossary,
-  user-print-group-heading: default-print-group-heading,
-  user-print-reference: default-print-reference,
-  user-group-break: default-group-break,
-  user-print-gloss: default-print-gloss,
-  user-print-title: default-print-title,
-  user-print-description: default-print-description,
-  user-print-back-references: default-print-back-references,
+  theme: "list",
+  user-print-glossary: none,
+  user-print-group-heading: none,
+  user-print-reference: none,
+  user-group-break: none,
+  user-print-gloss: none,
+  user-print-title: none,
+  user-print-description: none,
+  user-print-back-references: none,
 ) = {
   {
     if query(<glossarium:make-glossary>).len() == 0 {
@@ -1698,6 +1112,31 @@
       }
     }
   }
+  if user-print-title == none {
+      user-print-title = themes.at(theme).at("default-print-title")
+  }
+  if user-print-glossary == none {
+      user-print-glossary = themes.at(theme).at("default-print-glossary")
+  }
+  if user-print-group-heading == none {
+      user-print-group-heading = themes.at(theme).at("default-print-group-heading")
+  }
+  if user-print-reference == none {
+      user-print-reference = themes.at(theme).at("default-print-reference")
+  }
+  if user-print-gloss == none {
+      user-print-gloss = themes.at(theme).at("default-print-gloss")
+  }
+  if user-print-description == none {
+      user-print-description = themes.at(theme).at("default-print-description")
+  }
+  if user-print-back-references == none {
+      user-print-back-references = themes.at(theme).at("default-print-back-references")
+  }
+  if user-group-break == none {
+      user-group-break = themes.at(theme).at("default-group-break")
+  }
+
 
   // Glossary
   let body = []
@@ -1797,14 +1236,15 @@
   group-sortkey: g => g,
   entry-sortkey: e => e.at(SORT),
   shorthands: ("plural", "capitalize", "capitalize-plural", "short", "long"),
-  user-print-glossary: default-print-glossary,
-  user-print-group-heading: default-print-group-heading,
-  user-print-reference: default-print-reference,
-  user-group-break: default-group-break,
-  user-print-gloss: default-print-gloss,
-  user-print-title: default-print-title,
-  user-print-description: default-print-description,
-  user-print-back-references: default-print-back-references,
+  theme: "list",
+  user-print-glossary: none,
+  user-print-group-heading: none,
+  user-print-reference: none,
+  user-group-break: none,
+  user-print-gloss: none,
+  user-print-title: none,
+  user-print-description: none,
+  user-print-back-references: none,
 ) = {
   if invisible {
     user-print-group-heading = (..args) => []
@@ -1823,6 +1263,7 @@
     group-sortkey: group-sortkey,
     entry-sortkey: entry-sortkey,
     shorthands: shorthands,
+    theme: theme,
     user-print-glossary: user-print-glossary,
     user-print-group-heading: user-print-group-heading,
     user-print-reference: user-print-reference,

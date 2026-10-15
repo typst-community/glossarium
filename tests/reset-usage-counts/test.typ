@@ -1,4 +1,6 @@
 #import "../../themes/default.typ": *
+#import "../../themes/utils.typ": *
+
 #let entry-list = (
   (key: "foo", long: "Long Foo"),
   (key: "bar", long: "Long Bar"),
@@ -11,7 +13,8 @@
 
 = Glossary
 
-#print-glossary(entry-list)
+#print-glossary(entry-list, theme: "table", show-all: true, disable-back-references: false)
+
 
 = Full reset
 

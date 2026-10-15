@@ -1,8 +1,10 @@
 name: CI
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
+      - feature/themes
   pull_request:
     branches:
       - '**'
